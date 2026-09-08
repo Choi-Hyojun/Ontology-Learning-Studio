@@ -3,10 +3,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import neonPrompts from "./neon-prompts.json";
 import taoPrompts from "./tao-prompts.json";
-import { exampleResponse, exampleStatus, pipelineContext, resolveExampleContext } from "./example-model";
+import { exampleResponse, pipelineContext, resolveExampleContext } from "./example-model";
 import { assemblePrompt, simulateCompletion, type PromptMessages, type PromptValues } from "./prompt-model";
 import { DocumentField, type Attachment } from "./document-field";
+import { ContextTextarea } from "./context-textarea";
 import { ParameterHelp } from "./parameter-help";
+import { ExecutionStats } from "./execution-stats";
 import { FIELD_LABELS, STAGE_HELP, fieldHelp } from "./stage-help";
 import { currentOntology, downloadText, exportLog, simulatedOntology } from "./project-files";
 import { OntologyViewer } from "./ontology-viewer";
@@ -126,7 +128,6 @@ export default function Home() {
   const currentOutput = outputs[outputKey] ?? (runState === "running" ? (engine === "api" ? "API 응답을 기다리고 있습니다…" : "시뮬레이터가 응답을 생성하고 있습니다…") : "실행 버튼을 눌러 현재 단계의 응답을 생성하세요.");
   const previousOntology = currentOntology(Object.fromEntries(Object.entries(records).filter(([key]) => key.startsWith(method + "-") && Number(key.split("-")[1]) < Number(stage.id))), method);
 
-  const source = method === "neon" ? neonPrompts.stages[stageIndex] : taoPrompts.stages[stageIndex];
   const definition = promptDefinitions[outputKey];
   const effectiveValues = useMemo(() => resolveExampleContext(method, stage.id, values, outputs, previousOntology),
     [method, stage.id, values, outputs, previousOntology]);
@@ -359,7 +360,7 @@ export default function Home() {
           <label>제공업체 <select value={provider} disabled={engine !== "api" || runState === "running"} onChange={(event) => changeEngine("api", event.target.value as Provider)}>
             <option value="openai">GPT · OpenAI</option><option value="anthropic">Claude · Anthropic</option>
           </select></label>
-          <p id="engine-mode-help">{engine === "api" ? ".env.local의 키·모델 사용 · localhost 전용 · 실행 시 외부 전송/과금 가능" : "시뮬레이션 · 로컬 고정 예시 응답 · API 호출 없음"}</p>
+          <p id="engine-mode-help"><ExecutionStats engine={engine} provider={provider} apiCalls={apiCalls} tokenCount={tokenCount} /></p>
         </div>
         <div className="method-actions">
         <button type="button" className="methodology-open" aria-haspopup="dialog" onClick={() => setMethodologyOpen(true)}>방법론 알아보기</button>
@@ -374,27 +375,25 @@ export default function Home() {
           <div className="side-panel-content">
           <div className="panel-heading"><span>이전 단계</span><small>{stageIndex} / {stages.length}</small></div>
           {previous ? <button className="neighbor-card" onClick={() => move(-1)}><span className="step-number">{previous.id}</span><strong>{previous.title}</strong><p>{previous.description}</p><span className="neighbor-action">← 돌아가기</span></button> : <div className="empty-neighbor"><span>시작</span><p>첫 단계입니다.</p></div>}
-          <div className="configuration"><p className="mini-title">프롬프트 설정</p>
-            <p className="context-help">가운데 입력창에서 단계별 변수를 수정하세요. 변수 값은 같은 방법론의 다른 단계에서도 공유됩니다.</p>
-            <p className="context-help">공유 변수 변경은 해당 방법론의 실행 결과를 초기화합니다. 전체 메시지 편집은 현재·이후 단계만 초기화합니다. 새로고침하면 편집값도 초기화됩니다.</p>
-            <label><input type="checkbox" checked={autoAdvance} disabled={runState === "running"} onChange={(e) => setAutoAdvance(e.target.checked)} /> 실행 후 다음 단계 자동 실행</label>
-          </div>
           </div>
         </aside>
 
         <section className="current-stage">
-          <div className="stage-header"><div><div className="stage-label"><span>STEP {stage.id}</span></div><h2>{stage.title}</h2><p>{stage.description}</p></div><button className={`run-button ${runState}`} onClick={toggleRun}><span>{runState === "running" ? "Ⅱ" : "▶"}</span>{runState === "running" ? "일시정지" : autoAdvance ? "연속 실행" : "현재 단계 실행"}</button></div>
+          <div className="stage-header">
+            <div className="stage-heading"><div className="stage-label"><span>STEP {stage.id}</span></div><h2>{stage.title}</h2><p>{stage.description}</p></div>
+            <div className="stage-run-actions">
+              <button className={`run-button ${runState}`} onClick={toggleRun}><span>{runState === "running" ? "Ⅱ" : "▶"}</span>{runState === "running" ? "일시정지" : autoAdvance ? "연속 실행" : "현재 단계 실행"}</button>
+              <label className="auto-advance-control"><input type="checkbox" checked={autoAdvance} disabled={runState === "running"}
+                onChange={(e) => setAutoAdvance(e.target.checked)} /><span>실행 후 다음 단계 자동 실행</span></label>
+            </div>
+          </div>
           <div className="prompt-section">
             <div className="subheading"><span>Prompt context</span>
               <button type="button" className="prompt-toggle" aria-expanded={editorOpen} aria-controls="full-prompt-editor" onClick={() => { setRunState("paused"); setEditorOpen(!editorOpen); }}>
                 {editorOpen ? "전체 프롬프트 접기" : "전체 프롬프트 확인·수정"}
               </button>
             </div>
-            <p className="context-help">{loadedLogName ? `${loadedLogName}에서 복원한 프롬프트 템플릿 · 편집 후 이어서 실행할 수 있습니다.` : `비디오게임 첨부 예시 · ${source.source}`} 인자 옆 ?에 마우스를 올리거나 포커스·클릭하면 도움말을 볼 수 있습니다.</p>
-            {engine === "simulation" && <p className="context-help">{exampleStatus(method, stage.id)}</p>}
-            {!manual && <p className="context-help">{method === "tao"
-              ? "실행된 CQ·SRD·TIP와 현재 TTL이 해당 입력란에 자동 연결됩니다. 값을 수정하면 기존 실행 결과를 초기화하고 편집값을 사용합니다."
-              : "03단계는 명세+재사용, 06–08단계는 누적 개념 triple, 09단계 이후는 마지막 유효한 전체 TTL을 사용합니다. 아래 직전 출력과 전체 전송 문맥은 다를 수 있습니다."}</p>}
+            {loadedLogName && <p className="context-help">{loadedLogName}에서 복원한 프롬프트 템플릿입니다. 편집 후 이어서 실행할 수 있습니다.</p>}
             {manual && <p className="manual-notice">직접 편집 모드입니다. 아래 변수는 자동 조립에 사용된 참고값이며, 실행에는 직접 수정한 전체 메시지가 사용됩니다. 변수 연결을 재개하려면 ‘변수로 다시 조립’을 누르세요.</p>}
             <div className="prompt-cards editable-context">
               {previous && <div className="prompt-card context-field previous-output-card">
@@ -404,8 +403,8 @@ export default function Home() {
                 </div>
                 <code>previous_step_content</code>
                 <small>{`STEP ${previous.id} · ${previous.title}`}</small>
-                <textarea id="context-previous-output" value={previousOutput} readOnly rows={7}
-                  aria-describedby="previous-output-help"
+                <ContextTextarea key={outputKey} id="context-previous-output" label="이전 단계 출력" value={previousOutput} readOnly rows={7}
+                  descriptionId="previous-output-help"
                   placeholder="이전 단계를 실행하면 출력이 이곳에 표시됩니다." />
                 <small id="previous-output-help">
                   {manual
@@ -418,10 +417,10 @@ export default function Home() {
                 ? <DocumentField key={outputKey + "-" + key + "-" + !!manual + "-" + (runState === "running")} fieldKey={key} label={FIELD_LABELS[key]} help={fieldHelp(key)} value={values[key] ?? ""}
                     disabled={!!manual || runState === "running"} attachment={attachments[method + "-" + key]}
                     onChange={(value) => editValue(key, value)} onImport={(attachment) => importDocument(key, attachment)} />
-                : <div className="prompt-card context-field" key={key}>
+                : <div className="prompt-card context-field" key={outputKey + "-" + key}>
                 <div className="parameter-label"><label htmlFor={"context-" + key}><strong>{FIELD_LABELS[key] ?? key}</strong></label><ParameterHelp key={outputKey} label={FIELD_LABELS[key] ?? key} description={fieldHelp(key)} /></div><code>{key}</code>
-                <textarea id={"context-" + key} value={(manual ? values : effectiveValues)[key] ?? ""} rows={key === "domain_name" ? 2 : 5}
-                  disabled={!!manual || runState === "running"} onChange={(e) => editValue(key, e.target.value)} />
+                <ContextTextarea id={"context-" + key} label={FIELD_LABELS[key] ?? key} value={(manual ? values : effectiveValues)[key] ?? ""} rows={key === "domain_name" ? 2 : 5}
+                  disabled={!!manual || runState === "running"} onChange={(value) => editValue(key, value)} />
               </div>)}
             </div>
             {editorOpen && <section id="full-prompt-editor" className="full-prompt-editor" aria-label="전체 프롬프트 편집">
@@ -430,11 +429,13 @@ export default function Home() {
               </div>
               <p className="context-help">변수가 치환되고 이전 출력이 포함된 전체 메시지입니다. 직접 수정하면 현재 단계에 즉시 적용되며, 이후 변수·이전 출력 변경을 자동 반영하지 않습니다.</p>
               <label htmlFor="system-message">System 메시지 · persona와 출력 형식</label>
-              <textarea id="system-message" value={messages.system} rows={8} disabled={runState === "running"} onChange={(e) => editMessage("system", e.target.value)} />
+              <ContextTextarea key={outputKey + "-system"} id="system-message" label="System 메시지" value={messages.system} rows={8}
+                disabled={runState === "running"} onChange={(value) => editMessage("system", value)} />
               <label htmlFor="user-message">User 메시지 · send_and_capture에 전달되는 전체 본문</label>
-              <textarea id="user-message" value={messages.user} rows={18} disabled={runState === "running"} onChange={(e) => editMessage("user", e.target.value)} />
+              <ContextTextarea key={outputKey + "-user"} id="user-message" label="User 메시지" value={messages.user} rows={18}
+                disabled={runState === "running"} onChange={(value) => editMessage("user", value)} />
             </section>}
-            <p className="context-help">{engine === "api" ? "현재 메시지를 서버에서 선택한 API로 전송합니다. TAO는 텍스트 기반 단계 실행이며, 원본 도구 루프·코드 실행·OWL 추론기를 실행하지 않습니다. NeOn 11–20단계의 새 Turtle triple은 이전 스냅샷에 병합합니다." : "첨부된 비디오게임 결과를 고정 예시로 재생합니다. 입력을 수정해도 예시 결과는 바뀌지 않습니다. 미제공 중간 결과·검증 판정은 생성하지 않습니다."}</p>
+            {engine === "api" && <p className="context-help">현재 메시지를 서버에서 선택한 API로 전송합니다. TAO는 텍스트 기반 단계 실행이며, 원본 도구 루프·코드 실행·OWL 추론기를 실행하지 않습니다. NeOn 11–20단계의 새 Turtle triple은 이전 스냅샷에 병합합니다.</p>}
           </div>
           <div className="output-section"><div className="output-tabs" role="tablist">
             <button role="tab" aria-selected={activeTab === "output"} onClick={() => setActiveTab("output")}>{record && completionProvider(record.response) === "simulation" ? "모의 출력" : "LLM 출력"}</button>
@@ -449,7 +450,6 @@ export default function Home() {
           <div className="side-panel-content">
           <div className="panel-heading"><span>이후 단계</span><small>{stages.length - stageIndex - 1} remaining</small></div>
           {next ? <button className="neighbor-card" onClick={() => move(1)}><span className="step-number">{next.id}</span><strong>{next.title}</strong><p>{next.description}</p><span className="neighbor-action">미리보기 →</span></button> : <div className="empty-neighbor complete"><span>마지막 단계</span><p>{record ? "모의 응답이 생성되었습니다." : "아직 실행하지 않았습니다."}</p></div>}
-          <div className="run-summary"><p className="mini-title">현재 실행</p><dl><div><dt>Engine</dt><dd>{engine === "api" ? provider : "Local simulator"}</dd></div><div><dt>API 요청 시도</dt><dd>{apiCalls}</dd></div><div><dt>누적 tokens*</dt><dd>{tokenCount.toLocaleString()}</dd></div></dl><p className="context-help">* 모의 실행은 추정치, 실제 실행은 API 응답 사용량입니다. 실패·취소된 요청의 과금은 제공업체에서 확인하세요.</p></div>
           </div>
         </aside>
       </section>

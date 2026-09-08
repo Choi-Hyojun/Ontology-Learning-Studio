@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { decodeDocument, validateTextFile } from "./project-files";
 import { ParameterHelp } from "./parameter-help";
+import { ContextTextarea } from "./context-textarea";
 
 export type Attachment = { name: string; size: number; importedAt: string; text: string; edited: boolean };
 
@@ -45,6 +46,7 @@ export function DocumentField({ fieldKey, label, help, value, disabled, attachme
     {attachment && <small className="attachment-name">{attachment.name}{attachment.edited ? " · 불러온 뒤 수정됨" : ""}</small>}
     {busy && <small role="status">파일을 읽는 중…</small>}
     {error && <small role="alert" className="file-error">{error}</small>}
-    <textarea id={"context-" + fieldKey} value={value} rows={7} disabled={disabled || busy} onChange={(e) => onChange(e.target.value)} />
+    <ContextTextarea id={"context-" + fieldKey} label={label} value={value} rows={7}
+      disabled={disabled || busy} onChange={onChange} />
   </div>;
 }

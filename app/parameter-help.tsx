@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
-export function ParameterHelp({ label, description }: { label: string; description: string }) {
+export function ParameterHelp({ label, description, triggerText, children }: {
+  label: string; description: string; triggerText?: string; children?: ReactNode;
+}) {
   const id = useId();
   const button = useRef<HTMLButtonElement>(null);
   const popup = useRef<HTMLDivElement>(null);
@@ -52,14 +54,15 @@ export function ParameterHelp({ label, description }: { label: string; descripti
   }, [open]);
 
   return <>
-    <button ref={button} type="button" className="parameter-help" aria-label={`${label} 도움말`}
+    <button ref={button} type="button" className={triggerText ? "parameter-help-text" : "parameter-help"}
+      aria-label={triggerText ? `${triggerText} · ${label}` : `${label} 도움말`}
       aria-describedby={id} onPointerEnter={show} onPointerLeave={leave} onFocus={show}
-      onBlur={() => setPosition(null)} onClick={show}>?</button>
+      onBlur={() => setPosition(null)} onClick={show}>{triggerText ?? "?"}</button>
     <span id={id} className="visually-hidden">{description}</span>
     {position && createPortal(<div ref={popup} role="tooltip" className="parameter-tooltip" aria-hidden="true"
       style={{ left: position.left, [position.above ? "bottom" : "top"]: position.edge, maxHeight: `calc(100dvh - ${position.edge + 12}px)` }}
       onPointerEnter={cancelClose} onPointerLeave={leave}>
-      <strong>{label}</strong><p>{description}</p>
+      <strong>{label}</strong>{children ?? <p>{description}</p>}
     </div>, document.body)}
   </>;
 }

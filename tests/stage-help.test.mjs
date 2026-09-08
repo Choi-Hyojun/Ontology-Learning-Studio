@@ -68,6 +68,18 @@ test("compact stage view retains descriptions and parameter help without the rep
   assert.match(page, /className="prompt-section"/);
 });
 
+test("prompt context omits example commentary while retaining editing and API notices", () => {
+  const page = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
+  assert.doesNotMatch(page, /exampleStatus|비디오게임 첨부 예시|첨부된 비디오게임 결과를 고정 예시로 재생/);
+  const intro = page.slice(page.indexOf('<div className="prompt-section">'), page.indexOf('<div className="prompt-cards editable-context">'));
+  assert.doesNotMatch(intro, /실행된 CQ·SRD·TIP|03단계는 명세\+재사용|인자 옆 \?/);
+  assert.match(intro, /loadedLogName &&/);
+  assert.match(intro, /manual &&/);
+  assert.match(page, /engine === "api" && <p className="context-help">현재 메시지/);
+  assert.match(page, /<ParameterHelp/);
+  assert.match(page, /exampleResponse\(method, stage.id\)/);
+});
+
 test("help button server-renders with an accessible description and no browser globals", () => {
   const file = new URL("../app/parameter-help.tsx", import.meta.url);
   const { outputText } = ts.transpileModule(readFileSync(file, "utf8"), {
