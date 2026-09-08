@@ -1,0 +1,1294 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>현재 온톨로지 · OntoVis</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: sans-serif;
+      }
+      #controls {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: white;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+      }
+      #folder-status {
+        display: block;
+        max-width: 520px;
+        margin-top: 6px;
+        color: #555;
+        font-size: 12px;
+      }
+      #folder-status.error {
+        color: #b42318;
+      }
+      #ontology-select {
+        width: 220px;
+        max-width: 220px;
+      }
+      #selected-ontology-name {
+        width: 330px;
+        max-width: 100%;
+        margin-top: 6px;
+        padding: 4px 7px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        border: 1px solid #dedee5;
+        border-radius: 4px;
+        box-sizing: border-box;
+        background: #f7f7fa;
+        color: #444;
+        font-size: 12px;
+        cursor: grab;
+        user-select: none;
+        scrollbar-width: thin;
+      }
+      #selected-ontology-name.dragging {
+        cursor: grabbing;
+      }
+      .focus-autocomplete {
+        position: relative;
+        display: inline-block;
+      }
+      #focus-id {
+        width: 220px;
+        box-sizing: border-box;
+      }
+      #focus-suggestions {
+        position: absolute;
+        top: calc(100% + 3px);
+        left: 0;
+        width: min(360px, 70vw);
+        max-height: 240px;
+        overflow-y: auto;
+        display: none;
+        background: white;
+        border: 1px solid #c8c8cf;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+        z-index: 3000;
+      }
+      #focus-suggestions.open {
+        display: block;
+      }
+      .focus-suggestion {
+        display: block;
+        width: 100%;
+        padding: 7px 9px;
+        overflow: hidden;
+        border: 0;
+        background: white;
+        text-align: left;
+        cursor: pointer;
+      }
+      .focus-suggestion:hover,
+      .focus-suggestion.active {
+        background: #eef2ff;
+      }
+      .focus-suggestion-label,
+      .focus-suggestion-id {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .focus-suggestion-id {
+        margin-top: 2px;
+        color: #777;
+        font-size: 11px;
+      }
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      #params-toggle {
+        margin-left: 6px;
+        border: 1px solid #c8c8cf;
+        background: #f5f6fb;
+        color: #2d2d33;
+        padding: 2px 10px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      #params-toggle:hover {
+        background: #eef0f7;
+      }
+      #label-offset-toggle {
+        margin-left: 6px;
+        border: 1px solid #c8c8cf;
+        background: #f5f6fb;
+        color: #2d2d33;
+        padding: 2px 10px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      #label-offset-toggle.active {
+        background: #dfe7ff;
+        border-color: #8aa2ff;
+        color: #1d2c66;
+      }
+      #force-controls {
+        margin-top: 10px;
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition:
+          max-height 220ms ease,
+          opacity 220ms ease,
+          transform 220ms ease;
+      }
+      #force-controls.open {
+        max-height: 260px;
+        opacity: 1;
+        transform: translateY(0);
+      }
+      #info-panel {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: white;
+        padding: 14px;
+        border-radius: 8px;
+        box-shadow: 0 0 7px rgba(0, 0, 0, 0.18);
+        z-index: 2000;
+        min-width: 330px;
+        max-width: 420px;
+        max-height: 420px;
+        overflow-y: auto;
+        display: none;
+      }
+      #info-panel h2 {
+        font-size: 16px;
+        margin-top: 0;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
+      #info-panel pre {
+        background: #f7f7fa;
+        padding: 6px 10px;
+        border-radius: 5px;
+        font-size: 13px;
+        line-height: 1.45;
+        overflow-x: auto;
+        font-family: inherit;
+        font-weight: normal;
+        margin: 0;
+      }
+      .info-label {
+        font-weight: bold;
+        color: #5469b3;
+        margin-top: 6px;
+        font-size: 13px;
+        display: block;
+      }
+      .link {
+        stroke: #777;
+        stroke-opacity: 0.6;
+        marker-end: url(#arrow);
+      }
+      .node text {
+        font-size: 10px;
+        text-anchor: middle;
+        dominant-baseline: middle;
+        fill: black;
+        pointer-events: none;
+      }
+      #link-label-layer text {
+        pointer-events: none;
+        user-select: none;
+      }
+      #focus-visual,
+      #children-visual,
+      #sibling-visual {
+        background: white;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+      }
+      #focus-visual {
+        position: absolute;
+        left: 10px;
+        bottom: 10px;
+      }
+      #children-visual,
+      #sibling-visual {
+        max-height: 300px;
+        overflow-y: auto;
+        min-width: 160px;
+      }
+      #desc-axiom-panel {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: white;
+        padding: 14px;
+        border-radius: 8px;
+        box-shadow: 0 0 7px rgba(0, 0, 0, 0.18);
+        z-index: 2000;
+        min-width: 330px;
+        max-width: 400px;
+        max-height: 400px;
+        overflow-y: auto;
+        display: none;
+      }
+      #desc-axiom-panel h2 {
+        font-size: 16px;
+        margin-top: 0;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
+      #desc-axiom-panel pre {
+        background: #f7f7fa;
+        padding: 6px 10px;
+        border-radius: 5px;
+        font-size: 13px;
+        line-height: 1.45;
+        overflow-x: auto;
+        font-family: inherit;
+        font-weight: normal;
+        margin: 0;
+      }
+      .desc-label {
+        font-weight: bold;
+        color: #5469b3;
+        margin-top: 6px;
+        font-size: 13px;
+        display: block;
+      }
+      .desc-entry {
+        margin-bottom: 5px;
+      }
+      html, body { width: 100%; height: 100%; background: #f7faf7; }
+      #controls { max-width: calc(100% - 40px); max-height: 40vh; overflow: auto; font-size: 12px; }
+      #controls button, #controls input { font: inherit; }
+      @media (max-width: 640px) {
+        #controls { max-height: 32vh; }
+        #info-panel, #desc-axiom-panel { max-width: 42vw; max-height: 30vh; overflow: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="controls">
+      <button id="toggle-btn" onclick="toggleMode()" style="margin-left: 8px">Show ABox</button>
+      <div id="selected-ontology-name" tabindex="0" title="Drag horizontally to see the full file name">No ontology selected</div>
+      <span id="folder-status" aria-live="polite">현재 Turtle을 불러오는 중…</span>
+      <br /><br />
+      <label id="focus-mode-label">Focus class: </label>
+      <span class="focus-autocomplete">
+        <input type="text" id="focus-id" placeholder="e.g., owl:Thing" autocomplete="off" aria-autocomplete="list" aria-controls="focus-suggestions" aria-expanded="false" />
+        <div id="focus-suggestions" role="listbox"></div>
+      </span>
+      <button onclick="focusOnNode()">Focus</button>
+      <button onclick="clearFocus()">Clear Focus</button>
+      <br /><br />
+      <label>
+        <input type="checkbox" id="use-force" checked />
+        Force Simulation
+      </label>
+      <button id="params-toggle" type="button">Setting</button>
+      <div id="force-controls">
+        <label style="font-size: 13px">
+          Charge Strength:
+          <input type="range" id="charge-strength" min="-300" max="0" value="-30" step="1" style="width: 120px" />
+          <span id="charge-strength-value">-30</span>
+        </label>
+        <br />
+        <label style="font-size: 13px">
+          Link Strength:
+          <input type="range" id="link-strength" min="0" max="1" value="0.1" step="0.01" style="width: 120px" />
+          <span id="link-strength-value">0.1</span>
+        </label>
+        <br />
+        <label style="font-size: 13px">
+          Link Distance:
+          <input type="range" id="link-distance" min="10" max="200" value="40" step="1" style="width: 120px" />
+          <span id="link-distance-value">40</span>
+        </label>
+        <br />
+        <label style="font-size: 13px">
+          Gravity/Repel Strength:
+          <input type="range" id="gravity-strength" min="-0.1" max="0.1" value="0.01" step="0.005" style="width: 120px" />
+          <span id="gravity-strength-value">0.01</span>
+        </label>
+        <br />
+        <label style="font-size: 13px">
+          Dim Opacity:
+          <input type="range" id="dim-opacity" min="0.05" max="0.8" value="0.2" step="0.05" style="width: 120px" />
+          <span id="dim-opacity-value">0.2</span>
+        </label>
+        <br />
+        <label style="font-size: 13px">
+          Label Offset:
+          <button id="label-offset-toggle" type="button">Label Offset: Off</button>
+        </label>
+      </div>
+    </div>
+
+    <div id="info-panel">
+      <h2 id="info-title">Node info</h2>
+      <div id="info-content"></div>
+    </div>
+
+    <div id="focus-visual" style="display: none">
+      <div id="focus-label" style="font-weight: bold; font-size: 16px; margin-bottom: 6px; text-align: center">Superclasses</div>
+    </div>
+
+    <div id="bottom-panels-container" style="position: absolute; right: 10px; bottom: 10px; display: none; flex-direction: row; gap: 12px; z-index: 1000; align-items: flex-end">
+      <div
+        id="sibling-visual"
+        style="
+          background: white;
+          padding: 10px;
+          border-radius: 8px;
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+          min-width: 150px;
+          max-height: 300px;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <div style="font-weight: bold; font-size: 16px; margin-bottom: 6px; text-align: center">Sibling Classes</div>
+        <ul id="sibling-list" style="list-style: none; padding-left: 0; font-size: 15px; margin: 0; text-align: left"></ul>
+      </div>
+      <div
+        id="children-visual"
+        style="
+          background: white;
+          padding: 10px;
+          border-radius: 8px;
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+          min-width: 150px;
+          max-height: 300px;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <div style="font-weight: bold; font-size: 16px; margin-bottom: 6px; text-align: center">SubClasses</div>
+        <ul id="children-list" style="list-style: none; padding-left: 0; font-size: 15px; margin: 0; text-align: left"></ul>
+      </div>
+    </div>
+
+    <div id="desc-axiom-panel">
+      <h2 id="panel-class-label">Class info</h2>
+      <div id="desc-content"></div>
+      <div id="axiom-content"></div>
+    </div>
+
+    <svg width="100%" height="100%">
+      <defs>
+        <marker id="arrow" viewBox="0 -5 10 10" refX="36" refY="0" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,-5L10,0L0,5" fill="#aaa" />
+        </marker>
+      </defs>
+    </svg>
+
+    <script src="./vendor/d3.min.js"></script>
+    <script src="./vendor/rdflib.min.js"></script>
+    <script src="./ontology-folder-loader.js"></script>
+    <script>
+      const svg = d3.select("svg").attr("viewBox", [0, 0, window.innerWidth, window.innerHeight])
+      const svgGroup = svg.append("g")
+      const zoom = d3.zoom().on("zoom", (event) => {
+        svgGroup.attr("transform", event.transform)
+      })
+      svg.call(zoom)
+
+      let simulation
+      let tboxData = null
+      let aboxData = null
+      let currentMode = "tbox"
+      let allNodes = []
+      let allLinks = []
+      let baseTboxLinks = []
+      let currentFocusId = null
+      let currentNodeSelection = null
+      let currentLinkSelection = null
+      let currentLinkLabelSelection = null
+      let lastRenderLinks = []
+      let highlightParams = {
+        dimOpacity: 0.2
+      }
+      let labelOffsetEnabled = true
+      let forceParams = {
+        chargeStrength: -30,
+        linkStrength: 0.1,
+        linkDistance: 40,
+        gravityStrength: 0.01
+      }
+
+      // UI setup
+      document.getElementById("params-toggle").addEventListener("click", function () {
+        document.getElementById("force-controls").classList.toggle("open")
+      })
+
+      document.getElementById("charge-strength").addEventListener("input", function () {
+        forceParams.chargeStrength = +this.value
+        document.getElementById("charge-strength-value").textContent = this.value
+        if (simulation) simulation.force("charge").strength(forceParams.chargeStrength)
+        if (simulation) simulation.alpha(0.3).restart()
+      })
+      document.getElementById("link-strength").addEventListener("input", function () {
+        forceParams.linkStrength = +this.value
+        document.getElementById("link-strength-value").textContent = this.value
+        if (simulation) simulation.force("link").strength(forceParams.linkStrength)
+        if (simulation) simulation.alpha(0.3).restart()
+      })
+      document.getElementById("link-distance").addEventListener("input", function () {
+        forceParams.linkDistance = +this.value
+        document.getElementById("link-distance-value").textContent = this.value
+        if (simulation) simulation.force("link").distance(forceParams.linkDistance)
+        if (simulation) simulation.alpha(0.3).restart()
+      })
+      document.getElementById("gravity-strength").addEventListener("input", function () {
+        forceParams.gravityStrength = +this.value
+        document.getElementById("gravity-strength-value").textContent = this.value
+        if (simulation) simulation.force("x").strength(forceParams.gravityStrength)
+        if (simulation) simulation.force("y").strength(forceParams.gravityStrength)
+        if (simulation) simulation.alpha(0.3).restart()
+      })
+      document.getElementById("dim-opacity").addEventListener("input", function () {
+        highlightParams.dimOpacity = +this.value
+        document.getElementById("dim-opacity-value").textContent = this.value
+        applyFocusHighlight(currentFocusId)
+      })
+
+      function updateLabelOffsetButton() {
+        const button = document.getElementById("label-offset-toggle")
+        if (!button) return
+        button.textContent = labelOffsetEnabled ? "Label Offset: On" : "Label Offset: Off"
+        button.classList.toggle("active", labelOffsetEnabled)
+      }
+
+      document.getElementById("label-offset-toggle").addEventListener("click", function () {
+        labelOffsetEnabled = !labelOffsetEnabled
+        updateLabelOffsetButton()
+        updateLinkLabelPositions(currentLinkLabelSelection)
+      })
+
+      const folderStatus = document.getElementById("folder-status")
+      const selectedOntologyName = document.getElementById("selected-ontology-name")
+
+      let isDraggingOntologyName = false
+      let ontologyDragStartX = 0
+      let ontologyDragStartScroll = 0
+      selectedOntologyName.addEventListener("pointerdown", (event) => {
+        isDraggingOntologyName = true
+        ontologyDragStartX = event.clientX
+        ontologyDragStartScroll = selectedOntologyName.scrollLeft
+        selectedOntologyName.classList.add("dragging")
+        selectedOntologyName.setPointerCapture(event.pointerId)
+      })
+      selectedOntologyName.addEventListener("pointermove", (event) => {
+        if (!isDraggingOntologyName) return
+        selectedOntologyName.scrollLeft = ontologyDragStartScroll - (event.clientX - ontologyDragStartX)
+      })
+      function stopOntologyNameDrag(event) {
+        isDraggingOntologyName = false
+        selectedOntologyName.classList.remove("dragging")
+        if (selectedOntologyName.hasPointerCapture(event.pointerId)) selectedOntologyName.releasePointerCapture(event.pointerId)
+      }
+      selectedOntologyName.addEventListener("pointerup", stopOntologyNameDrag)
+      selectedOntologyName.addEventListener("pointercancel", stopOntologyNameDrag)
+
+      function setFolderStatus(message, isError = false) {
+        folderStatus.textContent = message
+        folderStatus.classList.toggle("error", isError)
+      }
+
+
+      function getLocalName(value) {
+        if (value === null || value === undefined) return ""
+        const text = String(value)
+        if (text.includes("#")) return text.split("#").pop()
+        if (text.includes("/")) return text.split("/").pop()
+        if (text.includes(":")) return text.split(":").pop()
+        return text
+      }
+
+      function displayLabel(value) {
+        return getLocalName(value).replace(/_/g, " ")
+      }
+
+      const focusInput = document.getElementById("focus-id")
+      const focusSuggestions = document.getElementById("focus-suggestions")
+      let autocompleteItems = []
+      let activeSuggestionIndex = -1
+
+      function getFocusAutocompleteNodes() {
+        return currentMode === "tbox" ? allNodes : aboxData?.nodes || []
+      }
+
+      function closeFocusSuggestions() {
+        autocompleteItems = []
+        activeSuggestionIndex = -1
+        focusSuggestions.classList.remove("open")
+        focusInput.setAttribute("aria-expanded", "false")
+        focusInput.removeAttribute("aria-activedescendant")
+      }
+
+      function setActiveSuggestion(index) {
+        if (!autocompleteItems.length) return
+        activeSuggestionIndex = (index + autocompleteItems.length) % autocompleteItems.length
+        focusSuggestions.querySelectorAll(".focus-suggestion").forEach((button, buttonIndex) => {
+          const isActive = buttonIndex === activeSuggestionIndex
+          button.classList.toggle("active", isActive)
+          button.setAttribute("aria-selected", String(isActive))
+          if (isActive) {
+            focusInput.setAttribute("aria-activedescendant", button.id)
+            button.scrollIntoView({ block: "nearest" })
+          }
+        })
+      }
+
+      function selectFocusSuggestion(index) {
+        const node = autocompleteItems[index]
+        if (!node) return
+        focusInput.value = displayLabel(node.id)
+        closeFocusSuggestions()
+        focusOnNode()
+      }
+
+      function updateFocusSuggestions() {
+        const query = focusInput.value.trim().toLocaleLowerCase()
+        focusSuggestions.innerHTML = ""
+        autocompleteItems = []
+        activeSuggestionIndex = -1
+        if (!query) {
+          closeFocusSuggestions()
+          return
+        }
+
+        autocompleteItems = getFocusAutocompleteNodes()
+          .map((node) => {
+            const label = displayLabel(node.id)
+            const labelLower = label.toLocaleLowerCase()
+            const idLower = String(node.id).toLocaleLowerCase()
+            let score = 3
+            if (labelLower.startsWith(query)) score = 0
+            else if (idLower.startsWith(query)) score = 1
+            else if (labelLower.includes(query) || idLower.includes(query)) score = 2
+            return { node, label, score }
+          })
+          .filter((item) => item.score < 3)
+          .sort((a, b) => a.score - b.score || a.label.localeCompare(b.label))
+          .slice(0, 12)
+          .map((item) => item.node)
+
+        if (!autocompleteItems.length) {
+          closeFocusSuggestions()
+          return
+        }
+
+        autocompleteItems.forEach((node, index) => {
+          const button = document.createElement("button")
+          button.type = "button"
+          button.id = `focus-suggestion-${index}`
+          button.className = "focus-suggestion"
+          button.setAttribute("role", "option")
+          button.setAttribute("aria-selected", "false")
+
+          const label = document.createElement("span")
+          label.className = "focus-suggestion-label"
+          label.textContent = displayLabel(node.id)
+          button.appendChild(label)
+
+          if (displayLabel(node.id) !== node.id) {
+            const id = document.createElement("span")
+            id.className = "focus-suggestion-id"
+            id.textContent = node.id
+            button.appendChild(id)
+          }
+          button.addEventListener("pointerdown", (event) => {
+            event.preventDefault()
+            selectFocusSuggestion(index)
+          })
+          focusSuggestions.appendChild(button)
+        })
+        focusSuggestions.classList.add("open")
+        focusInput.setAttribute("aria-expanded", "true")
+      }
+
+      focusInput.addEventListener("input", updateFocusSuggestions)
+      focusInput.addEventListener("focus", updateFocusSuggestions)
+      focusInput.addEventListener("blur", () => setTimeout(closeFocusSuggestions, 100))
+      focusInput.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowDown" && autocompleteItems.length) {
+          event.preventDefault()
+          setActiveSuggestion(activeSuggestionIndex + 1)
+        } else if (event.key === "ArrowUp" && autocompleteItems.length) {
+          event.preventDefault()
+          setActiveSuggestion(activeSuggestionIndex <= 0 ? autocompleteItems.length - 1 : activeSuggestionIndex - 1)
+        } else if (event.key === "Enter") {
+          event.preventDefault()
+          if (autocompleteItems.length) selectFocusSuggestion(activeSuggestionIndex >= 0 ? activeSuggestionIndex : 0)
+          else focusOnNode()
+        } else if (event.key === "Escape") {
+          closeFocusSuggestions()
+        }
+      })
+
+      function getNodeId(nodeOrId) {
+        return typeof nodeOrId === "object" ? nodeOrId.id : nodeOrId
+      }
+
+      function getNodePosition(node) {
+        const x = typeof node.x === "number" ? node.x : node.x_norm
+        const y = typeof node.y === "number" ? node.y : node.y_norm
+        return { x, y }
+      }
+
+      function getLabelPosition(link, offset) {
+        const source = getNodePosition(link.source)
+        const target = getNodePosition(link.target)
+        const midX = (source.x + target.x) / 2
+        const midY = (source.y + target.y) / 2
+        const dx = target.x - source.x
+        const dy = target.y - source.y
+        const length = Math.hypot(dx, dy) || 1
+        const nx = dx / length
+        const ny = dy / length
+        // Clockwise 90-degree offset from the arrow direction.
+        const offsetX = ny * offset
+        const offsetY = -nx * offset
+        return { x: midX + offsetX, y: midY + offsetY }
+      }
+
+      function updateLinkLabelPositions(selection) {
+        if (!selection) return
+        if (labelOffsetEnabled) {
+          selection.attr("x", (d) => getLabelPosition(d, 10).x).attr("y", (d) => getLabelPosition(d, 10).y)
+          return
+        }
+        selection
+          .attr("x", (d) => {
+            const source = getNodePosition(d.source)
+            const target = getNodePosition(d.target)
+            return (source.x + target.x) / 2
+          })
+          .attr("y", (d) => {
+            const source = getNodePosition(d.source)
+            const target = getNodePosition(d.target)
+            return (source.y + target.y) / 2 - 6
+          })
+      }
+
+      function setTboxPanelsVisible(isVisible) {
+        document.getElementById("focus-visual").style.display = isVisible ? "" : "none"
+        document.getElementById("bottom-panels-container").style.display = isVisible ? "flex" : "none"
+        if (isVisible) {
+          document.getElementById("info-panel").style.display = "none"
+        }
+        if (!isVisible) {
+          document.getElementById("desc-axiom-panel").style.display = "none"
+        }
+      }
+
+      function applyFocusHighlight(focusId) {
+        if (!currentNodeSelection || !currentLinkSelection) return
+        const dimOpacity = highlightParams.dimOpacity
+        const dimLinkOpacity = Math.max(0.05, dimOpacity * 0.5)
+        if (!focusId) {
+          currentNodeSelection.attr("opacity", 1)
+          currentLinkSelection.attr("opacity", 0.6).attr("stroke", "#777")
+          if (currentLinkLabelSelection) currentLinkLabelSelection.attr("opacity", 1).attr("fill", "#444")
+          return
+        }
+        const related = new Set([focusId])
+        lastRenderLinks.forEach((l) => {
+          const sourceId = getNodeId(l.source)
+          const targetId = getNodeId(l.target)
+          if (sourceId === focusId || targetId === focusId) {
+            related.add(sourceId)
+            related.add(targetId)
+          }
+        })
+
+        currentNodeSelection.attr("opacity", (d) => (related.has(d.id) ? 1 : dimOpacity))
+        currentLinkSelection
+          .attr("opacity", (d) => {
+            const sourceId = getNodeId(d.source)
+            const targetId = getNodeId(d.target)
+            return sourceId === focusId || targetId === focusId ? 1 : dimLinkOpacity
+          })
+          .attr("stroke", (d) => {
+            const sourceId = getNodeId(d.source)
+            const targetId = getNodeId(d.target)
+            return sourceId === focusId || targetId === focusId ? "#111" : "#777"
+          })
+        if (currentLinkLabelSelection) {
+          currentLinkLabelSelection
+            .attr("opacity", (d) => {
+              const sourceId = getNodeId(d.source)
+              const targetId = getNodeId(d.target)
+              return sourceId === focusId || targetId === focusId ? 1 : dimLinkOpacity
+            })
+            .attr("fill", (d) => {
+              const sourceId = getNodeId(d.source)
+              const targetId = getNodeId(d.target)
+              return sourceId === focusId || targetId === focusId ? "#111" : "#444"
+            })
+        }
+
+        currentNodeSelection.filter((d) => related.has(d.id)).raise()
+        ensureLayerOrder()
+      }
+
+      function clearFocus() {
+        currentFocusId = null
+        document.getElementById("focus-id").value = ""
+        closeFocusSuggestions()
+        applyFocusHighlight(null)
+      }
+
+      function ensureLayerOrder() {
+        const linkLayer = svgGroup.select("#link-layer")
+        if (!linkLayer.empty()) linkLayer.lower()
+        const linkLabelLayer = svgGroup.select("#link-label-layer")
+        const nodeLayer = svgGroup.select("#node-layer")
+        if (!linkLabelLayer.empty()) linkLabelLayer.raise()
+        if (!nodeLayer.empty()) nodeLayer.raise()
+      }
+
+      function updateFocusLabel() {
+        const label = document.getElementById("focus-mode-label")
+        const input = document.getElementById("focus-id")
+        closeFocusSuggestions()
+        if (currentMode === "abox") {
+          label.textContent = "Focus instance: "
+          input.placeholder = "e.g., 도어"
+        } else {
+          label.textContent = "Focus class: "
+          input.placeholder = "e.g., owl:Thing"
+        }
+      }
+
+      function useOntologyData(tbox, abox) {
+        svgGroup.selectAll("#link-layer, #node-layer, #link-label-layer").remove()
+        if (simulation) simulation.stop()
+        clearFocus()
+        tboxData = tbox
+        aboxData = abox
+        baseTboxLinks = Array.isArray(tbox.links) ? tbox.links.map((link) => ({ ...link })) : []
+        currentMode = "tbox"
+        document.getElementById("toggle-btn").textContent = "Show ABox"
+        updateFocusLabel()
+        renderCurrent()
+      }
+
+      function toggleMode() {
+        if (!tboxData || !aboxData) return
+        currentMode = currentMode === "tbox" ? "abox" : "tbox"
+        document.getElementById("toggle-btn").textContent = currentMode === "tbox" ? "Show ABox" : "Show TBox"
+        updateFocusLabel()
+        renderCurrent()
+      }
+
+      function preparePositions(data) {
+        const width = window.innerWidth
+        const height = window.innerHeight
+        data.nodes.forEach((n) => {
+          if (typeof n.x !== "number" || typeof n.y !== "number") {
+            if (n.x_norm !== undefined && n.y_norm !== undefined) {
+              n.x = n.x_norm * (width - 40) + 20
+              n.y = n.y_norm * (height - 40) + 20
+            } else {
+              n.x = Math.random() * (width - 40) + 20
+              n.y = Math.random() * (height - 40) + 20
+            }
+          }
+        })
+      }
+
+      function renderCurrent() {
+        const data = currentMode === "tbox" ? tboxData : aboxData
+        if (!data) return
+        setFolderStatus(`${currentMode.toUpperCase()} · ${data.nodes.length} nodes · ${data.links.length} links${data.nodes.length ? "" : " · 이 스냅샷에는 인스턴스가 없습니다."}`)
+        const renderData = currentMode === "tbox" && baseTboxLinks.length ? { nodes: data.nodes, links: baseTboxLinks } : data
+        preparePositions(renderData)
+        lastRenderLinks = renderData.links
+
+        if (currentMode === "tbox") {
+          allNodes = renderData.nodes
+          allLinks = renderData.links
+        }
+
+        const nodeById = new Map(renderData.nodes.map((n) => [n.id, n]))
+        renderData.links.forEach((l) => {
+          if (nodeById.has(l.source)) l.source = nodeById.get(l.source)
+          if (nodeById.has(l.target)) l.target = nodeById.get(l.target)
+        })
+
+        svgGroup.selectAll("#link-layer, #node-layer, #link-label-layer").remove()
+        if (simulation) simulation.stop()
+
+        const link = svgGroup
+          .append("g")
+          .attr("id", "link-layer")
+          .selectAll("line")
+          .data(renderData.links)
+          .enter()
+          .append("line")
+          .attr("class", "link")
+          .attr("stroke-width", 1.2)
+          .attr("marker-end", "url(#arrow)")
+
+        const node = svgGroup
+          .append("g")
+          .attr("id", "node-layer")
+          .selectAll("g")
+          .data(renderData.nodes)
+          .enter()
+          .append("g")
+          .attr("class", "node")
+          .call(d3.drag().on("start", dragStarted).on("drag", dragged).on("end", dragEnded))
+
+        node
+          .append("circle")
+          .attr("r", currentMode === "tbox" ? 22 : 18)
+          .attr("fill", (d) => d.color || "#eeeeee")
+          .attr("stroke", "#333")
+          .attr("stroke-width", 1.1)
+
+        node.on("click", (event, d) => {
+          if (currentMode === "tbox") {
+            document.getElementById("focus-id").value = displayLabel(d.id)
+            focusOnNode()
+          } else {
+            document.getElementById("focus-id").value = displayLabel(d.id)
+            focusOnNode()
+          }
+        })
+
+        node
+          .append("text")
+          .attr("text-anchor", "middle")
+          .attr("dominant-baseline", "middle")
+          .text((d) => displayLabel(d.id))
+
+        const linkLabel =
+          currentMode === "abox"
+            ? svgGroup
+                .append("g")
+                .attr("id", "link-label-layer")
+                .selectAll("text")
+                .data(renderData.links)
+                .enter()
+                .append("text")
+                .attr("font-size", "10px")
+                .attr("fill", "#444")
+                .attr("text-anchor", "middle")
+                .text((d) => displayLabel(d.label || ""))
+            : null
+
+        currentNodeSelection = node
+        currentLinkSelection = link
+        currentLinkLabelSelection = linkLabel
+        ensureLayerOrder()
+
+        const useForce = document.getElementById("use-force").checked
+        if (useForce) {
+          simulation = d3
+            .forceSimulation(renderData.nodes)
+            .force(
+              "link",
+              d3
+                .forceLink(renderData.links)
+                .id((d) => d.id)
+                .distance(forceParams.linkDistance)
+                .strength(forceParams.linkStrength)
+            )
+            .force("charge", d3.forceManyBody().strength(forceParams.chargeStrength))
+            .force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2))
+            .force("x", d3.forceX(window.innerWidth / 2).strength(forceParams.gravityStrength))
+            .force("y", d3.forceY(window.innerHeight / 2).strength(forceParams.gravityStrength))
+            .force("collide", d3.forceCollide().radius(currentMode === "tbox" ? 28 : 22))
+            .on("tick", () => {
+              link
+                .attr("x1", (d) => d.source.x)
+                .attr("y1", (d) => d.source.y)
+                .attr("x2", (d) => d.target.x)
+                .attr("y2", (d) => d.target.y)
+
+              node.attr("transform", (d) => `translate(${d.x},${d.y})`)
+
+              if (linkLabel) {
+                updateLinkLabelPositions(linkLabel)
+              }
+            })
+        } else {
+          link
+            .attr("x1", (d) => d.source.x || d.source.x_norm)
+            .attr("y1", (d) => d.source.y || d.source.y_norm)
+            .attr("x2", (d) => d.target.x || d.target.x_norm)
+            .attr("y2", (d) => d.target.y || d.target.y_norm)
+
+          node.attr("transform", (d) => `translate(${d.x},${d.y})`)
+
+          if (linkLabel) {
+            updateLinkLabelPositions(linkLabel)
+          }
+        }
+
+        setTboxPanelsVisible(currentMode === "tbox")
+        const hasFocus = currentFocusId && renderData.nodes.some((n) => n.id === currentFocusId)
+        applyFocusHighlight(hasFocus ? currentFocusId : null)
+      }
+
+      function focusOnNode() {
+        const rawInput = document.getElementById("focus-id").value.trim()
+        const normalizedInput = rawInput.toLocaleLowerCase()
+        const nodes = currentMode === "tbox" ? allNodes : aboxData?.nodes || []
+        const target =
+          nodes.find((n) => String(n.id).toLocaleLowerCase() === normalizedInput) ||
+          nodes.find((n) => displayLabel(n.id).toLocaleLowerCase() === normalizedInput)
+        if (!target || typeof target.x !== "number" || typeof target.y !== "number") {
+          alert("Node not found or not yet positioned")
+          return
+        }
+        closeFocusSuggestions()
+        currentFocusId = target.id
+        applyFocusHighlight(currentFocusId)
+
+        if (currentMode === "tbox") {
+          showClassPanel(target)
+        } else {
+          setTboxPanelsVisible(false)
+          showInfoPanel(target)
+        }
+
+        const scale = 1.5
+        const translate = [window.innerWidth / 2 - scale * target.x, window.innerHeight / 2 - scale * target.y]
+        svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale))
+
+        if (currentMode !== "tbox") return
+
+        const parentMap = new Map()
+        allLinks.forEach((l) => {
+          const sourceId = getNodeId(l.source)
+          const targetId = getNodeId(l.target)
+          if (!parentMap.has(sourceId)) parentMap.set(sourceId, targetId)
+        })
+
+        let trace = target.id
+        const lineage = []
+        while (trace && parentMap.has(trace)) {
+          const parent = parentMap.get(trace)
+          lineage.push(parent)
+          trace = parent
+        }
+
+        const radiusStep = 40
+        const focusBox = d3.select("#focus-visual")
+        focusBox.html("<div id='focus-label' style='font-weight:bold; font-size:16px; text-align:center; margin-bottom:6px;'>Superclasses</div>")
+        const all = [target.id, ...lineage].reverse()
+        const svgWidth = 300
+        const svgHeight = radiusStep * (all.length + 2)
+        const centerX = svgWidth / 2
+        const centerY = svgHeight - radiusStep
+        const miniSvg = focusBox.append("svg").attr("width", svgWidth).attr("height", svgHeight)
+        all.forEach((cls, i) => {
+          const radius = radiusStep * (all.length - i)
+          const color = allNodes.find((n) => n.id === cls)?.color || "#ccc"
+          miniSvg.append("circle").attr("cx", centerX).attr("cy", centerY).attr("r", radius).attr("fill", "none").attr("stroke", color).attr("stroke-width", 2)
+
+          miniSvg
+            .append("text")
+            .attr("x", centerX)
+            .attr("y", centerY - radius + 5)
+            .attr("text-anchor", "middle")
+            .style("font-size", "15px")
+            .style("cursor", "pointer")
+            .text(displayLabel(cls))
+            .on("click", () => {
+              document.getElementById("focus-id").value = displayLabel(cls)
+              focusOnNode()
+            })
+        })
+
+        let siblings = []
+        let myParent = null
+        for (let l of allLinks) {
+          const sourceId = getNodeId(l.source)
+          const targetId = getNodeId(l.target)
+          if (sourceId === target.id) {
+            myParent = targetId
+            break
+          }
+        }
+        if (myParent) {
+          siblings = allLinks
+            .filter((l) => {
+              const sourceId = getNodeId(l.source)
+              const targetId = getNodeId(l.target)
+              return targetId === myParent && sourceId !== target.id
+            })
+            .map((l) => getNodeId(l.source))
+        }
+
+        const childList = allLinks
+          .filter((l) => {
+            const sourceId = getNodeId(l.source)
+            const targetId = getNodeId(l.target)
+            return targetId === target.id && sourceId !== target.id && !siblings.includes(sourceId)
+          })
+          .map((l) => getNodeId(l.source))
+
+        const sibUl = document.getElementById("sibling-list")
+        sibUl.innerHTML = ""
+        siblings.forEach((cls) => {
+          const li = document.createElement("li")
+          li.textContent = displayLabel(cls)
+          li.style.cursor = "pointer"
+          li.onclick = () => {
+            document.getElementById("focus-id").value = displayLabel(cls)
+            focusOnNode()
+          }
+          sibUl.appendChild(li)
+        })
+
+        const ul = document.getElementById("children-list")
+        ul.innerHTML = ""
+        childList.forEach((cls) => {
+          const li = document.createElement("li")
+          li.textContent = displayLabel(cls)
+          li.style.cursor = "pointer"
+          li.onclick = () => {
+            document.getElementById("focus-id").value = displayLabel(cls)
+            focusOnNode()
+          }
+          ul.appendChild(li)
+        })
+      }
+
+      function showClassPanel(node) {
+        document.getElementById("info-panel").style.display = "none"
+        const panel = document.getElementById("desc-axiom-panel")
+        const classLabel = displayLabel(node.id)
+        document.getElementById("panel-class-label").textContent = classLabel
+
+        let descHtml = ""
+        if (node.description) {
+          for (const [key, value] of Object.entries(node.description)) {
+            descHtml += `<span class='desc-label'>${escapeHtml(displayLabel(key))}</span>`
+            if (Array.isArray(value)) {
+              descHtml += value.map((v) => `<div class='desc-entry'>${escapeHtml(v)}</div>`).join("")
+            } else {
+              descHtml += `<div class='desc-entry'>${escapeHtml(value)}</div>`
+            }
+          }
+        } else {
+          descHtml = "<span style='color:#aaa'>No description available.</span>"
+        }
+        document.getElementById("desc-content").innerHTML = descHtml
+
+        let axiomHtml = ""
+        if (node.axioms) {
+          for (const [key, value] of Object.entries(node.axioms)) {
+            axiomHtml += `<span class='desc-label'>${escapeHtml(displayLabel(key))}</span>`
+            let axStrs = Array.isArray(value) ? value : [value]
+            axiomHtml += "<pre>"
+            axStrs.forEach((ax) => {
+              let replaced = escapeHtml(String(ax))
+              if (key === "disjointWith") {
+                let sortedIds = allNodes.map((n) => n.id).sort((a, b) => b.length - a.length)
+                for (let id of sortedIds) {
+                  const safeId = escapeHtml(id)
+                  if (replaced.includes(safeId)) {
+                    replaced = replaced.replace(safeId, `<span class=\"node-link\" data-id=\"${escapeAttribute(id)}\">${escapeHtml(displayLabel(id))}</span>`)
+                    break
+                  }
+                }
+              } else {
+                let sortedIds = allNodes.map((n) => n.id).sort((a, b) => b.length - a.length)
+                for (let id of sortedIds) {
+                  const safeId = escapeHtml(id)
+                  replaced = replaced.replace(
+                    new RegExp(`\\b${escapeRegExp(safeId)}\\b`, "g"),
+                    `<span class=\"node-link\" data-id=\"${escapeAttribute(id)}\">${escapeHtml(displayLabel(id))}</span>`
+                  )
+                }
+              }
+              axiomHtml += replaced + "\n"
+            })
+            axiomHtml += "</pre>"
+          }
+        } else {
+          axiomHtml = "<span style='color:#aaa'>No axioms available.</span>"
+        }
+        document.getElementById("axiom-content").innerHTML = axiomHtml
+        panel.style.display = "block"
+
+        document.querySelectorAll("#axiom-content .node-link").forEach((span) => {
+          span.style.color = "#3a5dff"
+          span.style.cursor = "pointer"
+          span.onclick = function () {
+            document.getElementById("focus-id").value = displayLabel(this.dataset.id)
+            focusOnNode()
+          }
+        })
+      }
+
+      function showInfoPanel(node) {
+        document.getElementById("desc-axiom-panel").style.display = "none"
+        const panel = document.getElementById("info-panel")
+        const title = document.getElementById("info-title")
+        const content = document.getElementById("info-content")
+
+        title.textContent = currentMode === "tbox" ? `${displayLabel(node.id)}` : `${displayLabel(node.id)}`
+        content.innerHTML = ""
+
+        if (currentMode === "tbox") {
+          if (node.description) {
+            const descLabel = document.createElement("div")
+            descLabel.className = "info-label"
+            descLabel.textContent = "Description"
+            const descPre = document.createElement("pre")
+            descPre.textContent = JSON.stringify(node.description, null, 2)
+            content.appendChild(descLabel)
+            content.appendChild(descPre)
+          }
+          if (node.axioms) {
+            const axLabel = document.createElement("div")
+            axLabel.className = "info-label"
+            axLabel.textContent = "Axioms"
+            const axPre = document.createElement("pre")
+            axPre.textContent = JSON.stringify(node.axioms, null, 2)
+            content.appendChild(axLabel)
+            content.appendChild(axPre)
+          }
+        } else {
+          const typeLabel = document.createElement("div")
+          typeLabel.className = "info-label"
+          typeLabel.textContent = "Classes"
+          const typePre = document.createElement("pre")
+          typePre.textContent = node.types && node.types.length ? node.types.map(displayLabel).join("\n") : "(none)"
+          content.appendChild(typeLabel)
+          content.appendChild(typePre)
+
+          const objectLabel = document.createElement("div")
+          objectLabel.className = "info-label"
+          objectLabel.textContent = "Object Properties"
+          const objectPre = document.createElement("pre")
+          if (aboxData && aboxData.links) {
+            const outgoing = aboxData.links.filter((l) => getNodeId(l.source) === node.id)
+            if (outgoing.length) {
+              objectPre.innerHTML = outgoing
+                .map(
+                  (l) =>
+                    `${escapeHtml(displayLabel(l.label))} -&gt; <span class="node-link" data-id="${escapeAttribute(getNodeId(l.target))}">${escapeHtml(displayLabel(getNodeId(l.target)))}</span>`
+                )
+                .join("\n")
+            } else {
+              objectPre.textContent = "(none)"
+            }
+          } else {
+            objectPre.textContent = "(none)"
+          }
+          content.appendChild(objectLabel)
+          content.appendChild(objectPre)
+
+          const incomingLabel = document.createElement("div")
+          incomingLabel.className = "info-label"
+          incomingLabel.textContent = "Incoming Object Properties"
+          const incomingPre = document.createElement("pre")
+          if (aboxData && aboxData.links) {
+            const incoming = aboxData.links.filter((l) => getNodeId(l.target) === node.id)
+            if (incoming.length) {
+              incomingPre.innerHTML = incoming
+                .map(
+                  (l) =>
+                    `<span class="node-link" data-id="${escapeAttribute(getNodeId(l.source))}">${escapeHtml(displayLabel(getNodeId(l.source)))}</span> -&gt; ${escapeHtml(displayLabel(l.label))}`
+                )
+                .join("\n")
+            } else {
+              incomingPre.textContent = "(none)"
+            }
+          } else {
+            incomingPre.textContent = "(none)"
+          }
+          content.appendChild(incomingLabel)
+          content.appendChild(incomingPre)
+
+          const dataLabel = document.createElement("div")
+          dataLabel.className = "info-label"
+          dataLabel.textContent = "Data Properties"
+          const dataPre = document.createElement("pre")
+          if (node.data && node.data.length) {
+            dataPre.textContent = node.data.map((entry) => `${displayLabel(entry.property)}: ${entry.value}`).join("\n")
+          } else {
+            dataPre.textContent = "(none)"
+          }
+          content.appendChild(dataLabel)
+          content.appendChild(dataPre)
+        }
+
+        panel.style.display = "block"
+
+        content.querySelectorAll(".node-link").forEach((span) => {
+          span.style.color = "#3a5dff"
+          span.style.cursor = "pointer"
+          span.onclick = function () {
+            document.getElementById("focus-id").value = displayLabel(this.dataset.id)
+            focusOnNode()
+          }
+        })
+      }
+
+      function escapeRegExp(string) {
+        return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&")
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&#039;")
+      }
+
+      function escapeAttribute(value) {
+        return escapeHtml(value)
+      }
+
+      function dragStarted(event, d) {
+        if (!event.active && simulation) simulation.alphaTarget(0.3).restart()
+        d.fx = d.x
+        d.fy = d.y
+      }
+
+      function dragged(event, d) {
+        d.fx = event.x
+        d.fy = event.y
+      }
+
+      function dragEnded(event, d) {
+        if (!event.active && simulation) simulation.alphaTarget(0)
+        d.fx = null
+        d.fy = null
+      }
+    </script>
+    <script src="./studio-bridge.js"></script>
+  </body>
+</html>
