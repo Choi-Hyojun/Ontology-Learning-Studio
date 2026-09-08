@@ -20,8 +20,8 @@ function loadDialog() {
 }
 
 test("both concise paper summaries identify primary sources and separate local implementation", () => {
-  assert.deepEqual(Object.keys(docs.METHODOLOGY_DOCS), ["neon", "tao"]);
-  for (const doc of Object.values(docs.METHODOLOGY_DOCS)) {
+  assert.deepEqual(Object.keys(docs.METHODOLOGY_DOCS).sort(), ["neon", "tao", "yonsei"]);
+  for (const doc of [docs.METHODOLOGY_DOCS.neon, docs.METHODOLOGY_DOCS.tao]) {
     assert.ok(doc.paper.url.startsWith("https://"));
     assert.ok(doc.paper.sections.includes("§3"));
     assert.equal(doc.flow.length, 5);
@@ -31,6 +31,16 @@ test("both concise paper summaries identify primary sources and separate local i
   }
   assert.match(docs.METHODOLOGY_DOCS.neon.paper.url, /swj4014\.pdf$/);
   assert.match(docs.METHODOLOGY_DOCS.tao.paper.url, /2604\.23090v1$/);
+});
+
+test("Yonsei guide identifies the user proposal without inventing a paper or validation result", () => {
+  const doc = docs.METHODOLOGY_DOCS.yonsei;
+  assert.equal(doc.paper, null);
+  const html = renderToStaticMarkup(createElement(loadDialog(), { initialMethod: "yonsei", onClose() {} }));
+  assert.match(html, /사용자 제안/);
+  assert.match(html, /한 번의 LLM 호출/);
+  assert.match(html, /별도 성능 평가나 논문 검증 결과가 없습니다/);
+  assert.doesNotMatch(html, /href=/);
 });
 
 test("paper capabilities are not presented as implemented Studio features or guaranteed results", () => {

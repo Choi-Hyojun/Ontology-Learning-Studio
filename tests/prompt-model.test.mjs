@@ -5,6 +5,12 @@ import { assemblePrompt, simulateCompletion } from "../app/prompt-model.ts";
 
 const source = JSON.parse(readFileSync(new URL("../app/neon-prompts.json", import.meta.url), "utf8"));
 
+test("numbered few-shot fields interpolate once without reinterpreting inserted JSON", () => {
+  const prompt = assemblePrompt("Example: {few_shot_03}", { persona: "Expert", few_shot_03: '{"question":"{domain_name}"}' }, "");
+  assert.ok(prompt.user.includes('{"question":"{domain_name}"}'));
+  assert.doesNotMatch(prompt.user, /\{few_shot_03\}/);
+});
+
 test("all 20 source templates render using their actual input variables", () => {
   assert.equal(source.stages.length, 20);
   for (const stage of source.stages) {

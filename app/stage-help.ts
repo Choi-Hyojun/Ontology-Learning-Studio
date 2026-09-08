@@ -43,10 +43,16 @@ export const FIELD_LABELS: Record<string, string> = {
   few_shot_entity_extraction: "개체·관계 추출 예시", few_shot_data_properties: "데이터 속성 예시",
   few_shot_individuals: "인스턴스 예시", page_text: "도메인 문서 원문", cqs_for_page: "페이지 CQ",
   competency_questions: "생성된 CQ 전체",
+  cq_count: "목표 CQ 수", document_paragraphs: "문단 ID·문서 원문", element_catalog: "CQ별 클래스·프로퍼티",
+  refinement_context: "문단별 Refine 문맥",
   requirements_doc: "SRD", implementation_plan: "TIP", ontology_snapshot: "현재 TTL", feedback: "검증 피드백",
 };
 
 export const FIELD_HELP: Record<string, string> = {
+  cq_count: "Yonsei에서 생성할 CQ 수의 목표입니다. 문서가 부족하면 근거 없는 질문을 채우지 않고 생성 가능한 질문과 부족 사유를 반환합니다.",
+  document_paragraphs: "현재 도메인 문서를 빈 줄 기준으로 나눈 문단과 안정적인 문단 ID입니다. 자동 조립된 읽기 전용 입력이며 CQ 근거 인용과 연결됩니다.",
+  element_catalog: "Yonsei 04–07의 유효한 출력에서 누적한 클래스·객체 속성·데이터 속성과 관련 CQ ID입니다. 직접 수정하지 않고 해당 생성 단계를 다시 실행합니다.",
+  refinement_context: "각 문단의 원문, 해당 문단을 근거로 삼은 CQ, 그 CQ에 연결된 클래스·프로퍼티를 자동으로 묶은 JSON입니다. 연결되지 않은 문단도 명시해 Refine에 전달합니다.",
   competency_questions: "NeOn 20단계가 구조를 최종 정제할 때 확인할 CQ 전체입니다. 첨부의 CQ1–50이 기본값이며, 03단계를 실행하면 그 유효한 출력이 자동 연결됩니다. few-shot 질문과 구별합니다.",
   persona: "LLM에 부여할 역할과 전문성입니다. 예: expert ontology engineer. 모든 단계의 System 메시지에 들어가며, 템플릿에 {persona}가 있으면 본문에도 삽입됩니다.",
   domain_name: "생성할 온톨로지의 도메인 이름입니다. 기본 예시는 Video Game입니다. 문서 원문과 함께 무엇을 모델링할지 지정합니다.",
@@ -67,7 +73,16 @@ export const FIELD_HELP: Record<string, string> = {
   previous_step_content: "이 카드는 직전 단계 출력 원문입니다. NeOn 03은 명세+재사용, 06–08은 누적 개념 모델, 09 이후는 유효한 전체 TTL을 별도 조립합니다. 전체 프롬프트에서 실제 문맥을 확인하세요. 직접 편집 모드에서는 자동 반영되지 않습니다.",
 };
 
-export function fieldHelp(key: string): string {
+const YONSEI_FIELD_HELP: Record<string, string> = {
+  domain_description: "Yonsei의 도메인 문서 원문입니다. 기본값은 첨부의 Video Game 문서이며, UTF-8 TXT/MD를 불러오거나 수정할 수 있습니다. 변경하면 문단 ID·CQ 연결을 새로 만들도록 기존 결과와 Few-shot을 초기화합니다.",
+  competency_questions: "Yonsei 03단계에서 생성한 CQ와 문단 ID·원문 인용의 JSON입니다. 이후 클래스·프로퍼티 추출과 Refine에 자동으로 연결되는 읽기 전용 결과입니다. Few-shot 예시와는 구별합니다.",
+  ontology_snapshot: "Yonsei 08단계의 최신 유효한 전체 TTL을 Refine에 전달합니다. 재실행은 이 스냅샷에서 시작하며 별도 OWL 추론기는 실행하지 않습니다.",
+  reuse_example_desc: "재사용할 어휘·모델링 패턴에 관한 힌트입니다. 기본 참조 설명은 NeOn 첨부에서 가져오지만 Few-shot 자체는 현재 단계의 별도 생성 버튼으로 만듭니다. 관련 없는 도메인 조각을 강제 적용하지 마세요.",
+  previous_step_content: "직전 Yonsei 단계의 출력 원문입니다. 03단계에는 01·02의 요구사항, 06–08단계에는 누적 개념 모델, 09단계에는 전체 TTL과 문단별 CQ·요소 연결을 별도로 조립합니다. 전체 프롬프트에서 확인하세요.",
+};
+
+export function fieldHelp(key: string, method?: "neon" | "tao" | "yonsei"): string {
+  if (method === "yonsei" && YONSEI_FIELD_HELP[key]) return YONSEI_FIELD_HELP[key];
   return FIELD_HELP[key] ?? `현재 프롬프트 정의에 등록된 사용자 변수입니다. {${key}} 위치에 입력값이 삽입됩니다. 불러온 로그나 전체 프롬프트에서 용도를 확인하세요.`;
 }
 

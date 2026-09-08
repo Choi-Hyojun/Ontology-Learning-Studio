@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { decodeDocument } from "./project-files";
 import { parseSessionLog, validateLogFile, type RestoredSession, type SessionDefaults } from "./session-log";
 
+const METHOD_LABELS = { neon: "NeOn-GPT", tao: "TAO", yonsei: "Yonsei" };
+
 export function SessionImportDialog({ file, defaults, onRestore, onClose, onSaveCurrent }: {
   file: File; defaults: SessionDefaults; onRestore: (session: RestoredSession, name: string) => void;
   onClose: () => void; onSaveCurrent: () => void;
@@ -42,12 +44,12 @@ export function SessionImportDialog({ file, defaults, onRestore, onClose, onSave
     aria-describedby="session-import-description" onCancel={(event) => { event.preventDefault(); onClose(); }}>
     <h2 id="session-import-title">로그 불러오기</h2>
     <p className="import-filename">{file.name}</p>
-    <p id="session-import-description">저장된 프로젝트로 현재 작업을 교체합니다. 두 방법론의 입력값·프롬프트·실행 결과·이력·온톨로지를 복원하며, 자동으로 실행하지 않습니다.</p>
+    <p id="session-import-description">저장된 프로젝트로 현재 작업을 교체합니다. 모든 방법론의 입력값·프롬프트·실행 결과·이력·온톨로지를 복원하며, 자동으로 실행하지 않습니다.</p>
     {!session && !error && <p role="status">파일을 검증하고 있습니다…</p>}
     {error && <p role="alert" className="import-error">{error}<br />현재 작업은 변경하지 않았습니다.</p>}
     {session && <dl className="import-summary">
       <div><dt>저장 시각</dt><dd>{new Date(session.exportedAt).toLocaleString()}</dd></div>
-      <div><dt>복원 위치</dt><dd>{session.current.method === "neon" ? "NeOn-GPT" : "TAO"} · STEP {session.current.stageId}</dd></div>
+      <div><dt>복원 위치</dt><dd>{METHOD_LABELS[session.current.method]} · STEP {session.current.stageId}</dd></div>
       <div><dt>실행 모드</dt><dd>{session.current.engine === "api" ? `실제 API · ${session.current.provider}` : "시뮬레이션"} · 일시정지로 복원</dd></div>
       <div><dt>현재 유효한 결과</dt><dd>{Object.keys(session.currentRecords).length}개 단계</dd></div>
       <div><dt>전체 이력</dt><dd>{session.history.length}건</dd></div>

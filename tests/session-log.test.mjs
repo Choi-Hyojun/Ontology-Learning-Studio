@@ -197,3 +197,139 @@ test("metrics migration handles single-line and split stock instructions, leavin
   const unrelated = "Refine class hierarchies.\r\nPreserve previous output.\r\nUse {keywords}.";
   assert.equal(removeNeonMetrics(unrelated), unrelated);
 });
+
+function yonseiDefaults() {
+  const result = structuredClone(defaults);
+  result.valuesByMethod.yonsei = {
+    persona: "Ontology engineer", domain_name: "Video Game", domain_description: "Default source document",
+    ...Object.fromEntries(Array.from({ length: 8 }, (_, index) => {
+      const id = String(index + 1).padStart(2, "0");
+      return [[`few_shot_${id}`, ""], [`few_shot_prompt_${id}`, `Generate examples for step ${id}: {domain_description}`]];
+    }).flat()),
+  };
+  for (let index = 1; index <= 9; index++) {
+    const id = String(index).padStart(2, "0");
+    result.promptDefinitions[`yonsei-${id}`] = { template: `Yonsei ${id}: {domain_description}`, fields: ["domain_description"] };
+  }
+  return result;
+}
+
+function yonseiFixture() {
+  const log = fixture();
+  const expanded = yonseiDefaults();
+  log.version = 4; log.simulation = false; log.apiCalls = 3; log.tokenCount = 500;
+  log.current = { method: "yonsei", stageId: "09", runState: "running", autoAdvance: true, engine: "api", provider: "openai" };
+  log.valuesByMethod.yonsei = structuredClone(expanded.valuesByMethod.yonsei);
+  log.valuesByMethod.yonsei.domain_description = "문단 1: Games have players.\n\n문단 2: A release has a date.";
+  log.valuesByMethod.yonsei.few_shot_03 = '{"cqs":[{"id":"CQ-01","question":"Who plays a game?","evidence":[{"paragraph_id":"P001","text":"Games have players."}]}]}';
+  log.valuesByMethod.yonsei.few_shot_prompt_03 = "사용자가 수정한 생성 프롬프트: {domain_description}";
+  Object.assign(log.promptDefinitions, Object.fromEntries(Object.entries(expanded.promptDefinitions).filter(([key]) => key.startsWith("yonsei-"))));
+  log.promptDefinitions["yonsei-09"].template = "문단별 CQ와 요소를 사용하여 refine: {domain_description}";
+  const request = { system: "Yonsei engineer", user: "Refine with linked paragraphs and CQs" };
+  const response = simulateCompletion(request, '@prefix : <https://example.org/> .\n:Game :relatedCQ "CQ-01" .');
+  delete response.simulation;
+  response.execution = { provider: "openai", requestId: "req_yonsei_refine" };
+  response.model = "test-model";
+  const output = response.choices[0].message.content;
+  log.currentRecords["yonsei-09"] = { request, response, ontology: output, startedAt: at, completedAt: at };
+  log.currentOutputs["yonsei-09"] = output;
+  log.promptOverrides["yonsei-03"] = { system: "Custom CQ system", user: "Custom CQ request" };
+  log.attachments["yonsei-domain_description"] = { name: "source.md", size: 110, text: log.valuesByMethod.yonsei.domain_description, importedAt: at, edited: false };
+  log.history.push({ at, method: "yonsei", stageId: "03", event: "few_shot_completed", data: {
+    request: { system: "Generate few-shot examples", user: log.valuesByMethod.yonsei.few_shot_prompt_03 },
+    response: { content: log.valuesByMethod.yonsei.few_shot_03, usage: { prompt_tokens: 30, completion_tokens: 20 } },
+  } });
+  return log;
+}
+
+test("v4 round-trip preserves all methods, Yonsei generated examples, generator edits, API history and refine ontology", () => {
+  const log = yonseiFixture();
+  const restored = parseSessionLog(exportLog(log), yonseiDefaults());
+  assert.deepEqual(restored.current, { ...log.current, runState: "paused" });
+  for (const key of ["valuesByMethod", "promptDefinitions", "promptOverrides", "attachments", "history", "currentRecords", "currentOutputs"]) {
+    assert.deepEqual(restored[key], log[key], key);
+  }
+  assert.equal(restored.tokenCount, 500);
+  assert.equal(restored.apiCalls, 3);
+  assert.equal(currentOntology(restored.currentRecords, "yonsei"), log.currentRecords["yonsei-09"].ontology);
+  const resaved = exportLog({ ...restored, version: 4, simulation: false });
+  assert.deepEqual(parseSessionLog(resaved, yonseiDefaults()), restored);
+});
+
+test("v1-v3 imports seed a new Yonsei method only from defaults while preserving original method work", () => {
+  const expanded = yonseiDefaults();
+  const defaultSnapshot = structuredClone(expanded);
+  for (const version of [1, 2, 3]) {
+    const log = fixture(); log.version = version;
+    if (version === 3) { log.current.engine = "simulation"; log.current.provider = "anthropic"; }
+    const legacy = parseSessionLog(JSON.stringify(log), defaults);
+    const restored = parseSessionLog(JSON.stringify(log), expanded);
+    assert.deepEqual(restored.valuesByMethod.yonsei, expanded.valuesByMethod.yonsei);
+    assert.notEqual(restored.valuesByMethod.yonsei, expanded.valuesByMethod.yonsei);
+    for (const key of ["neon", "tao"]) assert.deepEqual(restored.valuesByMethod[key], legacy.valuesByMethod[key]);
+    for (const [key, definition] of Object.entries(legacy.promptDefinitions)) assert.deepEqual(restored.promptDefinitions[key], definition);
+    for (const key of ["history", "attachments", "currentRecords", "currentOutputs", "promptOverrides", "current"]) assert.deepEqual(restored[key], legacy[key]);
+    assert.equal(restored.promptDefinitions["yonsei-09"].template, expanded.promptDefinitions["yonsei-09"].template);
+    restored.promptDefinitions["yonsei-09"].fields.push("new_field");
+    restored.valuesByMethod.yonsei.few_shot_03 = "local changes";
+    assert.deepEqual(expanded, defaultSnapshot);
+  }
+});
+
+test("saved Yonsei fields and definitions are not replaced by defaults, including legacy-version files", () => {
+  for (const version of [3, 4]) {
+    const log = yonseiFixture(); log.version = version;
+    const restored = parseSessionLog(JSON.stringify(log), yonseiDefaults());
+    assert.equal(restored.valuesByMethod.yonsei.few_shot_03, log.valuesByMethod.yonsei.few_shot_03);
+    assert.equal(restored.valuesByMethod.yonsei.few_shot_prompt_03, log.valuesByMethod.yonsei.few_shot_prompt_03);
+    assert.equal(restored.promptDefinitions["yonsei-09"].template, log.promptDefinitions["yonsei-09"].template);
+    delete log.valuesByMethod.yonsei.few_shot_03;
+    assert.throws(() => parseSessionLog(JSON.stringify(log), yonseiDefaults()), /few_shot_03/);
+  }
+});
+
+test("v4 rejects incomplete or malformed Yonsei method state before replacement", () => {
+  const mutations = [
+    (log) => { delete log.valuesByMethod.yonsei; },
+    (log) => { delete log.valuesByMethod.yonsei.few_shot_prompt_01; },
+    (log) => { log.valuesByMethod.yonsei.few_shot_08 = { content: "not a string" }; },
+    (log) => { delete log.promptDefinitions["yonsei-01"]; },
+    (log) => { delete log.promptDefinitions["yonsei-09"]; },
+    (log) => { log.promptDefinitions["yonsei-10"] = log.promptDefinitions["yonsei-09"]; },
+    (log) => { log.current.stageId = "10"; },
+    (log) => { log.current.stageId = "1"; },
+    (log) => { log.current.stageId = "00"; },
+    (log) => { log.current.provider = "other"; },
+    (log) => { log.current.engine = "other"; },
+    (log) => { log.apiCalls = -1; },
+    (log) => { log.promptOverrides["yonsei-10"] = { system: "x", user: "y" }; },
+    (log) => { log.attachments["yonsei-page_text"] = log.attachments["yonsei-domain_description"]; },
+    (log) => { log.attachments["yonsei-domain_description"].text = null; },
+    (log) => { log.history.at(-1).stageId = "10"; },
+    (log) => { log.currentRecords["yonsei-09"].response.execution.provider = "other"; },
+    (log) => { log.currentRecords["yonsei-09"].response.simulation = {}; },
+    (log) => { delete log.valuesByMethod.neon.competency_questions; },
+  ];
+  for (const mutate of mutations) {
+    const log = yonseiFixture(); mutate(log);
+    assert.throws(() => parseSessionLog(JSON.stringify(log), yonseiDefaults()), /로그 형식/);
+  }
+});
+
+test("Yonsei attachment edits and invalidation remain separate from NeOn and TAO", () => {
+  const log = yonseiFixture();
+  log.valuesByMethod.yonsei.domain_description += "\nNew document content";
+  const restored = parseSessionLog(JSON.stringify(log), yonseiDefaults());
+  assert.equal(restored.attachments["yonsei-domain_description"].edited, true);
+  const remaining = invalidateStageResults(restored.currentRecords, "yonsei", 3);
+  assert.equal(remaining["yonsei-09"], undefined);
+  assert.deepEqual(remaining["neon-08"], restored.currentRecords["neon-08"]);
+  assert.deepEqual(remaining["tao-08"], restored.currentRecords["tao-08"]);
+  assert.equal(restored.history.at(-1).event, "few_shot_completed");
+});
+
+test("the current method cannot be synthesized from absent legacy method data", () => {
+  const log = fixture();
+  log.current.method = "yonsei";
+  assert.throws(() => parseSessionLog(JSON.stringify(log), yonseiDefaults()), /current.method/);
+});

@@ -4,7 +4,7 @@ export type PromptValues = Record<string, string>;
 // Replace only once: braces inside user text, JSON examples or prior output
 // must remain literal, never be interpreted as another variable.
 export function interpolate(template: string, values: PromptValues): string {
-  return template.replace(/\{([a-z_]+)\}/g, (match, key: string) => values[key] ?? match);
+  return template.replace(/\{([a-z_][a-z_0-9]*)\}/g, (match, key: string) => values[key] ?? match);
 }
 
 export function assemblePrompt(template: string, values: PromptValues, previousOutput: string): PromptMessages {

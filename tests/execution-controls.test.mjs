@@ -34,7 +34,7 @@ test("auto-run checkbox follows the run button and preserves running-state behav
   const page = read("page.tsx");
   const controls = page.slice(page.indexOf('<div className="stage-run-actions">'), page.indexOf('<div className="prompt-section">'));
   assert.match(controls, /onClick=\{toggleRun\}/);
-  assert.match(controls, /checked=\{autoAdvance\} disabled=\{runState === "running"\}/);
+  assert.match(controls, /checked=\{autoAdvance\} disabled=\{busy\}/);
   assert.match(controls, /onChange=\{\(e\) => setAutoAdvance\(e.target.checked\)\}/);
   assert.ok(controls.indexOf("</button>") < controls.indexOf('type="checkbox"'));
   assert.equal((page.match(/실행 후 다음 단계 자동 실행/g) || []).length, 1);

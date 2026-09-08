@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { handleGeneration, normalizeResponse, ontologyFromResponse } from "../server/llm-service.ts";
+import { handleGeneration, normalizeResponse, ontologyFromResponse, validateGeneration } from "../server/llm-service.ts";
 import { GenerationError, requestGeneration } from "../app/execution-model.ts";
 
 const env = { OPENAI_API_KEY: "sk-test-DO-NOT-EXPOSE", OPENAI_MODEL: "test-openai", ANTHROPIC_API_KEY: "sk-ant-test-DO-NOT-EXPOSE", ANTHROPIC_MODEL: "test-claude" };
@@ -11,6 +11,153 @@ function request(body = input, headers = {}, url = "http://localhost:3000/api/ge
 const openaiResponse = (text = "Real fixture output", reason = "stop") => ({ choices: [{ message: { role: "assistant", content: text }, finish_reason: reason }], usage: { prompt_tokens: 25, completion_tokens: 12 } });
 const claudeResponse = (text = "Claude fixture") => ({ content: [{ type: "thinking", thinking: "not output" }, { type: "text", text }], stop_reason: "end_turn", usage: { input_tokens: 30, output_tokens: 15 } });
 const ttl = '@prefix : <http://example.org/test#> .\n@prefix owl: <http://www.w3.org/2002/07/owl#> .\n:A a owl:Class .';
+const yonseiTrace = { cqIds: ["CQ1", "CQ2"], elements: [
+  { id: "http://example.org/test#Game", kind: "class", cq_ids: ["CQ1", "CQ2"] },
+  { id: "http://example.org/test#hasMode", kind: "object_property", cq_ids: ["CQ1"] },
+  { id: "http://example.org/test#title", kind: "data_property", cq_ids: ["CQ2"] },
+] };
+const tracedTtl = '@prefix : <http://example.org/test#> .\n@prefix owl: <http://www.w3.org/2002/07/owl#> .\n'
+  + '@prefix ys: <https://example.org/yonsei/> .\nys:relatedCQ a owl:AnnotationProperty .\n'
+  + ':Game a owl:Class ; ys:relatedCQ "CQ1", "CQ2" .\n'
+  + ':hasMode a owl:ObjectProperty ; ys:relatedCQ "CQ1" .\n'
+  + ':title a owl:DatatypeProperty ; ys:relatedCQ "CQ2" .';
+
+test("Yonsei trace metadata is restricted to serialization/refinement and validated before any API call", async () => {
+  for (const stageId of ["08", "09"]) {
+    const value = { ...input, method: "yonsei", stageId, yonseiTrace };
+    assert.deepEqual(validateGeneration(value).yonseiTrace, yonseiTrace);
+  }
+  let calls = 0;
+  const badTraces = [null, [], {}, { cqIds: [], elements: [] }, { cqIds: [" "], elements: [] },
+    { ...yonseiTrace, cqIds: ["CQ1", "CQ1"] },
+    { ...yonseiTrace, elements: [yonseiTrace.elements[0], yonseiTrace.elements[0]] },
+    ...[
+      { id: "relative-iri" }, { id: "http://example.org/a b" }, { kind: "individual" }, { kind: "constructor" },
+      { cq_ids: [] }, { cq_ids: ["CQ3"] }, { cq_ids: ["CQ1", "CQ1"] },
+    ].map(invalid => ({ ...yonseiTrace, elements: [{ ...yonseiTrace.elements[0], ...invalid }] })),
+  ];
+  const invalidRequests = [
+    ...badTraces.map(trace => ({ method: "yonsei", stageId: "08", yonseiTrace: trace })),
+    { method: "neon", stageId: "08", yonseiTrace }, { method: "tao", stageId: "04", yonseiTrace },
+    { method: "yonsei", stageId: "07", yonseiTrace }, { method: "yonsei", stageId: "08", purpose: "few-shot", yonseiTrace },
+  ];
+  for (const invalid of invalidRequests) {
+    const result = await handleGeneration(request({ ...input, ...invalid }), env, async () => { calls++; return Response.json(openaiResponse()); });
+    assert.equal(result.status, 400);
+    assert.equal((await result.json()).error.code, "INVALID_REQUEST");
+  }
+  assert.equal(calls, 0);
+});
+
+test("Yonsei full Turtle retains every catalog kind and all CQ links, including multi-CQ elements", async () => {
+  for (const stageId of ["08", "09"]) {
+    const value = { ...input, method: "yonsei", stageId, yonseiTrace, previousOntology: ttl };
+    const result = await handleGeneration(request(value), env, async () => Response.json(openaiResponse(tracedTtl)));
+    assert.equal(result.status, 200);
+    const body = await result.json();
+    assert.match(body.ontology, /CQ1/);
+    assert.match(body.ontology, /CQ2/);
+    assert.match(body.ontology, /AnnotationProperty/);
+    assert.doesNotMatch(body.ontology, /:A\s/);
+  }
+  assert.ok(ontologyFromResponse(ttl, { ...input, method: "yonsei", stageId: "08", yonseiTrace: { cqIds: ["CQ1"], elements: [] } }));
+});
+
+test("Yonsei rejects missing elements, changed kinds, lost links and unknown CQ annotations without repairing output", async () => {
+  const invalidOutputs = [
+    tracedTtl.replace(':Game a owl:Class ; ys:relatedCQ "CQ1", "CQ2" .\n', ""),
+    tracedTtl.replace(":Game a owl:Class", ":Game a owl:ObjectProperty"),
+    tracedTtl + "\n:Game a owl:ObjectProperty .",
+    tracedTtl.replace(':Game a owl:Class ; ys:relatedCQ "CQ1", "CQ2"', ':Game a owl:Class ; ys:relatedCQ "CQ1"'),
+    tracedTtl.replace("ys:relatedCQ a owl:AnnotationProperty .\n", ""),
+    tracedTtl + '\n:Other ys:relatedCQ "CQ999" .',
+    tracedTtl + "\n:Other ys:relatedCQ <https://example.org/CQ1> .",
+  ];
+  for (const stageId of ["08", "09"]) {
+    for (const text of invalidOutputs) {
+      const result = await handleGeneration(request({ ...input, method: "yonsei", stageId, yonseiTrace, previousOntology: tracedTtl }), env,
+        async () => Response.json(openaiResponse(text)));
+      assert.equal(result.status, 422);
+      const body = await result.json();
+      assert.equal(body.error.code, "INVALID_CQ_TRACE");
+      assert.match(body.error.message, /CQ 추적 정보/);
+      assert.equal(body.ontology, undefined);
+      assert.equal(body.response, undefined);
+    }
+  }
+});
+
+test("Yonsei accepts nine stages and restricts few-shot calls to stages 01–08", async () => {
+  for (let step = 1; step <= 9; step++) {
+    const stage = { ...input, method: "yonsei", stageId: String(step).padStart(2, "0") };
+    assert.deepEqual(validateGeneration(stage), stage);
+    assert.deepEqual(validateGeneration({ ...stage, purpose: "stage" }), { ...stage, purpose: "stage" });
+    if (step < 9) assert.equal(validateGeneration({ ...stage, purpose: "few-shot" }).purpose, "few-shot");
+  }
+  let calls = 0;
+  for (const invalid of [
+    { method: "yonsei", stageId: "00" }, { method: "yonsei", stageId: "10" },
+    { method: "yonsei", stageId: "9" }, { method: "yonsei", stageId: "09", purpose: "few-shot" },
+    { method: "neon", stageId: "08", purpose: "few-shot" }, { method: "tao", stageId: "04", purpose: "few-shot" },
+    { method: "yonsei", stageId: "01", purpose: "other" }, { method: "yonsei", stageId: "01", purpose: null },
+  ]) {
+    const result = await handleGeneration(request({ ...input, ...invalid }), env, async () => { calls++; return Response.json(openaiResponse()); });
+    assert.equal(result.status, 400);
+    assert.equal((await result.json()).error.code, "INVALID_REQUEST");
+  }
+  assert.equal(calls, 0);
+});
+
+test("Yonsei few-shot generation returns editable text but never an ontology snapshot", async () => {
+  for (const text of ["Example input and output", ttl, "###start_turtle###\n" + ttl + "\n###end_turtle###", "```turtle\ninvalid example\n``` "]) {
+    const result = await handleGeneration(request({ ...input, method: "yonsei", stageId: "08", purpose: "few-shot", previousOntology: ttl }), env,
+      async () => Response.json(openaiResponse(text)));
+    assert.equal(result.status, 200);
+    const body = await result.json();
+    assert.equal(body.response.choices[0].message.content, text);
+    assert.equal(body.ontology, null);
+  }
+});
+
+test("Yonsei conceptual stages do not extract Turtle examples from JSON or prose", () => {
+  const nested = JSON.stringify({ elements: [{ name: "A", cq_ids: ["CQ001"] }], example: "###start_turtle###\n" + ttl + "\n###end_turtle###" });
+  for (let step = 1; step <= 7; step++) {
+    const stage = { ...input, method: "yonsei", stageId: String(step).padStart(2, "0") };
+    assert.equal(ontologyFromResponse(nested, stage), null);
+    assert.equal(ontologyFromResponse(ttl, stage), null);
+    assert.equal(ontologyFromResponse("```turtle\ninvalid example\n```", stage), null);
+  }
+});
+
+test("Yonsei Turtle creation and Refine require valid full Turtle and replace the prior ontology", async () => {
+  const replacement = ttl.replace(":A a owl:Class", ":B a owl:Class");
+  for (const stageId of ["08", "09"]) {
+    const stage = { ...input, method: "yonsei", stageId, previousOntology: ttl };
+    for (const text of [replacement, "```turtle\n" + replacement + "\n```", "###start_turtle###\n" + replacement + "\n###end_turtle###"]) {
+      const result = await handleGeneration(request(stage), env, async () => Response.json(openaiResponse(text)));
+      assert.equal(result.status, 200);
+      const body = await result.json();
+      assert.ok(body.ontology.includes(":B"));
+      assert.ok(!body.ontology.includes(":A"));
+    }
+    for (const [text, code] of [["Only an explanation", "TURTLE_MISSING"], ["```turtle\nnot valid !!!\n```", "INVALID_TURTLE"], ["```turtle\n:B a owl:Class .\n```", "INVALID_TURTLE"]]) {
+      const result = await handleGeneration(request(stage), env, async () => Response.json(openaiResponse(text)));
+      assert.equal(result.status, 422);
+      assert.equal((await result.json()).error.code, code);
+    }
+  }
+});
+
+test("client forwards the separate few-shot purpose without changing stage identity", async () => {
+  const generated = { ...input, method: "yonsei", stageId: "08", purpose: "few-shot" };
+  const response = normalizeResponse(openaiResponse("Example only"), "openai", "test-openai");
+  const result = await requestGeneration(generated, new AbortController().signal, async (_url, options) => {
+    assert.deepEqual(JSON.parse(options.body), generated);
+    return Response.json({ response, ontology: null });
+  });
+  assert.equal(result.ontology, null);
+  assert.equal(result.response.choices[0].message.content, "Example only");
+});
 
 test("GPT uses server key, correct endpoint and exact edited messages; normalizes without mock metadata or credentials", async () => {
   let calls = 0;

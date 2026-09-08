@@ -7,8 +7,8 @@ const sans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const mono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Ontology Learning Studio — NeOn-GPT & TAO",
-  description: "NeOn-GPT와 TAO 온톨로지 생성 과정을 실행하고 관찰하는 워크벤치",
+  title: "Ontology Learning Studio — NeOn-GPT · TAO · Yonsei",
+  description: "NeOn-GPT, TAO, Yonsei 온톨로지 생성 과정을 실행하고 관찰하는 워크벤치",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

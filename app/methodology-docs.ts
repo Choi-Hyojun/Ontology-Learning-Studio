@@ -1,7 +1,7 @@
-export type MethodologyKey = "neon" | "tao";
+export type MethodologyKey = "neon" | "tao" | "yonsei";
 export type MethodologyDoc = {
   label: string;
-  paper: { title: string; url: string; edition: string; sections: string };
+  paper: { title: string; url: string; edition: string; sections: string } | null;
   summary: string;
   inputs: string;
   flow: { title: string; description: string }[];
@@ -14,6 +14,27 @@ export type MethodologyDoc = {
 // Korean summaries of the linked primary papers, not copied prompt instructions.
 // Paper descriptions and local implementation notes deliberately remain separate.
 export const METHODOLOGY_DOCS: Record<MethodologyKey, MethodologyDoc> = {
+  yonsei: {
+    label: "Yonsei", paper: null,
+    summary: "사용자가 제안한 초기 방법론입니다. NeOn-GPT 01–08 흐름에 LLM Few-shot 생성과 CQ·문서 근거 추적을 더하고, 09단계에서 문단별 Refine을 수행합니다.",
+    inputs: "도메인 문서(TXT/MD 또는 직접 입력), 페르소나, 도메인 이름, 키워드를 준비합니다. 각 단계에서 Few-shot 생성 프롬프트를 검토하고 생성 버튼을 누릅니다.",
+    flow: [
+      { title: "01–02 명세·재사용", description: "도메인의 요구사항을 정의하고 재사용 가능한 모델링 패턴을 정리합니다." },
+      { title: "03 CQ·근거 JSON", description: "CQ마다 ID, 질문, 관련 문단 ID와 원문 인용을 저장합니다. 자동 검증은 근거의 원문 포함 여부와 ID 구조를 확인하며 의미적 정확성을 보증하지 않습니다." },
+      { title: "04–07 개념 모델", description: "클래스·프로퍼티와 triple에 관련 CQ ID를 부여하고 개념 모델을 두 번 확장합니다." },
+      { title: "08 직렬화", description: "누적 개념 모델을 CQ 연결이 포함된 전체 Turtle로 직렬화합니다." },
+      { title: "09 Refine", description: "문단마다 관련 CQ·클래스·프로퍼티 묶음을 구성하고 최신 Turtle과 함께 한 번의 LLM 호출로 전달해 전체 온톨로지를 정제합니다." },
+    ],
+    output: "CQ 근거 JSON, CQ별 개념 모델 JSON, 직렬화·정제한 Turtle과 별도 Few-shot 생성 요청·응답을 남깁니다.",
+    evaluation: "현재는 초기 구현이며 별도 성능 평가나 논문 검증 결과가 없습니다.",
+    limitations: "Few-shot은 모델이 만든 교육용 예시이지 문서 근거가 아닙니다. 긴 문서는 제공업체의 문맥·출력 한도에 걸릴 수 있습니다. 문단별 순차 API 호출이나 OWL 추론기 검증은 구현하지 않았습니다.",
+    studio: [
+      "01–08에서 Few-shot 생성 → 결과 검토·편집 → 현재 단계 실행을 분리합니다. 두 버튼은 API 모드에서 각각 과금 가능한 별도 호출입니다.",
+      "자동 실행 중 다음 단계의 Few-shot이 없으면 멈춥니다. 먼저 예시를 생성한 뒤 단계 실행을 재개하세요.",
+      "문서를 바꾸면 해당 방법론의 결과와 Few-shot을 초기화합니다. 앞 단계를 다시 실행하면 이후 산출물과 이후 Few-shot도 무효화합니다.",
+      "시뮬레이션은 소규모 동작 확인용 예시이며 LLM을 호출하지 않습니다. JSON 로그에는 모든 단계와 Few-shot의 프롬프트·결과·이력을 저장합니다.",
+    ],
+  },
   neon: {
     label: "NeOn-GPT",
     paper: {

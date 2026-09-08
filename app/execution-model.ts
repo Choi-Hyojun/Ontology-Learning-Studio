@@ -14,7 +14,12 @@ export type ExecutionIssue = {
   status?: number; requestId?: string;
 };
 export type GenerationRequest = {
-  provider: Provider; method: "neon" | "tao"; stageId: string; messages: PromptMessages; previousOntology: string;
+  provider: Provider; method: "neon" | "tao" | "yonsei"; stageId: string; messages: PromptMessages; previousOntology: string;
+  purpose?: "stage" | "few-shot";
+  yonseiTrace?: {
+    cqIds: string[];
+    elements: { id: string; kind: "class" | "object_property" | "data_property"; cq_ids: string[] }[];
+  };
 };
 export function completionProvider(response: Completion): Provider | "simulation" {
   return "execution" in response ? response.execution.provider : "simulation";

@@ -2,7 +2,7 @@ import type { PromptMessages, PromptValues } from "./prompt-model";
 import type { Completion, Engine, Provider } from "./execution-model";
 import type { Attachment } from "./document-field";
 
-export type MethodKey = "neon" | "tao";
+export type MethodKey = "neon" | "tao" | "yonsei";
 export type RunRecord = { request: PromptMessages; response: Completion;
   startedAt: string; completedAt: string; ontology: string | null };
 export type LogEntry = { at: string; event: string; method: MethodKey; stageId?: string; data?: unknown };
@@ -47,10 +47,10 @@ function timestamp(value: unknown, path: string): string {
   const text = string(value, path); check(Number.isFinite(Date.parse(text)), path); return text;
 }
 function methodKey(value: unknown): MethodKey {
-  check(value === "neon" || value === "tao", "method"); return value;
+  check(value === "neon" || value === "tao" || value === "yonsei", "method"); return value;
 }
 function stageKey(key: string) {
-  check(/^(neon-(0[1-9]|1[0-9]|20)|tao-0[1-8])$/.test(key), `단계 ${key}`);
+  check(/^(neon-(0[1-9]|1[0-9]|20)|tao-0[1-8]|yonsei-0[1-9])$/.test(key), `단계 ${key}`);
 }
 function fieldKey(key: string) {
   check(/^[a-z][a-z0-9_]*$/.test(key) && !["constructor", "prototype"].includes(key), `입력 변수 ${key}`);
@@ -92,8 +92,9 @@ export function parseSessionLog(text: string, defaults: SessionDefaults): Restor
   } catch { throw new Error("안전한 JSON 로그를 읽지 못했습니다. 파일 내용과 인코딩을 확인하세요."); }
   const log = object(parsed, "로그");
   check(log.format === "ontology-studio-session", "Ontology Studio 전체 로그 파일이 아닙니다");
-  check(log.version === 1 || log.version === 2 || log.version === 3, "지원하지 않는 로그 버전");
-  if (log.version !== 3) check(log.simulation === true && log.apiCalls === 0, "로컬 시뮬레이션 로그만 지원합니다");
+  check(log.version === 1 || log.version === 2 || log.version === 3 || log.version === 4, "지원하지 않는 로그 버전");
+  const supportsApi = log.version === 3 || log.version === 4;
+  if (!supportsApi) check(log.simulation === true && log.apiCalls === 0, "로컬 시뮬레이션 로그만 지원합니다");
   else { check(typeof log.simulation === "boolean", "simulation"); natural(log.apiCalls, "apiCalls"); }
   const exportedAt = timestamp(log.exportedAt, "exportedAt");
   const current = object(log.current, "current");
@@ -101,20 +102,28 @@ export function parseSessionLog(text: string, defaults: SessionDefaults): Restor
   const stageId = string(current.stageId, "current.stageId"); stageKey(method + "-" + stageId);
   check(["idle", "running", "paused", "done"].includes(String(current.runState)), "current.runState");
   check(typeof current.autoAdvance === "boolean", "current.autoAdvance");
-  if (log.version === 3) {
+  if (supportsApi) {
     check(current.engine === "simulation" || current.engine === "api", "current.engine");
     check(current.provider === "openai" || current.provider === "anthropic", "current.provider");
   }
 
   const values = object(log.valuesByMethod, "valuesByMethod");
   const valuesByMethod = {} as Record<MethodKey, PromptValues>;
-  for (const key of ["neon", "tao"] as const) {
+  const seedLegacyYonsei = log.version !== 4 && values.yonsei === undefined;
+  for (const key of ["neon", "tao", "yonsei"] as const) {
+    // A legacy caller may know only the two original methods. Do not invent
+    // state in that case, or overwrite any saved Yonsei values with examples.
+    if (key === "yonsei" && defaults.valuesByMethod.yonsei === undefined && values.yonsei === undefined) continue;
+    if (key === "yonsei" && seedLegacyYonsei) {
+      valuesByMethod.yonsei = { ...defaults.valuesByMethod.yonsei };
+      continue;
+    }
     const saved = object(values[key], "valuesByMethod." + key);
     for (const [field, value] of Object.entries(saved)) { fieldKey(field); string(value, field); }
-    if (log.version !== 1) {
-      for (const field of Object.keys(defaults.valuesByMethod[key])) {
+    if (log.version !== 1 || key === "yonsei") {
+      for (const field of Object.keys(defaults.valuesByMethod[key] ?? {})) {
         // Older Studio logs did not expose the NeOn Step 20 CQ input.
-        if (key === "neon" && field === "competency_questions" && saved[field] === undefined) continue;
+        if (log.version !== 4 && key === "neon" && field === "competency_questions" && saved[field] === undefined) continue;
         check(typeof saved[field] === "string", `valuesByMethod.${key}.${field}`);
       }
     }
@@ -123,6 +132,7 @@ export function parseSessionLog(text: string, defaults: SessionDefaults): Restor
     if (key === "neon" && saved.competency_questions === undefined) valuesByMethod[key].competency_questions = "";
     if (key === "neon") delete valuesByMethod[key].ontology_metrics;
   }
+  check(values[method] !== undefined, "current.method: 저장된 방법론 입력 누락");
 
   const promptDefinitions: Record<string, PromptDefinition> = {};
   const readDefinition = (value: unknown, key: string) => {
@@ -137,7 +147,6 @@ export function parseSessionLog(text: string, defaults: SessionDefaults): Restor
   };
   if (log.version !== 1) {
     for (const [key, spec] of Object.entries(object(log.promptDefinitions, "promptDefinitions"))) readDefinition(spec, key);
-    for (const key of Object.keys(defaults.promptDefinitions)) check(promptDefinitions[key], "누락된 프롬프트 " + key);
   } else {
     // Legacy v1 exports stored NeOn source templates and TAO blueprint tuples.
     const templates = object(log.templates, "templates");
@@ -151,20 +160,33 @@ export function parseSessionLog(text: string, defaults: SessionDefaults): Restor
       readDefinition({ fields, template: `You are a {persona}.\nStage: ${row[1]}\n${fields.filter((field) => field !== "persona").map((field) => field + ": {" + field + "}").join("\n\n")}\n\n${row[2]}` }, key);
     });
   }
+  for (const [key, spec] of Object.entries(defaults.promptDefinitions)) {
+    if (seedLegacyYonsei && key.startsWith("yonsei-") && !promptDefinitions[key]) {
+      readDefinition(spec, key);
+    }
+    check(promptDefinitions[key], "누락된 프롬프트 " + key);
+  }
+  const savedStageKey = (key: string) => {
+    stageKey(key);
+    check(valuesByMethod[key.split("-")[0] as MethodKey], key + ": 방법론 입력 누락");
+    check(promptDefinitions[key], "누락된 프롬프트 " + key);
+  };
+  savedStageKey(method + "-" + stageId);
   const promptOverrides: Record<string, PromptMessages> = {};
   for (const [key, value] of Object.entries(object(log.promptOverrides, "promptOverrides"))) {
-    stageKey(key); promptOverrides[key] = messages(value, key);
+    savedStageKey(key); promptOverrides[key] = messages(value, key);
     if (key.startsWith("neon-")) promptOverrides[key] = {
       system: removeNeonMetrics(promptOverrides[key].system), user: removeNeonMetrics(promptOverrides[key].user),
     };
   }
   const attachments: Record<string, Attachment> = {};
   for (const [key, value] of Object.entries(object(log.attachments, "attachments"))) {
-    check(key === "neon-domain_description" || key === "tao-page_text", "첨부 문서 " + key);
+    check(key === "neon-domain_description" || key === "tao-page_text" || key === "yonsei-domain_description", "첨부 문서 " + key);
     const item = object(value, key);
     const text = string(item.text, key + ".text");
     check(typeof item.edited === "boolean", key + ".edited");
     const [owner, field] = key.split("-");
+    check(valuesByMethod[owner as MethodKey], key + ": 방법론 입력 누락");
     attachments[key] = { name: string(item.name, key + ".name"), size: natural(item.size, key + ".size"),
       importedAt: timestamp(item.importedAt, key + ".importedAt"), text,
       edited: valuesByMethod[owner as MethodKey][field] !== text };
@@ -172,12 +194,12 @@ export function parseSessionLog(text: string, defaults: SessionDefaults): Restor
 
   const currentOutputs: Record<string, string> = {};
   for (const [key, value] of Object.entries(object(log.currentOutputs, "currentOutputs"))) {
-    stageKey(key); currentOutputs[key] = string(value, key + ".output");
+    savedStageKey(key); currentOutputs[key] = string(value, key + ".output");
   }
   const currentRecords: Record<string, RunRecord> = {};
   let calculatedTokens = 0;
   for (const [key, value] of Object.entries(object(log.currentRecords, "currentRecords"))) {
-    stageKey(key);
+    savedStageKey(key);
     const item = object(value, key);
     const request = messages(item.request, key + ".request");
     timestamp(item.startedAt, key + ".startedAt"); timestamp(item.completedAt, key + ".completedAt");
@@ -196,7 +218,7 @@ export function parseSessionLog(text: string, defaults: SessionDefaults): Restor
     const usage = object(response.usage, key + ".usage");
     calculatedTokens += natural(usage.prompt_tokens, key + ".prompt_tokens") + natural(usage.completion_tokens, key + ".completion_tokens");
     if (response.execution !== undefined) {
-      check(log.version === 3 && response.simulation === undefined, key + ".execution version");
+      check(supportsApi && response.simulation === undefined, key + ".execution version");
       const execution = object(response.execution, key + ".execution");
       check(execution.provider === "openai" || execution.provider === "anthropic", key + ".provider");
       if (execution.requestId !== undefined) string(execution.requestId, key + ".requestId");
@@ -217,14 +239,15 @@ export function parseSessionLog(text: string, defaults: SessionDefaults): Restor
     const entry = object(value, "history entry");
     const at = timestamp(entry.at, "history.at"), event = string(entry.event, "history.event"), method = methodKey(entry.method);
     const stageId = entry.stageId === undefined ? undefined : string(entry.stageId, "history.stageId");
-    if (stageId !== undefined) stageKey(method + "-" + stageId);
+    if (stageId !== undefined) savedStageKey(method + "-" + stageId);
+    check(valuesByMethod[method], "history.method: 방법론 입력 누락");
     return { at, event, method, ...(stageId !== undefined ? { stageId } : {}), ...(entry.data !== undefined ? { data: entry.data } : {}) };
   });
   return { current: { method, stageId, runState: "paused", autoAdvance: current.autoAdvance,
-      ...(log.version === 3 ? { engine: current.engine as Engine, provider: current.provider as Provider } : {}) },
+      ...(supportsApi ? { engine: current.engine as Engine, provider: current.provider as Provider } : {}) },
     valuesByMethod, promptDefinitions, promptOverrides, attachments, history, currentRecords, currentOutputs,
     tokenCount: log.tokenCount === undefined ? calculatedTokens : natural(log.tokenCount, "tokenCount"), exportedAt,
-    ...(log.version === 3 ? { apiCalls: log.apiCalls as number } : {}) };
+    ...(supportsApi ? { apiCalls: log.apiCalls as number } : {}) };
 }
 
 export function invalidateStageResults<T>(items: Record<string, T>, method: MethodKey, fromStageIndex: number): Record<string, T> {

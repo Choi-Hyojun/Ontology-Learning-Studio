@@ -13,13 +13,64 @@ function fail(code: string, message: string, status = 400): never { throw new Se
 const isObject = (value: unknown): value is Record<string, unknown> => !!value && typeof value === "object" && !Array.isArray(value);
 const safeId = (value: string | null) => value && /^[a-zA-Z0-9_.:-]{1,160}$/.test(value) ? value : undefined;
 const json = (body: unknown, status = 200) => Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
+const nonempty = (value: unknown): value is string => typeof value === "string" && !!value.trim();
+const absoluteIri = (value: unknown): value is string => nonempty(value) && /^[a-z][a-z0-9+.-]*:[^\s<>"{}|\\^`]+$/i.test(value);
+const YONSEI_CQ_ANNOTATION = "https://example.org/yonsei/relatedCQ";
+const YONSEI_TYPES = {
+  class: "http://www.w3.org/2002/07/owl#Class",
+  object_property: "http://www.w3.org/2002/07/owl#ObjectProperty",
+  data_property: "http://www.w3.org/2002/07/owl#DatatypeProperty",
+};
+
+function validateTraceInput(trace: unknown): void {
+  if (!isObject(trace) || !Array.isArray(trace.cqIds) || !trace.cqIds.length || trace.cqIds.some(id => !nonempty(id))
+    || new Set(trace.cqIds).size !== trace.cqIds.length || !Array.isArray(trace.elements))
+    fail("INVALID_REQUEST", "Yonsei CQ 추적 정보의 cqIds와 elements 형식을 확인하세요.");
+  const knownCqs = new Set(trace.cqIds);
+  const elements = new Set<string>();
+  for (const element of trace.elements) {
+    if (!isObject(element) || !absoluteIri(element.id) || elements.has(element.id)
+      || typeof element.kind !== "string" || !Object.hasOwn(YONSEI_TYPES, element.kind)
+      || !Array.isArray(element.cq_ids) || !element.cq_ids.length
+      || element.cq_ids.some(id => typeof id !== "string" || !knownCqs.has(id))
+      || new Set(element.cq_ids).size !== element.cq_ids.length)
+      fail("INVALID_REQUEST", "Yonsei 요소에는 고유한 절대 IRI, 유효한 kind와 알려진 CQ ID 연결이 필요합니다.");
+    elements.add(element.id);
+  }
+}
 
 export function validateGeneration(value: unknown): GenerationRequest {
-  if (!isObject(value) || !["openai", "anthropic"].includes(String(value.provider)) || !["neon", "tao"].includes(String(value.method))
-    || typeof value.stageId !== "string" || !/^(neon-(0[1-9]|1[0-9]|20)|tao-0[1-8])$/.test(value.method + "-" + value.stageId)
+  if (!isObject(value) || !["openai", "anthropic"].includes(String(value.provider)) || !["neon", "tao", "yonsei"].includes(String(value.method))
+    || typeof value.stageId !== "string" || !/^(neon-(0[1-9]|1[0-9]|20)|tao-0[1-8]|yonsei-0[1-9])$/.test(value.method + "-" + value.stageId)
+    || (value.purpose !== undefined && value.purpose !== "stage" && value.purpose !== "few-shot")
+    || (value.purpose === "few-shot" && (value.method !== "yonsei" || value.stageId === "09"))
     || !isObject(value.messages) || typeof value.messages.system !== "string" || typeof value.messages.user !== "string"
     || !value.messages.user.trim() || typeof value.previousOntology !== "string") fail("INVALID_REQUEST", "제공업체·단계·프롬프트 형식을 확인하세요.");
+  if (value.yonseiTrace !== undefined) {
+    if (value.method !== "yonsei" || !["08", "09"].includes(value.stageId) || value.purpose === "few-shot")
+      fail("INVALID_REQUEST", "CQ 추적 정보는 Yonsei 08·09 단계 실행에서만 사용할 수 있습니다.");
+    validateTraceInput(value.yonseiTrace);
+  }
   return value as unknown as GenerationRequest;
+}
+
+function validateOntologyTrace(graph: ReturnType<typeof rdf.graph>, trace: NonNullable<GenerationRequest["yonseiTrace"]>): void {
+  const type = rdf.sym("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+  const annotation = rdf.sym(YONSEI_CQ_ANNOTATION);
+  const knownCqs = new Set(trace.cqIds);
+  const reject = () => fail("INVALID_CQ_TRACE", "생성된 Turtle이 CQ 추적 정보를 보존하지 않았습니다. 기존 요소의 IRI·종류와 relatedCQ 주석을 유지하고, 알려진 CQ ID만 연결하도록 프롬프트를 확인하세요.", 422);
+  if (trace.elements.length && !graph.holds(annotation, type, rdf.sym("http://www.w3.org/2002/07/owl#AnnotationProperty"))) reject();
+  for (const statement of graph.statementsMatching(null, annotation, null)) {
+    if (statement.object.termType !== "Literal" || !knownCqs.has(statement.object.value)) reject();
+  }
+  for (const element of trace.elements) {
+    const subject = rdf.sym(element.id);
+    if (!graph.holds(subject, type, rdf.sym(YONSEI_TYPES[element.kind]))) reject();
+    // A changed kind cannot be hidden by retaining the original declaration too.
+    if (Object.entries(YONSEI_TYPES).some(([kind, iri]) => kind !== element.kind && graph.holds(subject, type, rdf.sym(iri)))) reject();
+    const links = new Set(graph.statementsMatching(subject, annotation, null).map(statement => statement.object.value));
+    if (element.cq_ids.some(id => !links.has(id))) reject();
+  }
 }
 
 export function normalizeResponse(value: unknown, provider: Provider, model: string, requestId?: string): ApiCompletion {
@@ -47,8 +98,11 @@ export function normalizeResponse(value: unknown, provider: Provider, model: str
 }
 
 export function ontologyFromResponse(text: string, input: GenerationRequest): string | null {
+  // Generated examples and conceptual JSON are context, never ontology snapshots.
+  // In particular, a Turtle example nested in that text must not replace real output.
+  if (input.purpose === "few-shot" || (input.method === "yonsei" && Number(input.stageId) < 8)) return null;
   const match = text.match(/###start_turtle###([\s\S]*?)###end_turtle###/i) ?? text.match(/```(?:turtle|ttl)\s*\n([\s\S]*?)```/i);
-  const expected = input.method === "neon" ? Number(input.stageId) >= 8 : ["04", "08"].includes(input.stageId);
+  const expected = input.method === "neon" || input.method === "yonsei" ? Number(input.stageId) >= 8 : ["04", "08"].includes(input.stageId);
   let turtle = match?.[1]?.trim();
   if (!turtle && /^\s*(?:@prefix|PREFIX|@base|BASE)\s/.test(text)) turtle = text.trim();
   if (!turtle) {
@@ -61,10 +115,14 @@ export function ontologyFromResponse(text: string, input: GenerationRequest): st
     const merge = input.method === "neon" && Number(input.stageId) >= 11;
     rdf.parse((merge && input.previousOntology ? input.previousOntology + "\n" : "") + turtle, graph, "http://example.org/generated/", "text/turtle");
     if (!graph.statements.length) throw new Error("empty graph");
+    if (input.yonseiTrace) validateOntologyTrace(graph, input.yonseiTrace);
     const serialized = rdf.serialize(null, graph, "http://example.org/generated/", "text/turtle");
     if (!serialized) throw new Error("serialization failed");
     return serialized;
-  } catch { fail("INVALID_TURTLE", "생성된 Turtle의 문법 검증에 실패했습니다. 해당 단계는 완료 처리하지 않았습니다. 프롬프트를 수정한 뒤 다시 실행하세요.", 422); }
+  } catch (error) {
+    if (error instanceof ServiceError) throw error;
+    fail("INVALID_TURTLE", "생성된 Turtle의 문법 검증에 실패했습니다. 해당 단계는 완료 처리하지 않았습니다. 프롬프트를 수정한 뒤 다시 실행하세요.", 422);
+  }
 }
 
 // Pure dependency-injected handler: tests supply fake env and fetch; no API keys needed.
