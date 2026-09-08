@@ -1,0 +1,2439 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+   xmlns="http://www.example.org/videogame#"
+   xmlns:dcterms="http://purl.org/dc/terms/"
+   xmlns:owl="http://www.w3.org/2002/07/owl#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasPurpose">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has purpose</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_GamePurpose"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b75">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasComponent"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_RemoteHardware"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_ACB">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_ContentRatingOrganization"/>
+    <rdfs:label xml:lang="en">Australian Classification Board</rdfs:label>
+    <rdfs:label xml:lang="en">ACB</rdfs:label>
+    <providesRatingsIn rdf:resource="http://www.example.org/videogame#Ind_Australia"/>
+    <qualification xml:lang="en">The document reports that ACB ratings are legally enforceable and that games lacking a rating or receiving Refused Classification cannot be imported or purchased digitally in Australia. This is the document's exception to general voluntariness, not independently verified current law.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 155</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b62">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#affirmedForRegion"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_Region"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Minecraft">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:label xml:lang="en">Minecraft</rdfs:label>
+    <qualification xml:lang="en">Named as an open-world or virtual-sandbox game used in classrooms after release, although not initially developed for education. Classroom use is not treated as educational design intent.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Educational games, line 135</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_HiddenObject">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <rdfs:label xml:lang="en">Hidden object</rdfs:label>
+    <qualification xml:lang="en">Identified among genres often associated with low-intensity casual gameplay; not every game of the genre is asserted to be casual.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Casual games, line 131</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ClassificationValue">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Classification value</rdfs:label>
+    <rdfs:comment xml:lang="en">A descriptor used in relational classification, not a game instance.</rdfs:comment>
+    <sourceLocator xml:lang="en">videogame_tip_document_50_ver2.md, section 2, classification value registry</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b39">
+    <rdf:first rdf:nodeID="nc06c151c573947668238dde3362ab768b37"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_GameMode">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Game mode</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_ClassificationValue"/>
+    <rdfs:comment xml:lang="en">A participation classification describing how many players can use a game at the same time. Single-player and multiplayer are the primary categories; zero-player involves very limited interaction, not necessarily no human involvement.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mode, lines 117-119</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b24">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasComponent"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_Software"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Germany">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Region"/>
+    <rdfs:label xml:lang="en">Germany</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 159</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasGameWorld">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has game world</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_GameWorld"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_AlcoholUse">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_ContentTheme"/>
+    <rdfs:label xml:lang="en">Alcohol use</rdfs:label>
+    <qualification xml:lang="en">May be identified in content review as a theme that can influence children.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 147</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_PEGI">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_ContentRatingSystem"/>
+    <rdfs:label xml:lang="en">Pan European Game Information</rdfs:label>
+    <rdfs:label xml:lang="en">PEGI</rdfs:label>
+    <providesRatingsIn rdf:resource="http://www.example.org/videogame#Ind_UnitedKingdom"/>
+    <providesRatingsIn rdf:resource="http://www.example.org/videogame#Ind_EuropeanUnion"/>
+    <qualification xml:lang="en">Covers the United Kingdom, most of the European Union and other European countries not enumerated by the document. It is a rating system, not asserted to be a rating organization.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 153</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_FloppyDisc">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Floppy disc</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_MagneticStorage"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 89</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_GameExtension">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Game extension</rdfs:label>
+    <rdfs:comment xml:lang="en">An addition or modification that extends or changes an existing game.</rdfs:comment>
+    <sourceLocator xml:lang="en">videogame_tip_document_50_ver2.md, section 2, game extension registry</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Avatar">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Avatar</rdfs:label>
+    <rdfs:comment xml:lang="en">The in-game representation controlled by a player in the described gameplay.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_AugmentedRealityGameplay">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Augmented reality gameplay</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mobile game, line 69</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_GameOverScreen">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Game-over screen</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_OnScreenUserInterface"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ArtGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Art game</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b58"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b59"/>
+    <rdfs:comment xml:lang="en">Also called an arthouse game; designed to communicate a story or message through the medium as a work of art.</rdfs:comment>
+    <qualification xml:lang="en">Emotion and empathy are intended responses, not guaranteed outcomes. Art games may lack a winning condition, allow exploration, and are mostly indie games based on personal experiences or stories.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Art games, line 143</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_GlobalPositioningInformation">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Global positioning information</rdfs:label>
+    <rdfs:comment xml:lang="en">Information available from a mobile device, not a device or hardware component.</rdfs:comment>
+    <qualification xml:lang="en">May support augmented reality gameplay; no mobile device is required to provide it.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mobile game, line 69</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_SeriousGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Serious game</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b57"/>
+    <rdfs:comment xml:lang="en">Game design reinforces a purpose beyond entertainment.</rdfs:comment>
+    <qualification xml:lang="en">Other purposes may augment, overshadow or eliminate the entertainment factor. Serious games need not lack entertainment and are not disjoint from other purpose-based game types.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Serious games, line 139</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#enablesExecutionOf">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">enables execution of</rdfs:label>
+    <rdfs:domain rdf:nodeID="nc06c151c573947668238dde3362ab768b4"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:comment xml:lang="en">Enables execution of games from another or older system, preserving the distinction between emulation software and backward-compatibility capability.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Emulation, line 81; Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_PlayStation2Platform">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGamePlatform"/>
+    <rdfs:label xml:lang="en">PlayStation 2</rdfs:label>
+    <hasBackwardCompatibility rdf:resource="http://www.example.org/videogame#Ind_PlayStation2BackwardCompatibility"/>
+    <rdfs:comment xml:lang="en">The source describes playing past-generation PlayStation games by inserting original game media into the newer console.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Doom">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_FirstPersonShooter"/>
+    <rdfs:label xml:lang="en">Doom</rdfs:label>
+    <rdfs:comment xml:lang="en">The document explains that first-person shooters were initially called Doom clones after this 1993 game.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, line 113</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_EaseOfAccessibility">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_DesignCharacteristic"/>
+    <rdfs:label xml:lang="en">Ease of accessibility</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Casual games, line 131</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_ZeroPlayer">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameMode"/>
+    <rdfs:label xml:lang="en">Zero-player</rdfs:label>
+    <qualification xml:lang="en">A small number of games have very limited player interaction. The player may establish a starting state and then passively observe the game proceeding on its own. These are most commonly simulations, exemplified by many computerized simulations of Conway's Game of Life. This does not mean zero human involvement.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mode, line 119</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Sega">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:label xml:lang="en">Sega</rdfs:label>
+    <rdfs:comment xml:lang="en">The document describes Sega as a console-industry company and reports that it exited the console space by the 2000s.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 7; Platform, line 43; Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#usesMinimumAgeIdentifier">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">uses minimum-age identifier</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_ContentRatingSystem"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_MinimumAgeIdentifier"/>
+    <qualification xml:lang="en">Nearly all systems use a primary identifier based on minimum age; no universal restriction or numeric age is asserted.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 147</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b20">
+    <rdf:first rdf:nodeID="nc06c151c573947668238dde3362ab768b18"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#overlaysVisualOutput">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">overlays visual output</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_HeadsUpDisplay"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VisualOutput"/>
+    <rdfs:comment xml:lang="en">Places the interface atop the rendering of the game, rather than making it a physical display.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#originallyIntendedFor">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">originally intended for</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VideoGamePlatform"/>
+    <rdfs:comment xml:lang="en">Records positive evidence of original platform intent.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_HapticTechnology">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Haptic technology</rdfs:label>
+    <rdfs:comment xml:lang="en">Technology providing tactile sensations, such as shaking a controller in the player's hands.</rdfs:comment>
+    <qualification xml:lang="en">Some platforms support this additional feedback; it is commonly built into controllers.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 3; Display and output, line 103</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#mayBoostAttribute">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">may boost attribute</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_PowerUp"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_AvatarAttribute"/>
+    <qualification xml:lang="en">In the described gameplay, collecting a power-up can boost an avatar's innate attributes.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_GrandTheftAutoClone">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <rdfs:label xml:lang="en">Grand Theft Auto clone</rdfs:label>
+    <rdfs:comment xml:lang="en">The genre name derives from Grand Theft Auto III.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, line 113</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_DownloadableContent">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Downloadable content</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_GameExtension"/>
+    <qualification xml:lang="en">Can provide new game content and software patches; nominally available through digital distribution. May be free or used for post-release monetization.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 91</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b10">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Axiom"/>
+    <owl:annotatedSource rdf:resource="http://www.example.org/videogame#Ind_PEGI"/>
+    <owl:annotatedProperty rdf:resource="http://www.example.org/videogame#providesRatingsIn"/>
+    <owl:annotatedTarget rdf:resource="http://www.example.org/videogame#Ind_EuropeanUnion"/>
+    <qualification xml:lang="en">Coverage within most of the European Union, not the entire Union. Other European countries are mentioned but not enumerated.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, line 153</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#marketedBy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">marketed by</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_BattleRoyale">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <rdfs:label xml:lang="en">Battle royale</rdfs:label>
+    <rdfs:comment xml:lang="en">The genre name derives from the film Battle Royale; the film is not modeled as a video game.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, line 113</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b11">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Axiom"/>
+    <owl:annotatedSource rdf:resource="http://www.example.org/videogame#Ind_Multiplayer"/>
+    <owl:annotatedProperty rdf:resource="http://www.example.org/videogame#hasPossibleGameplayStyle"/>
+    <owl:annotatedTarget rdf:resource="http://www.example.org/videogame#Ind_CompetitiveGameplay"/>
+    <qualification xml:lang="en">Most multiplayer games are based on competitive gameplay.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, line 117</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Emotion">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_IntendedPlayerResponse"/>
+    <rdfs:label xml:lang="en">Emotion</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Art games, line 143</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b12">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Axiom"/>
+    <owl:annotatedSource rdf:resource="http://www.example.org/videogame#Ind_Multiplayer"/>
+    <owl:annotatedProperty rdf:resource="http://www.example.org/videogame#hasPossibleGameplayStyle"/>
+    <owl:annotatedTarget rdf:resource="http://www.example.org/videogame#Ind_CooperativeGameplay"/>
+    <qualification xml:lang="en">Many multiplayer games offer cooperative gameplay; this is an option, not a requirement for every multiplayer game.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, line 117</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b23">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasComponent"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_Hardware"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Ontology"/>
+    <rdfs:label xml:lang="en">Document-grounded video game ontology</rdfs:label>
+    <dcterms:source xml:lang="en">ontology_instruction.txt; source and modeling priority. fileciteturn0file0L13-L18</dcterms:source>
+    <dcterms:source xml:lang="en">videogame_tip_document_50_ver2.md; class registry and implementation policy. fileciteturn0file1L94-L110 fileciteturn0file1L171-L193</dcterms:source>
+    <dcterms:source xml:lang="en">Video Game Document.txt; factual source, including named game examples and rating coverage. fileciteturn0file2L131-L143 fileciteturn0file2L151-L161</dcterms:source>
+    <rdfs:comment xml:lang="en">OWL 2 DL ontology implementing the supplied TIP. Classes, properties and restrictions follow the TIP; named examples and factual qualifications come from the supplied document. No external background instances or invented game, player, review or rating records are included. Historical, regional and legal statements are document reports, not independently verified current claims. Missing assertions do not establish negation.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Remaster">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VersionForm"/>
+    <rdfs:label xml:lang="en">Remaster</rdfs:label>
+    <qualification xml:lang="en">Reuses most of the original game's source code and updates art assets, in-game models and levels for modern systems. No percentage, total-code-reuse condition or platform maximum is supplied.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Platform, line 43</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b21">
+    <rdf:first rdf:resource="http://www.example.org/videogame#hasDefiningInteraction"/>
+    <rdf:rest rdf:nodeID="nc06c151c573947668238dde3362ab768b22"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_CrossGenreType">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Cross-genre type</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <qualification xml:lang="en">Cross-genre types can fall under multiple top-level genres. Specific action-adventure parents are not asserted.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, line 113</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasLevel">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has level</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Level"/>
+    <qualification xml:lang="en">Most games are divided into levels for progression. This is not a requirement for every video game.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_XboxCloudGamingPlatform">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGamePlatform"/>
+    <rdf:type rdf:nodeID="nc06c151c573947668238dde3362ab768b74"/>
+    <rdfs:label xml:lang="en">Xbox Cloud Gaming</rdfs:label>
+    <rdfs:comment xml:lang="en">The document describes dedicated custom server-blade hardware in cloud-computing centers for this platform. This is a document-reported platform example, not a claim about current service availability.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Cloud gaming, line 73</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_SpecializedController">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Specialized controller</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_GameController"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Input device, line 95</sourceLocator>
+    <qualification xml:lang="en">Racing wheels, light guns and dance pads may be used for certain game genres. No particular controller-to-genre pairing is supplied.</qualification>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_WiiConsole">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Console"/>
+    <rdfs:label xml:lang="en">Wii console hardware</rdfs:label>
+    <manufacturedBy rdf:resource="http://www.example.org/videogame#Ind_Nintendo"/>
+    <rdfs:comment xml:lang="en">The console hardware associated with the source-named Wii platform; hardware and the platform combination are represented separately.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#runsOnPlatform">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">runs on platform</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VirtualMachine"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VideoGamePlatform"/>
+    <rdfs:comment xml:lang="en">Identifies the virtual machine's host platform, described as a modern system in the source.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Emulation, line 81</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#requiresPlatform">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">requires platform</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VideoGamePlatform"/>
+    <rdfs:comment xml:lang="en">The operational platform requirement, not a platform-count limit.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b14">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Axiom"/>
+    <owl:annotatedSource rdf:resource="http://www.example.org/videogame#Ind_Multiplayer"/>
+    <owl:annotatedProperty rdf:resource="http://www.example.org/videogame#hasPossibleGameplayStyle"/>
+    <owl:annotatedTarget rdf:resource="http://www.example.org/videogame#Ind_AsymmetricGameplay"/>
+    <qualification xml:lang="en">Many multiplayer games offer asymmetric gameplay; this is an option, not a requirement for every multiplayer game.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, line 117</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_LightGun">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Light gun</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_SpecializedController"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Input device, line 95</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#computedAndRenderedOn">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">computed and rendered on</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_RemoteHardware"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#broaderGenre">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">broader genre</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <rdfs:comment xml:lang="en">A broader-descriptor relation with potentially multiple parents. No action-adventure parents are inferred.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Spacewar">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:label xml:lang="en">Spacewar!</rdfs:label>
+    <rdfs:comment xml:lang="en">The document identifies this as a 1962 computer game and an inspiration for Computer Space.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 7</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b29">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasDevicePart"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_StereoscopicScreen"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b40">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:intersectionOf rdf:nodeID="nc06c151c573947668238dde3362ab768b42"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b44"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b45"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b46"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b47"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Horror">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <rdfs:label xml:lang="en">Horror</rdfs:label>
+    <qualification xml:lang="en">An exception to generally interaction-based genre classification: based on narrative elements of horror fiction, the supernatural and psychological horror.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, line 111</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Console">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Console</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_Device"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Home console, line 53</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#providesTactileFeedback">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">provides tactile feedback</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_HapticTechnology"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_TactileFeedback"/>
+    <rdfs:comment xml:lang="en">Includes tactile sensations such as a controller shaking in the player's hands.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Display and output, line 103</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_CarmenSandiegoSeries">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdfs:label xml:lang="en">Carmen Sandiego series</rdfs:label>
+    <rdfs:comment xml:lang="en">Named by the document as an educational-game series. It is retained as a series-level named entity, not incorrectly typed as a single video game.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Educational games, line 135</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_HeadsUpDisplay">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Heads-up display</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_OnScreenUserInterface"/>
+    <rdfs:comment xml:lang="en">An on-screen user interface that presents gameplay information atop the rendered game.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b32">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasPlatformCategory"/>
+    <owl:hasValue rdf:resource="http://www.example.org/videogame#Ind_CloudGame"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#controlsAvatar">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">controls avatar</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Avatar"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_ActionAdventure">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_CrossGenreType"/>
+    <rdfs:label xml:lang="en">Action-adventure</rdfs:label>
+    <qualification xml:lang="en">A cross-genre type that can fall under multiple top-level genres; the TIP leaves its particular parent genres unasserted.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, line 113; videogame_tip_document_50_ver2.md, section 1, GameGenre</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#mayBeUsedForGenre">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">may be used for genre</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_SpecializedController"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <qualification xml:lang="en">Specialized controllers may serve certain genres, but the document supplies no specific controller-to-genre pairs.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Input device, line 95</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_CasualGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Casual game</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b54"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b55"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b56"/>
+    <qualification xml:lang="en">Designed for a mass-market audience. Frequently support entering and leaving play on demand; numerous browser and mobile games are casual. Often use low-intensity gameplay and may use social-network mechanics.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Casual games, line 131</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_MicrosoftFlightSimulator">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_SimulatorGame"/>
+    <rdfs:label xml:lang="en">Microsoft Flight Simulator</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Serious games, line 139</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_MobileDevice">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Mobile device</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_Device"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mobile game, line 69</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_ArcadeVideoGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_PlatformCategory"/>
+    <rdfs:label xml:lang="en">Arcade video game</rdfs:label>
+    <qualification xml:lang="en">Generally played on specialized equipment in a large coin-operated cabinet with a built-in console, controls, screen, amplifier and speakers. Typically dedicated to one game, but some offer a choice of games.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 5; Arcade video game, line 61</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#developedBy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">developed by</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b51">
+    <rdf:first rdf:nodeID="nc06c151c573947668238dde3362ab768b49"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_CrossRegionRatingAffirmation">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Cross-region rating affirmation</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_ContentRatingProcess"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b60"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b61"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b62"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b63"/>
+    <rdfs:comment xml:lang="en">The IARC-facilitated process that follows a completed provider review and affirms its content rating for other regions.</rdfs:comment>
+    <qualification xml:lang="en">The target is another region relative to the completed review. Relative ordering and regional difference are retained as source conditions, without a timeline, scale mapping or fabricated occurrence.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 161</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasGenre">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has genre</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <qualification xml:lang="en">Generally based on gameplay interaction; horror is a narrative-based exception. More than one genre may apply.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, lines 111-113</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#providesPositioningInformation">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">provides positioning information</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_MobileDevice"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_GlobalPositioningInformation"/>
+    <qualification xml:lang="en">A possible mobile-device feature, not a requirement on every mobile device.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mobile game, line 69</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasPlatformCategory">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has platform category</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_PlatformCategory"/>
+    <rdfs:comment xml:lang="en">Relational classification of games by platform; it does not classify platforms as games.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasComponent">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has component</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGamePlatform"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_PlatformComponent"/>
+    <rdfs:comment xml:lang="en">A platform-component relation without transitivity or component counts.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_WinningCondition">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Winning condition</rdfs:label>
+    <qualification xml:lang="en">Most video games feature a victory condition, such as a scoring mechanism or final boss fight, but a winning condition is not necessary for video-game status.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Definition, line 27</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ContentRating">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Content rating</rdfs:label>
+    <rdfs:comment xml:lang="en">An assigned classification of game content, distinct from the system and organization used to produce it.</rdfs:comment>
+    <qualification xml:lang="en">The document identifies target-age appropriateness, with most content review considering violence and sexual content; drug use, alcohol use and gambling may also influence ratings.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 147</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_CoreGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Core game</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b53"/>
+    <qualification xml:lang="en">Also called hard-core games. Typically require a fair amount of time to learn and master and are most appealing to gamers rather than a broader audience. No numeric learning or mastery duration is specified.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Core games, line 127</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasWinningCondition">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has winning condition</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_WinningCondition"/>
+    <qualification xml:lang="en">Most games have some victory condition, but interaction with a game world can support video-game status without one.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Definition, line 27</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_GamePurpose">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Game purpose</rdfs:label>
+    <rdfs:comment xml:lang="en">A purpose motivating game design, rather than a guaranteed effect on a player.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Types, lines 123-143</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#providesContent">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">provides content</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_GameExtension"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_GameContent"/>
+    <qualification xml:lang="en">Expansion packs and downloadable content can provide new content. The domain does not imply that every extension, or every extension subtype, provides content.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 91</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Device">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Device</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_Hardware"/>
+    <rdfs:comment xml:lang="en">Physical equipment used in platforms, input or output.</rdfs:comment>
+    <sourceLocator xml:lang="en">videogame_tip_document_50_ver2.md, section 2, device class registry</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#influencedByTheme">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">influenced by theme</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_ContentRating"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_ContentTheme"/>
+    <qualification xml:lang="en">Most review is based on violence, including its type and graphic presentation, and sexual content. Drug use, alcohol use and gambling may also be identified. No actual game rating is supplied.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 147</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b15">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#requiresPlatform"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_VideoGamePlatform"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_MobileGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_PlatformCategory"/>
+    <rdfs:label xml:lang="en">Mobile game</rdfs:label>
+    <qualification xml:lang="en">Mobile devices such as smartphones and tablets may use accelerometers, global positioning information and cameras for augmented reality gameplay; those features are optional.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 5; Mobile game, line 69</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#reviewedWith">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">reviewed with</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_ContentRatingReview"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:comment xml:lang="en">Identifies the provider with which the publisher completes this review.</rdfs:comment>
+    <qualification xml:lang="en">One provider suffices in the described IARC route; the property is not functional and has no exact-one constraint.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 161</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasDesignCharacteristic">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has design characteristic</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_DesignCharacteristic"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_CloudGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_PlatformCategory"/>
+    <rdfs:label xml:lang="en">Cloud game</rdfs:label>
+    <rdfs:comment xml:lang="en">Computed and rendered on remote hardware supplied by the cloud gaming provider.</rdfs:comment>
+    <qualification xml:lang="en">The source describes a minimal local device connected to a display and good Internet connectivity, with predictive methods to reduce input-to-output network latency.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Cloud gaming, line 73</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_DisplayDevice">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Display device</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_Device"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Display and output, line 99</sourceLocator>
+    <rdfs:comment xml:lang="en">A physical device that displays game graphics; it is neither the visual output itself nor an on-screen user interface.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Rogue">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:label xml:lang="en">Rogue</rdfs:label>
+    <rdfs:comment xml:lang="en">Named as the influential game from which the term roguelike derives.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, line 113</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_WalkingSimulator">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <rdfs:label xml:lang="en">Walking simulator</rdfs:label>
+    <broaderGenre rdf:resource="http://www.example.org/videogame#Ind_Adventure"/>
+    <rdfs:comment xml:lang="en">Adventure games allowing exploration but lacking objectives, as described in the document.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Definition, line 27</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_DancePad">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Dance pad</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_SpecializedController"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Input device, line 95</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Camera">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Camera</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_Device"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mobile game, line 69</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b13">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Axiom"/>
+    <owl:annotatedSource rdf:resource="http://www.example.org/videogame#Ind_Multiplayer"/>
+    <owl:annotatedProperty rdf:resource="http://www.example.org/videogame#hasPossibleGameplayStyle"/>
+    <owl:annotatedTarget rdf:resource="http://www.example.org/videogame#Ind_TeamBasedGameplay"/>
+    <qualification xml:lang="en">Many multiplayer games offer team-based gameplay; this is an option, not a requirement for every multiplayer game.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, line 117</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Mattel">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:label xml:lang="en">Mattel</rdfs:label>
+    <rdfs:comment xml:lang="en">The document identifies Mattel among companies releasing successful home consoles during the early industry period.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 7; Platform, line 43; Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Health">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Health</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_AvatarAttribute"/>
+    <rdfs:comment xml:lang="en">An avatar attribute depleted by damage in the described gameplay. A zero-health loss threshold is not an assertion about any actual avatar health value.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b61">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#affirmsRating"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_ContentRating"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_MagnavoxOdyssey">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Console"/>
+    <rdfs:label xml:lang="en">Magnavox Odyssey</rdfs:label>
+    <rdfs:comment xml:lang="en">Identified in the document as the first home console, introduced in 1972.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 7</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#intendedToGenerate">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">intended to generate</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_IntendedPlayerResponse"/>
+    <rdfs:comment xml:lang="en">Expresses design intention, not an observed or guaranteed player response.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_TimeManagement">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <rdfs:label xml:lang="en">Time management</rdfs:label>
+    <qualification xml:lang="en">Identified among genres often associated with low-intensity casual gameplay; not every game of the genre is asserted to be casual.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Casual games, line 131</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_HandheldGameConsole">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Handheld game console</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_Device"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b25"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b26"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b27"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b28"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Handheld console, line 57</sourceLocator>
+    <rdfs:comment xml:lang="en">A small, self-contained, portable unit integrating a console, small screen, speakers and controls. Buttons, a joystick or other game controllers are alternatives, not jointly mandatory control types.</rdfs:comment>
+    <qualification xml:lang="en">Handheld hardware is usually less powerful than PC or home-console hardware.</qualification>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_TheOregonTrail">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_EducationalGame"/>
+    <rdfs:label xml:lang="en">The Oregon Trail</rdfs:label>
+    <qualification xml:lang="en">Named as an educational-game example; no assignment to the narrower edutainment or problem-solving branch is supplied.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Educational games, line 135</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_TextBasedOutput">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VisualOutputForm"/>
+    <rdfs:label xml:lang="en">Text-based output</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Display and output, line 99</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#updatesContent">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">updates content</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_GameContent"/>
+    <rdfs:comment xml:lang="en">Links a derivative to the content it updates; modern-system context and reworking extent are qualified on the relevant version form.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_DrugUse">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_ContentTheme"/>
+    <rdfs:label xml:lang="en">Drug use</rdfs:label>
+    <qualification xml:lang="en">May be identified in content review as a theme that can influence children.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 147</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#altersOrAddsTo">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">alters or adds to</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_UserCreatedModification"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:subPropertyOf rdf:resource="http://www.example.org/videogame#extendsGame"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_MicrosoftWindows">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Software"/>
+    <rdfs:label xml:lang="en">Microsoft Windows</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 7</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b46">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#updatesContent"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_GameModel"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_PlatformCategory">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Platform category</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_ClassificationValue"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_EuropeanUnion">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Region"/>
+    <rdfs:label xml:lang="en">European Union</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 153</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_DesignCharacteristic">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Design characteristic</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Casual games, line 131</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Pong">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:label xml:lang="en">Pong</rdfs:label>
+    <rdfs:comment xml:lang="en">The document places the introduction of Pong in 1972.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 7</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasPossibleGameplayStyle">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has possible gameplay style</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_GameMode"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_GameplayStyle"/>
+    <rdfs:comment xml:lang="en">A possible style within a mode category; prevalence is qualified on the specific assertion.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_SameDevice">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_PlayArrangement"/>
+    <rdfs:label xml:lang="en">Locally on the same device</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mode, line 117</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_WiiFit">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_FitnessGame"/>
+    <rdfs:label xml:lang="en">Wii Fit</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Serious games, line 139</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_USK">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_ContentRatingOrganization"/>
+    <rdfs:label xml:lang="en">Unterhaltungssoftware Selbstkontrolle</rdfs:label>
+    <rdfs:label xml:lang="en">USK</rdfs:label>
+    <providesRatingsIn rdf:resource="http://www.example.org/videogame#Ind_Germany"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 159</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_SimpleToUnderstandGameplay">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_DesignCharacteristic"/>
+    <rdfs:label xml:lang="en">Simple-to-understand gameplay</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Casual games, line 131</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_GrandTheftAutoIII">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:label xml:lang="en">Grand Theft Auto III</rdfs:label>
+    <rdfs:comment xml:lang="en">Named as the influential game from which the term Grand Theft Auto clone derives.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, line 113</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#reachesGameOverScreen">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">reaches game-over screen</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_GameOverScreen"/>
+    <condition xml:lang="en">In the described gameplay, the player reaches the game-over screen after losing all lives without gaining an extra life, also called a 1-UP.</condition>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#isVersionOf">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">is version of</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:comment xml:lang="en">A direct derivation relation between games, not a subclass relation.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_GoneHome">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:label xml:lang="en">Gone Home</rdfs:label>
+    <hasGenre rdf:resource="http://www.example.org/videogame#Ind_WalkingSimulator"/>
+    <qualification xml:lang="en">The source names Gone Home as a walking simulator, allowing exploration without objectives, in its discussion of games without winning conditions. No winning condition or synthetic game-world individual is asserted.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Definition, line 27</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Roblox">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:label xml:lang="en">Roblox</rdfs:label>
+    <qualification xml:lang="en">The source discusses this among metaverses of interactive experiences in the 2021 Epic Games v. Apple case; whether the whole and its individual experiences counted as games was questioned. This typing follows the document's use of game, not a legal determination.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Definition, line 29</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_SimulatorGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Simulator game</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_SeriousGame"/>
+    <rdfs:comment xml:lang="en">Serious-game simulation, exemplified by flight simulation for piloting aircraft.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Serious games, line 139</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#losesLife">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">loses life</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Life"/>
+    <condition xml:lang="en">In the described gameplay, one life is lost when avatar health reaches zero OR the avatar enters an impossible-to-escape location. This conditional count is not an OWL cardinality constraint.</condition>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#displaysVisualOutput">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">displays visual output</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_DisplayDevice"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VisualOutput"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#extendsGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">extends game</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_GameExtension"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_SeparateDevicesInternet">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_PlayArrangement"/>
+    <rdfs:label xml:lang="en">Separate devices connected through separate Internet connections</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mode, line 117</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_XboxPlatform">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGamePlatform"/>
+    <rdfs:label xml:lang="en">Xbox</rdfs:label>
+    <rdfs:comment xml:lang="en">Named as a major console platform; no particular Xbox model or specific supported game is asserted.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Home console, line 53</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Party">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Party</rdfs:label>
+    <rdfs:comment xml:lang="en">A person or organization filling a contextual player, developer, publisher, distributor, retailer, marketer, manufacturer, provider or consumer role. A party may fill more than one role.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 9; Content rating, line 161</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_GameContent">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Game content</rdfs:label>
+    <rdfs:comment xml:lang="en">Reusable parent for art assets, in-game models and levels.</rdfs:comment>
+    <sourceLocator xml:lang="en">videogame_tip_document_50_ver2.md, section 2, content class registry</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_RemoteHardware">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Remote hardware</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_Hardware"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Cloud gaming, line 73</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#presentsInformation">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">presents information</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_HeadsUpDisplay"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_GameplayInformation"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#affectsVisualOutput">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">affects visual output</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_PlayerInteraction"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VisualOutput"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_MagneticTape">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Magnetic tape</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_MagneticStorage"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 89</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Software">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Software</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_PlatformComponent"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_GameCubePlatform">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGamePlatform"/>
+    <rdfs:label xml:lang="en">GameCube</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_VirtualMachine">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Virtual machine</rdfs:label>
+    <rdfs:comment xml:lang="en">The execution environment used for hardware simulation by an emulator and running on a host platform.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Emulation, line 81</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_TwoDimensionalGraphics">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VisualOutputForm"/>
+    <rdfs:label xml:lang="en">Two-dimensional graphics</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Display and output, line 99</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_VideoGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Video game</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_ElectronicGame"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b15"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b16"/>
+    <rdfs:comment xml:lang="en">An electronic game with player interaction affecting its visual output.</rdfs:comment>
+    <qualification xml:lang="en">A winning condition is not necessary when a player can interact with the game world. Most games have levels, but levels are not universally required. Most video games are intended for entertainment.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Definition, lines 25-27; Video game terminology, line 33; Types, line 123</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b72">
+    <rdf:first rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdf:rest rdf:nodeID="nc06c151c573947668238dde3362ab768b73"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Merlin">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_ElectronicGame"/>
+    <rdfs:label xml:lang="en">Merlin</rdfs:label>
+    <rdfs:comment xml:lang="en">A handheld electronic-game example distinguished from video games because its LED indicators were not combined for imaging. No video-game type is asserted.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Terminology, line 13</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b50">
+    <rdf:first rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdf:rest rdf:nodeID="nc06c151c573947668238dde3362ab768b51"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_IARC">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:label xml:lang="en">International Age Rating Coalition</rdfs:label>
+    <rdfs:label xml:lang="en">IARC</rdfs:label>
+    <rdfs:comment xml:lang="en">The facilitator of the described cross-region affirmation process, not asserted to assign ratings itself.</rdfs:comment>
+    <qualification xml:lang="en">Publishers may complete a content-rating review with one provider and use IARC to affirm the rating for other regions. No provider-to-provider scale mappings or process occurrences are supplied.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 161</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_GameModel">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">In-game model</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_GameContent"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Platform, line 43</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#publishedBy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">published by</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasVersionForm">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has version form</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VersionForm"/>
+    <qualification xml:lang="en">Version forms can overlap.</qualification>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_EducationalVideoGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Educational video game</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_EducationalGame"/>
+    <rdfs:comment xml:lang="en">The narrower educational branch geared toward problem solving through motivation and positive reinforcement while downplaying entertainment, rather than a synonym for every educational game.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Educational games, line 135</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasConsumer">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has consumer</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#manufacturedBy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">manufactured by</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_Hardware"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:comment xml:lang="en">Relates hardware, not a video game, to its manufacturer.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_FortniteCreative">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:label xml:lang="en">Fortnite Creative</rdfs:label>
+    <qualification xml:lang="en">The source discusses this among metaverses of interactive experiences in the 2021 Epic Games v. Apple case; whether the whole and its individual experiences counted as games was questioned. This typing follows the document's use of game, not a legal determination.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Definition, line 29</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#basedOnCompletedReview">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">based on completed review</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_CrossRegionRatingAffirmation"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_ContentRatingReview"/>
+    <condition xml:lang="en">The provider review is completed before its rating is affirmed for other regions through IARC.</condition>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 161</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_PlayerInteraction">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Player interaction</rdfs:label>
+    <rdfs:comment xml:lang="en">Interaction between a player and a game, including limited setup interaction. Only the defining interaction is required to affect visual output; not every action must do so.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Definition, line 25; Mode, line 119</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#targetsPlatform">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">targets platform</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VideoGamePlatform"/>
+    <rdfs:comment xml:lang="en">Records a derivative game's target platform. Alternative-platform status requires positive evidence, not absence of an original-platform assertion.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b55">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasDesignCharacteristic"/>
+    <owl:hasValue rdf:resource="http://www.example.org/videogame#Ind_SimpleToUnderstandGameplay"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b31">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:intersectionOf rdf:nodeID="nc06c151c573947668238dde3362ab768b33"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b35"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Atari">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:label xml:lang="en">Atari</rdfs:label>
+    <rdfs:comment xml:lang="en">The document identifies Atari among companies releasing successful home consoles during the early industry period.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 7; Platform, line 43; Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#enablesRestartOf">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">enables restart of</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_SavedGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <qualification xml:lang="en">Saved-game availability is optional.</qualification>
+    <condition xml:lang="en">A saved game can allow restarting after losing all lives or after stopping play and resuming at a later time. A written passage may be re-entered at the title screen.</condition>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_EducationalGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Educational game</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_SeriousGame"/>
+    <rdfs:comment xml:lang="en">Uses interactivity and game-design elements for education. The document names The Oregon Trail and the Carmen Sandiego series as examples.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Educational games, line 135; Serious games, line 139</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Advergame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Advergame</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_SeriousGame"/>
+    <rdfs:comment xml:lang="en">A game built around advertising a product.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Serious games, line 139</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Nintendo">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:label xml:lang="en">Nintendo</rdfs:label>
+    <rdfs:comment xml:lang="en">The document identifies Nintendo as a console manufacturer and platform holder, and associates it with the Game Boy line and Wii.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 7; Platform, line 43; Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#translatesHumanAction">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">translates human action</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_InputDevice"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_HumanAction"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#interactsWithWorld">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">interacts with world</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_GameWorld"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_FitnessGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Fitness game</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_SeriousGame"/>
+    <rdfs:comment xml:lang="en">Incorporates significant physical exercise to help keep the player fit.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Serious games, line 139</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Entertainment">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GamePurpose"/>
+    <rdfs:label xml:lang="en">Entertainment</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Types, line 123; Core games, line 127</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_RolePlayingGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <rdfs:label xml:lang="en">Role-playing game</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, line 113</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Newsgame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Newsgame</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_SeriousGame"/>
+    <rdfs:comment xml:lang="en">A game aimed at conveying a specific advocacy message.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Serious games, line 139</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_GameplayInformation">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Gameplay information</rdfs:label>
+    <rdfs:comment xml:lang="en">Information about gameplay relayed to the player through an on-screen interface.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasDefiningInteraction">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has defining interaction</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_PlayerInteraction"/>
+    <rdfs:comment xml:lang="en">Links a video game to the interaction required by its definition.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#affirmsRating">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">affirms rating</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_CrossRegionRatingAffirmation"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_ContentRating"/>
+    <rdfs:subPropertyOf rdf:resource="http://www.example.org/videogame#concernsRating"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#simulatesHardware">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">simulates hardware</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_Emulator"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Hardware"/>
+    <rdfs:comment xml:lang="en">The hardware simulated is that of the original system.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Emulation, line 81</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_CDROM">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">CD-ROM</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_OpticalMedia"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 89</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ExpansionPack">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Expansion pack</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_GameExtension"/>
+    <qualification xml:lang="en">Can provide new game content and software patches; typically available as physical media. May be free or used for post-release monetization.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 91</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_TactileFeedback">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Tactile feedback</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 3; Display and output, line 103</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_UserCreatedModification">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">User-created modification</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_GameExtension"/>
+    <rdfs:comment xml:lang="en">Also called a mod; a player-created alteration or addition to a game.</rdfs:comment>
+    <qualification xml:lang="en">Mostly described for personal-computer games. Often unofficial and developed through reverse engineering, but some games officially support modding.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 91</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ShooterGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Shooter game</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:comment xml:lang="en">A gameplay-based game class with first-person and third-person shooter subclasses; it is not also a genre-descriptor individual.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, lines 111-113</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_StereoscopicScreen">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Stereoscopic screen</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_DisplayDevice"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Virtual reality, line 77</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_CandyCrushSaga">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_CasualGame"/>
+    <rdfs:label xml:lang="en">Candy Crush Saga</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Casual games, line 131</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b36">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:intersectionOf rdf:nodeID="nc06c151c573947668238dde3362ab768b38"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Port">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VersionForm"/>
+    <rdfs:label xml:lang="en">Port</rdfs:label>
+    <rdfs:label xml:lang="en">Conversion</rdfs:label>
+    <rdfs:comment xml:lang="en">A game developed for an alternative platform to the one originally intended.</rdfs:comment>
+    <qualification xml:lang="en">Alternative-platform status requires positive source evidence. A port may also be a remaster or remake; the forms are not exclusive.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Platform, line 43</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_CooperativeGameplay">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameplayStyle"/>
+    <rdfs:label xml:lang="en">Cooperative gameplay</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mode, line 117</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#healthValue">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">health value</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_Health"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    <rdfs:comment xml:lang="en">Records a supplied health value. The zero-health loss condition does not provide an actual avatar health measurement.</rdfs:comment>
+    <sourceLocator xml:lang="en">videogame_tip_document_50_ver2.md, section 2, data properties; Video Game Document.txt, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_VideoGamePlatform">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Video game platform</rdfs:label>
+    <rdfs:label xml:lang="en">System</rdfs:label>
+    <rdfs:comment xml:lang="en">A combination of electronic components or computer hardware and associated software required to operate a game.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Platform, line 43</sourceLocator>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b23"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b24"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#concernsRating">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">concerns rating</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_ContentRatingProcess"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_ContentRating"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b37">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#providedBy"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_SinglePlayer">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameMode"/>
+    <rdfs:label xml:lang="en">Single-player</rdfs:label>
+    <simultaneousPlayerCount rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</simultaneousPlayerCount>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mode, line 117; videogame_tip_document_50_ver2.md, section 2, data properties</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#providesPatch">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">provides patch</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_GameExtension"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_SoftwarePatch"/>
+    <qualification xml:lang="en">Expansion packs and downloadable content can provide software patches. This is not a universal provision requirement on game extensions.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 91</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Passage">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_ArtGame"/>
+    <rdfs:label xml:lang="en">Passage</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Art games, line 143</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Television">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Television</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_DisplayDevice"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Display and output, line 99</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b63">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#facilitatedBy"/>
+    <owl:hasValue rdf:resource="http://www.example.org/videogame#Ind_IARC"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_WiiBackwardCompatibility">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_BackwardCompatibility"/>
+    <rdf:type rdf:nodeID="nc06c151c573947668238dde3362ab768b69"/>
+    <rdfs:label xml:lang="en">Wii backward compatibility with GameCube games</rdfs:label>
+    <qualification xml:lang="en">The documented capability uses original game media. The document supplies no named compatible titles or assertion that every GameCube game is compatible.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ContentRatingReview">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Content rating review</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_ContentRatingProcess"/>
+    <rdfs:comment xml:lang="en">Scopes a publisher submission, reviewing provider and content rating to a single review. No actual review occurrence is supplied.</rdfs:comment>
+    <qualification xml:lang="en">Completing a review with one provider is sufficient for the described IARC route; this is not an exact-one-provider constraint.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 161</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_MatchThree">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <rdfs:label xml:lang="en">Match three</rdfs:label>
+    <qualification xml:lang="en">Identified among genres often associated with low-intensity casual gameplay; not every game of the genre is asserted to be casual.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Casual games, line 131</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_ComputerGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_PlatformCategory"/>
+    <rdfs:label xml:lang="en">Computer game</rdfs:label>
+    <rdfs:comment xml:lang="en">The PC/platform grouping, not the unrestricted lexical synonym for all video games.</rdfs:comment>
+    <qualification xml:lang="en">Personal computers are not dedicated game platforms; hardware differences can affect execution. The source also describes mainframe and shared-system gaming.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Terminology, line 15; PC games, line 49</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_NarcoGuerra">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Newsgame"/>
+    <rdfs:label xml:lang="en">NarcoGuerra</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Serious games, line 139</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b22">
+    <rdf:first rdf:resource="http://www.example.org/videogame#affectsVisualOutput"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ElectronicGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Electronic game</rdfs:label>
+    <rdfs:comment xml:lang="en">The broader electronic-game category includes video games and electronic games without video output.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Terminology, lines 13-17</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_TeamBasedGameplay">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameplayStyle"/>
+    <rdfs:label xml:lang="en">Team-based gameplay</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mode, line 117</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_SeparateDevicesLocalNetwork">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_PlayArrangement"/>
+    <rdfs:label xml:lang="en">Separate devices connected through a local network</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mode, line 117</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#depletesHealth">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">depletes health</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_Damage"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Health"/>
+    <rdfs:comment xml:lang="en">Taking damage depletes avatar health in the described gameplay; no numeric update rule is asserted.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ContentRatingSystem">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Content rating system</rdfs:label>
+    <rdfs:comment xml:lang="en">A rating scheme, distinct from an organization or an assigned content rating.</rdfs:comment>
+    <qualification xml:lang="en">Nearly all systems use a primary minimum-age identifier and additional specific-content descriptors. Systems are generally voluntary and upheld by vendor practices; regulations vary by country. The document reports penalties or fines for publisher misuse and an ACB legal-enforcement exception. These are source reports, not independently verified current rules.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, lines 147-155</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_PlatformComponent">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Platform component</rdfs:label>
+    <rdfs:comment xml:lang="en">Reusable parent for the hardware and software components of a platform.</rdfs:comment>
+    <sourceLocator xml:lang="en">videogame_tip_document_50_ver2.md, section 2, platform component class registry</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_AsymmetricGameplay">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameplayStyle"/>
+    <rdfs:label xml:lang="en">Asymmetric gameplay</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mode, line 117</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_SavedGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Saved game</rdfs:label>
+    <rdfs:comment xml:lang="en">A recorded game state on storage media, or a passage that can be written down and re-entered, supporting a restart.</rdfs:comment>
+    <qualification xml:lang="en">Available in some games, including through intermediate save points; availability is not required for every game.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_WiiPlatform">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGamePlatform"/>
+    <rdfs:label xml:lang="en">Wii</rdfs:label>
+    <hasComponent rdf:resource="http://www.example.org/videogame#Ind_WiiConsole"/>
+    <hasBackwardCompatibility rdf:resource="http://www.example.org/videogame#Ind_WiiBackwardCompatibility"/>
+    <rdfs:comment xml:lang="en">The source describes Wii playing GameCube titles using their original media.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#usesVirtualMachine">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">uses virtual machine</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_Emulator"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VirtualMachine"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#producesVisualOutput">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">produces visual output</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VisualOutput"/>
+    <owl:propertyChainAxiom rdf:nodeID="nc06c151c573947668238dde3362ab768b21"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#providesMotionTracking">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">provides motion tracking</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_HeadMountedUnit"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_MotionTracking"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_MinimumAgeIdentifier">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Minimum-age identifier</rdfs:label>
+    <rdfs:comment xml:lang="en">A lexical primary identifier based on minimum age. No specific rating-age values or scale mappings are populated.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 147</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b44">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#reusesSourceCode"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_SourceCode"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_AugmentedRealityGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_PlatformCategory"/>
+    <rdfs:label xml:lang="en">Augmented reality game</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 5; Mobile game, line 69</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Android">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Software"/>
+    <rdfs:label xml:lang="en">Android</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mobile game, line 69</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Gambling">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_ContentTheme"/>
+    <rdfs:label xml:lang="en">Gambling</rdfs:label>
+    <qualification xml:lang="en">May be identified in content review as a theme that can influence children.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 147</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#affirmedForRegion">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">affirmed for region</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_CrossRegionRatingAffirmation"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Region"/>
+    <qualification xml:lang="en">Another region relative to the completed review; no exhaustive list of regions or rating-scale equivalence is asserted.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 161</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b54">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasDesignCharacteristic"/>
+    <owl:hasValue rdf:resource="http://www.example.org/videogame#Ind_EaseOfAccessibility"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_SpaceChem">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:label xml:lang="en">SpaceChem</rdfs:label>
+    <hasGenre rdf:resource="http://www.example.org/videogame#Ind_PuzzleGame"/>
+    <qualification xml:lang="en">Named as a puzzle game offering critical-thinking skills and used in classrooms after release, although not initially developed for education.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Educational games, line 135</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Australia">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Region"/>
+    <rdfs:label xml:lang="en">Australia</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 155</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_ComputerSpace">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:label xml:lang="en">Computer Space</rdfs:label>
+    <hasPlatformCategory rdf:resource="http://www.example.org/videogame#Ind_ArcadeVideoGame"/>
+    <rdfs:comment xml:lang="en">The document identifies Computer Space, released in 1971, as the first consumer video game and says it took inspiration from the 1962 computer game Spacewar!. Inspiration is not asserted as isVersionOf.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 7</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ContentDescriptor">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Content descriptor</rdfs:label>
+    <rdfs:comment xml:lang="en">Identifies specific content that players and parents should be aware of.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 147</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#providedBy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">provided by</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_RemoteHardware"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:comment xml:lang="en">Identifies the cloud gaming provider supplying the remote hardware.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_ESRB">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_ContentRatingOrganization"/>
+    <rdfs:label xml:lang="en">Entertainment Software Rating Board</rdfs:label>
+    <rdfs:label xml:lang="en">ESRB</rdfs:label>
+    <providesRatingsIn rdf:resource="http://www.example.org/videogame#Ind_UnitedStates"/>
+    <qualification xml:lang="en">The document describes ESRB ratings as voluntary; no current-law verification or rating-scale mapping is asserted.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 151</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_EdutainmentGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Edutainment game</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_EducationalGame"/>
+    <qualification xml:lang="en">Tends to emphasize entertainment and rote learning and is described as unlikely to engage critical thinking.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Educational games, line 135</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#allowsPlayArrangement">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">allows play arrangement</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_GameMode"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_PlayArrangement"/>
+    <rdfs:comment xml:lang="en">An available option within a mode category, not a requirement for every game with that mode.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasBackwardCompatibility">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has backward compatibility</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGamePlatform"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_BackwardCompatibility"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Projector">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Projector</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_DisplayDevice"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Display and output, line 99</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasContentRating">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has content rating</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_ContentRating"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_SourceCode">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Source code</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Platform, line 43</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_iOS">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Software"/>
+    <rdfs:label xml:lang="en">iOS</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mobile game, line 69</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b16">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasDefiningInteraction"/>
+    <owl:someValuesFrom rdf:nodeID="nc06c151c573947668238dde3362ab768b17"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_CERO">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_ContentRatingOrganization"/>
+    <rdfs:label xml:lang="en">Computer Entertainment Rating Organization</rdfs:label>
+    <rdfs:label xml:lang="en">CERO</rdfs:label>
+    <providesRatingsIn rdf:resource="http://www.example.org/videogame#Ind_Japan"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 157</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#sourceLocator">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AnnotationProperty"/>
+    <rdfs:label xml:lang="en">source locator</rdfs:label>
+    <rdfs:comment xml:lang="en">Identifies a supplied file and its section or line range supporting the annotated statement.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Microsoft">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:label xml:lang="en">Microsoft</rdfs:label>
+    <rdfs:comment xml:lang="en">The document identifies Microsoft among the major console manufacturers in its historical account.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 7; Platform, line 43; Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_PhysicalGameMedia">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Physical game media</rdfs:label>
+    <qualification xml:lang="en">Physical delivery is optional; digital distribution and cloud gaming can remove the need for physical media. Media may be used directly or for installing assets to local storage.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 89</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_AugmentedRealityDisplay">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VisualOutputForm"/>
+    <rdfs:label xml:lang="en">Augmented reality display</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Display and output, line 99</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ComputerMonitor">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Computer monitor</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_DisplayDevice"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Display and output, line 99</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_MSDOS">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Software"/>
+    <rdfs:label xml:lang="en">MS-DOS</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 7</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b25">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasDevicePart"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_Console"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Pepsiman">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Advergame"/>
+    <rdfs:label xml:lang="en">Pepsiman</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Serious games, line 139</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b8">
+    <rdf:first rdf:resource="http://www.example.org/videogame#Cl_ContentRatingOrganization"/>
+    <rdf:rest rdf:nodeID="nc06c151c573947668238dde3362ab768b9"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b57">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasPurpose"/>
+    <owl:hasValue rdf:resource="http://www.example.org/videogame#Ind_NonEntertainmentPurpose"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b74">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasComponent"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_RemoteHardware"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b30">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#providesMotionTracking"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_MotionTracking"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Multiplayer">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameMode"/>
+    <rdfs:label xml:lang="en">Multiplayer</rdfs:label>
+    <allowsPlayArrangement rdf:resource="http://www.example.org/videogame#Ind_SameDevice"/>
+    <allowsPlayArrangement rdf:resource="http://www.example.org/videogame#Ind_SeparateDevicesLocalNetwork"/>
+    <allowsPlayArrangement rdf:resource="http://www.example.org/videogame#Ind_SeparateDevicesInternet"/>
+    <hasPossibleGameplayStyle rdf:resource="http://www.example.org/videogame#Ind_CompetitiveGameplay"/>
+    <hasPossibleGameplayStyle rdf:resource="http://www.example.org/videogame#Ind_CooperativeGameplay"/>
+    <hasPossibleGameplayStyle rdf:resource="http://www.example.org/videogame#Ind_TeamBasedGameplay"/>
+    <hasPossibleGameplayStyle rdf:resource="http://www.example.org/videogame#Ind_AsymmetricGameplay"/>
+    <qualification xml:lang="en">Most multiplayer games are based on competitive gameplay; many offer cooperative and team-based options as well as asymmetric gameplay. The arrangements and styles are category options, not obligations for each multiplayer game. The source describes MMOs supporting hundreds of simultaneous players without giving an exact multiplayer count.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mode, line 117</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#usesContentDescriptor">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">uses content descriptor</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_ContentRatingSystem"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_ContentDescriptor"/>
+    <qualification xml:lang="en">Nearly all systems provide additional descriptors identifying specific content; not a universal requirement.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 147</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_FlashMemoryCard">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Flash memory card</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_PhysicalGameMedia"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 89</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_GameWorld">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Game world</rdfs:label>
+    <rdfs:comment xml:lang="en">The world with which a player can interact within a game.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Definition, line 27</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_PlayStation2BackwardCompatibility">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_BackwardCompatibility"/>
+    <rdf:type rdf:nodeID="nc06c151c573947668238dde3362ab768b64"/>
+    <rdfs:label xml:lang="en">PlayStation 2 backward compatibility with PlayStation games</rdfs:label>
+    <qualification xml:lang="en">The documented capability uses original game media. The document supplies no named compatible titles or assertion that every PlayStation game is compatible.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Remake">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VersionForm"/>
+    <rdfs:label xml:lang="en">Remake</rdfs:label>
+    <qualification xml:lang="en">Includes asset improvements and significant reworking of the original game, possibly from scratch. Starting from scratch is possible, not mandatory; a remake is not required to avoid source-code reuse.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Platform, line 43</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b38">
+    <rdf:first rdf:resource="http://www.example.org/videogame#Cl_RemoteHardware"/>
+    <rdf:rest rdf:nodeID="nc06c151c573947668238dde3362ab768b39"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b35">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#computedAndRenderedOn"/>
+    <owl:someValuesFrom rdf:nodeID="nc06c151c573947668238dde3362ab768b36"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_ShootEmUp">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <rdfs:label xml:lang="en">Shoot 'em up</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, line 113</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Coleco">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:label xml:lang="en">Coleco</rdfs:label>
+    <rdfs:comment xml:lang="en">The document identifies Coleco among companies releasing successful home consoles during the early industry period.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 7; Platform, line 43; Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b41">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasVersionForm"/>
+    <owl:hasValue rdf:resource="http://www.example.org/videogame#Ind_Remaster"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasVisualOutputForm">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has visual output form</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VisualOutput"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VisualOutputForm"/>
+    <qualification xml:lang="en">Output forms are not exclusive.</qualification>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_ThatDragonCancer">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_ArtGame"/>
+    <rdfs:label xml:lang="en">That Dragon, Cancer</rdfs:label>
+    <qualification xml:lang="en">Named as an empathy game in the discussion of games without winning conditions and as an art-game example. No winning condition is fabricated.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Definition, line 27; Art games, line 143</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Emulator">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Emulator</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_Software"/>
+    <rdfs:comment xml:lang="en">Software enabling games from a different system to run by simulating the original hardware in a virtual machine on a host platform.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Emulation, line 81</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_SoftwarePatch">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Software patch</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_Software"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 91</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_PlayStationNowPlatform">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGamePlatform"/>
+    <rdf:type rdf:nodeID="nc06c151c573947668238dde3362ab768b75"/>
+    <rdfs:label xml:lang="en">PlayStation Now</rdfs:label>
+    <rdfs:comment xml:lang="en">The document describes dedicated custom server-blade hardware in cloud-computing centers for this platform. This is a document-reported platform example, not a claim about current service availability.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Cloud gaming, line 73</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b1">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="nc06c151c573947668238dde3362ab768b2"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b60">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#basedOnCompletedReview"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_ContentRatingReview"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#mayBeDistributedOn">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">may be distributed on</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_PhysicalGameMedia"/>
+    <qualification xml:lang="en">Physical distribution is optional; digital distribution and cloud gaming can avoid physical game media.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 89</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#distributedBy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">distributed by</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b19">
+    <rdf:first rdf:resource="http://www.example.org/videogame#Cl_PlayerInteraction"/>
+    <rdf:rest rdf:nodeID="nc06c151c573947668238dde3362ab768b20"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b27">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasDevicePart"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_Speaker"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b42">
+    <rdf:first rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdf:rest rdf:nodeID="nc06c151c573947668238dde3362ab768b43"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_BuiltInScreen">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Built-in screen</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_DisplayDevice"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Handheld console, line 57; Display and output, line 99</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b6">
+    <rdf:first rdf:resource="http://www.example.org/videogame#Cl_BackwardCompatibility"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b45">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#updatesContent"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_ArtAsset"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b26">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasDevicePart"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_BuiltInScreen"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Speaker">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Speaker</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_Device"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Display and output, line 101</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b48">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:intersectionOf rdf:nodeID="nc06c151c573947668238dde3362ab768b50"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b52"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_CompetitiveGameplay">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameplayStyle"/>
+    <rdfs:label xml:lang="en">Competitive gameplay</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mode, line 117</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_GameController">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Game controller</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_InputDevice"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Input device, line 95</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_GameGenre">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Game genre</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_ClassificationValue"/>
+    <qualification xml:lang="en">Genres are generally based on gameplay interaction rather than narrative setting. Horror is a narrative-based exception. Genre names may change over time; no single-parent hierarchy is imposed.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, lines 111-113</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_ConsoleGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_PlatformCategory"/>
+    <rdfs:label xml:lang="en">Console game</rdfs:label>
+    <rdfs:comment xml:lang="en">The home-console grouping; a home console connects to a television or composite video monitor and offers a dedicated hardware environment.</rdfs:comment>
+    <qualification xml:lang="en">Often comes with a specific game controller. The source describes restrictions on which platforms' games normally run, rather than an ontology-wide exclusion rule.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Home console, line 53</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Roguelike">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <rdfs:label xml:lang="en">Roguelike</rdfs:label>
+    <rdfs:comment xml:lang="en">The genre name derives from the influential game Rogue.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, line 113</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_ThreeDimensionalGraphics">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VisualOutputForm"/>
+    <rdfs:label xml:lang="en">Three-dimensional graphics</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Display and output, line 99</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b9">
+    <rdf:first rdf:resource="http://www.example.org/videogame#Cl_ContentRatingSystem"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ContentRatingProcess">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Content rating process</rdfs:label>
+    <rdfs:comment xml:lang="en">Parent for the source-described rating review and subsequent cross-region affirmation, rather than an event model for every domain relationship.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 161</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#submittedBy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">submitted by</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_ContentRatingReview"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:comment xml:lang="en">Identifies the publisher submitting the content-rating review, scoped to that review.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b17">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:intersectionOf rdf:nodeID="nc06c151c573947668238dde3362ab768b19"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#createdByPlayer">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">created by player</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_UserCreatedModification"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:comment xml:lang="en">Identifies the party in its player-creator role for a modification.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#providesRatingsIn">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">provides ratings in</rdfs:label>
+    <rdfs:domain rdf:nodeID="nc06c151c573947668238dde3362ab768b7"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Region"/>
+    <rdfs:comment xml:lang="en">Coverage within a region, not necessarily every jurisdiction or place in it. The union domain does not equate organizations and systems.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_AvatarAttribute">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Avatar attribute</rdfs:label>
+    <rdfs:comment xml:lang="en">An innate attribute of an avatar that a power-up may boost.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b73">
+    <rdf:first rdf:nodeID="nc06c151c573947668238dde3362ab768b71"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasDevicePart">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has device part</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_Device"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Device"/>
+    <rdfs:comment xml:lang="en">Integrated equipment parthood, without transitivity or exact part counts.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#requiresHeadMountedUnit">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">requires head-mounted unit</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_HeadMountedUnit"/>
+    <qualification xml:lang="en">VR games generally require this equipment; no universal headset restriction is imposed on VR-tagged games.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Virtual reality, line 77</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_TopLevelGenre">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Top-level genre</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, line 113</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b59">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#intendedToGenerate"/>
+    <owl:hasValue rdf:resource="http://www.example.org/videogame#Ind_Empathy"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Sony">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:label xml:lang="en">Sony</rdfs:label>
+    <rdfs:comment xml:lang="en">The document identifies Sony as a console manufacturer and platform holder.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Introduction, line 7; Platform, line 43; Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#maySupportARGameplay">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">may support augmented reality gameplay</rdfs:label>
+    <rdfs:domain rdf:nodeID="nc06c151c573947668238dde3362ab768b1"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_AugmentedRealityGameplay"/>
+    <qualification xml:lang="en">Mobile accelerometers, cameras and global positioning information may support augmented reality gameplay. Positioning information is not a device.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mobile game, line 69</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b47">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#updatesContent"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_Level"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_OnScreenUserInterface">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">On-screen user interface</rdfs:label>
+    <rdfs:comment xml:lang="en">An interface presented on screen, rather than the physical display device.</rdfs:comment>
+    <sourceLocator xml:lang="en">videogame_tip_document_50_ver2.md, section 2, gameplay class registry</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ContentRatingOrganization">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Content rating organization</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:comment xml:lang="en">An organization providing content ratings, distinct from a rating scheme and an assigned rating.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, lines 151-159</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b65">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:intersectionOf rdf:nodeID="nc06c151c573947668238dde3362ab768b67"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b66">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#originallyIntendedFor"/>
+    <owl:hasValue rdf:resource="http://www.example.org/videogame#Ind_PlayStationPlatform"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#reusesSourceCode">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">reuses source code</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_SourceCode"/>
+    <rdfs:comment xml:lang="en">Links a derivative game to reused source code. The extent qualifier for remasters belongs to the Remaster form.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_RacingWheel">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Racing wheel</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_SpecializedController"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Input device, line 95</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_UnitedKingdom">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Region"/>
+    <rdfs:label xml:lang="en">United Kingdom</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 153</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_MagneticStorage">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Magnetic storage</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_PhysicalGameMedia"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 89</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b69">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#enablesExecutionOf"/>
+    <owl:someValuesFrom rdf:nodeID="nc06c151c573947668238dde3362ab768b70"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b49">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasVersionForm"/>
+    <owl:hasValue rdf:resource="http://www.example.org/videogame#Ind_Remake"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_SexualContent">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_ContentTheme"/>
+    <rdfs:label xml:lang="en">Sexual content</rdfs:label>
+    <qualification xml:lang="en">Together with violence, described as a basis of most content review.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 147</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b33">
+    <rdf:first rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdf:rest rdf:nodeID="nc06c151c573947668238dde3362ab768b34"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_UnitedStates">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Region"/>
+    <rdfs:label xml:lang="en">United States</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 151</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Japan">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_Region"/>
+    <rdfs:label xml:lang="en">Japan</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 157</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_DVD">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">DVD</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_OpticalMedia"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 89</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Life">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Life</rdfs:label>
+    <rdfs:comment xml:lang="en">A countable allowance that a player can lose or gain in the described gameplay. An extra life is also called a 1-UP.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_BackwardCompatibility">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Backward compatibility</rdfs:label>
+    <rdfs:comment xml:lang="en">A platform capability enabling older games to be played on newer platforms; not a subtype of emulator.</rdfs:comment>
+    <qualification xml:lang="en">Typically operates directly through the newer platform hardware and built-in software. This mechanism is typical, not universal.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#designedFor">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">designed for</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_VideoGamePlatform"/>
+    <qualification xml:lang="en">Games are typically designed for one or a limited number of platforms; no maximum or exact count is asserted.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Platform, line 43</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Region">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Region</rdfs:label>
+    <rdfs:comment xml:lang="en">A geographical jurisdiction or grouping within which ratings are provided; a coverage relation does not assert coverage of every place in the region.</rdfs:comment>
+    <sourceLocator xml:lang="en">videogame_tip_document_50_ver2.md, section 2, parties and ratings registry</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasAttribute">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has attribute</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_Avatar"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_AvatarAttribute"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ROMCartridge">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">ROM cartridge</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_PhysicalGameMedia"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 89</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#gainsExtraLife">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">gains extra life</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Life"/>
+    <rdfs:comment xml:lang="en">An extra life is also called a 1-UP.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_GameInput">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Game input</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Input device, line 95</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_VersionForm">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Version form</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_ClassificationValue"/>
+    <rdfs:comment xml:lang="en">Port, Remaster and Remake are potentially overlapping version-form values, not video-game subclasses.</rdfs:comment>
+    <sourceLocator xml:lang="en">videogame_tip_document_50_ver2.md, section 1, VersionForm; Video Game Document.txt, Platform, line 43</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Adventure">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <rdfs:label xml:lang="en">Adventure</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Definition, line 27</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_ActionGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_TopLevelGenre"/>
+    <rdfs:label xml:lang="en">Action game</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, line 113</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_FixedDisplay">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VisualOutputForm"/>
+    <rdfs:label xml:lang="en">Fixed display</rdfs:label>
+    <rdfs:comment xml:lang="en">Uses LED or LCD elements.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Display and output, line 99</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_VisualOutput">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Visual output</rdfs:label>
+    <rdfs:comment xml:lang="en">Visual output produced by a game, distinct from the device displaying it. Output forms can overlap.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Display and output, line 99</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ContentTheme">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Content theme</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 147</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b58">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#intendedToGenerate"/>
+    <owl:hasValue rdf:resource="http://www.example.org/videogame#Ind_Emotion"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ArtAsset">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Art asset</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_GameContent"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Platform, line 43</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_PlayStationPlatform">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGamePlatform"/>
+    <rdfs:label xml:lang="en">PlayStation</rdfs:label>
+    <rdfs:comment xml:lang="en">The original PlayStation platform in the source's backward-compatibility example, not a claim about every platform bearing the PlayStation brand.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Backward compatibility, line 85</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_QuickToGraspRuleSets">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_DesignCharacteristic"/>
+    <rdfs:label xml:lang="en">Quick-to-grasp rule sets</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Casual games, line 131</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#simultaneousPlayerCount">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:label xml:lang="en">simultaneous player count</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_GameMode"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+    <rdfs:comment xml:lang="en">An explicitly supplied simultaneous-player count for a mode value. Only Single-Player is assigned the value 1; no exact multiplayer count or zero-human-involvement count is asserted.</rdfs:comment>
+    <sourceLocator xml:lang="en">videogame_tip_document_50_ver2.md, section 2, data properties; Video Game Document.txt, Mode, lines 117-119</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b18">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#affectsVisualOutput"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_VisualOutput"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_InputDevice">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Input device</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_Device"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Input device, line 95</sourceLocator>
+    <rdfs:comment xml:lang="en">Translates human actions into game input. The document mentions controllers, keyboards, mice, touchscreens, motion sensors, cameras and microphones as possible input equipment.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Flower">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_ArtGame"/>
+    <rdfs:label xml:lang="en">Flower</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Art games, line 143</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_IntendedPlayerResponse">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Intended player response</rdfs:label>
+    <rdfs:comment xml:lang="en">A response intended by game design; it need not actually occur.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Art games, line 143</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_PowerUp">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Power-up</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#playedBy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">played by</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:comment xml:lang="en">Identifies the player in relation to a particular game; it does not create a permanent player identity.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_DragonsLair">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:label xml:lang="en">Dragon's Lair</rdfs:label>
+    <qualification xml:lang="en">An example of an interactive-film game using full-motion video and only limited user interaction. Limited interaction is not treated as absence of defining interaction.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Definition, line 25</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#hasMode">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">has mode</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_GameMode"/>
+    <qualification xml:lang="en">Mode facets need not be exclusive. No universal player cardinality is imposed.</qualification>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b64">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#enablesExecutionOf"/>
+    <owl:someValuesFrom rdf:nodeID="nc06c151c573947668238dde3362ab768b65"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Tetris">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_CasualGame"/>
+    <rdfs:label xml:lang="en">Tetris</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Casual games, line 131</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_OpticalMedia">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Optical media</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_PhysicalGameMedia"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Game media, line 89</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b2">
+    <rdf:first rdf:resource="http://www.example.org/videogame#Cl_Device"/>
+    <rdf:rest rdf:nodeID="nc06c151c573947668238dde3362ab768b3"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b71">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#originallyIntendedFor"/>
+    <owl:hasValue rdf:resource="http://www.example.org/videogame#Ind_GameCubePlatform"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Damage">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Damage</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Video game terminology, line 33</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_VisualOutputForm">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Visual output form</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_ClassificationValue"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b3">
+    <rdf:first rdf:resource="http://www.example.org/videogame#Cl_GlobalPositioningInformation"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#producesGameInput">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">produces game input</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_InputDevice"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_GameInput"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b67">
+    <rdf:first rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdf:rest rdf:nodeID="nc06c151c573947668238dde3362ab768b68"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b5">
+    <rdf:first rdf:resource="http://www.example.org/videogame#Cl_Emulator"/>
+    <rdf:rest rdf:nodeID="nc06c151c573947668238dde3362ab768b6"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_PuzzleGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GameGenre"/>
+    <rdfs:label xml:lang="en">Puzzle game</rdfs:label>
+    <qualification xml:lang="en">Identified among genres often associated with low-intensity casual gameplay; not every game of the genre is asserted to be casual.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Casual games, line 131</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#retailedBy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">retailed by</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_VideoGame"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b68">
+    <rdf:first rdf:nodeID="nc06c151c573947668238dde3362ab768b66"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b4">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="nc06c151c573947668238dde3362ab768b5"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Hardware">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Hardware</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_PlatformComponent"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_FlappyBird">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_CasualGame"/>
+    <rdfs:label xml:lang="en">Flappy Bird</rdfs:label>
+    <rdfs:comment xml:lang="en">Named as an example of hyper-casual games with especially simple rules and short, replayable play; no additional game subclass is introduced.</rdfs:comment>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Casual games, line 131</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b52">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#updatesContent"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_ArtAsset"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#facilitatedBy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:label xml:lang="en">facilitated by</rdfs:label>
+    <rdfs:domain rdf:resource="http://www.example.org/videogame#Cl_CrossRegionRatingAffirmation"/>
+    <rdfs:range rdf:resource="http://www.example.org/videogame#Cl_Party"/>
+    <rdfs:comment xml:lang="en">Identifies the facilitator, not necessarily a rating-assigning organization.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_NonEntertainmentPurpose">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_GamePurpose"/>
+    <rdfs:label xml:lang="en">Non-entertainment purpose</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Serious games, line 139</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Level">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Level</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_GameContent"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Platform, line 43</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b70">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:intersectionOf rdf:nodeID="nc06c151c573947668238dde3362ab768b72"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_Accelerometer">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Accelerometer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_Device"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Mobile game, line 69</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#condition">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AnnotationProperty"/>
+    <rdfs:label xml:lang="en">condition</rdfs:label>
+    <rdfs:comment xml:lang="en">Preserves a source-described condition; the text is not an executable state transition or an OWL cardinality constraint.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_GameplayStyle">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Gameplay style</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_ClassificationValue"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b56">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasDesignCharacteristic"/>
+    <owl:hasValue rdf:resource="http://www.example.org/videogame#Ind_QuickToGraspRuleSets"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Violence">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_ContentTheme"/>
+    <rdfs:label xml:lang="en">Violence</rdfs:label>
+    <qualification xml:lang="en">Content review considers both the type of violence and how graphically it is represented; most review is based on violence and sexual content.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Content rating, line 147</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_HeadMountedUnit">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Head-mounted unit</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_Device"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b29"/>
+    <rdfs:subClassOf rdf:nodeID="nc06c151c573947668238dde3362ab768b30"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Virtual reality, line 77</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_Empathy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_IntendedPlayerResponse"/>
+    <rdfs:label xml:lang="en">Empathy</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Art games, line 143</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_ThirdPersonShooter">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Third-person shooter</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_ShooterGame"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, line 113</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b7">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:unionOf rdf:nodeID="nc06c151c573947668238dde3362ab768b8"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b53">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasPurpose"/>
+    <owl:hasValue rdf:resource="http://www.example.org/videogame#Ind_Entertainment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_HumanAction">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Human action</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Input device, line 95</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b28">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+    <owl:onProperty rdf:resource="http://www.example.org/videogame#hasDevicePart"/>
+    <owl:someValuesFrom rdf:resource="http://www.example.org/videogame#Cl_GameController"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/dc/terms/source">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AnnotationProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b43">
+    <rdf:first rdf:nodeID="nc06c151c573947668238dde3362ab768b41"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_PlayArrangement">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Play arrangement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_ClassificationValue"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_MotionTracking">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">Motion tracking</rdfs:label>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Virtual reality, line 77</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Ind_VirtualRealityGame">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+    <rdf:type rdf:resource="http://www.example.org/videogame#Cl_PlatformCategory"/>
+    <rdfs:label xml:lang="en">Virtual reality game</rdfs:label>
+    <qualification xml:lang="en">Generally requires a head-mounted unit providing stereoscopic screens and motion tracking. Some systems include hand controls; systems generally use a separate computer, console or other processing device.</qualification>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Virtual reality, line 77</sourceLocator>
+  </rdf:Description>
+  <rdf:Description rdf:nodeID="nc06c151c573947668238dde3362ab768b34">
+    <rdf:first rdf:nodeID="nc06c151c573947668238dde3362ab768b32"/>
+    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#qualification">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AnnotationProperty"/>
+    <rdfs:label xml:lang="en">qualification</rdfs:label>
+    <rdfs:comment xml:lang="en">Preserves scoped typicality, possibility, prevalence, relative extent, design intent or source-report limitations without asserting a universal logical rule.</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.example.org/videogame#Cl_FirstPersonShooter">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdfs:label xml:lang="en">First-person shooter</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.example.org/videogame#Cl_ShooterGame"/>
+    <sourceLocator xml:lang="en">Video Game Document.txt, Genre, line 113</sourceLocator>
+  </rdf:Description>
+</rdf:RDF>

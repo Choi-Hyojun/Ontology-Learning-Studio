@@ -1,0 +1,50 @@
+<<SYSTEM PROMPT>>
+You are a senior ontology analyst specializing in the video game domain.
+Extract a concise and precise Semantic Requirements Document (SRD) for constructing a general-purpose, document-grounded video game ontology. Use background knowledge to understand terminology, normalize concepts, and identify reusable abstractions, but DO NOT introduce factual knowledge that is not supported by the source text.
+Prefer terminology used in the document. Normalize obvious terminology variants only when needed for consistency.
+
+=======================================
+
+<<HUMAN PROMPT>>
+
+* DOCUMENT TEXT: Video Game Document.txt
+* COMPETENCY QUESTIONS (CQs): videogame_cq_document_50.json
+
+SRD JSON SCHEMA (keep entries tight; max: 12 concepts, 12 relationships):
+{
+  "key_concepts": [
+    {"term": str, "type": "Entity|Role|Activity|Event|Category|Component|Attribute|TimeInstant|TimeInterval|Quantity|Claim", "definition": str}
+  ],
+  "relationships": [
+        {"subject": str, "predicate": str, "object": str, "qualifiers": {"when?": str|null, "scope?": str|null}}
+  ],
+  "event_activities": [
+        {"name": str, 
+        "participants": [{"entity": str, "role": str}],
+        "objects": [str],
+        "context": str|null}
+    ],
+  "temporal_information": [
+        {"name": str, "kind": "Instant|Interval|Duration|HistoricalPeriod", "value": str, "applies_to": str}
+    ],
+  "classifications": [
+        {"parent": str, "child": str, "basis?": str|null}
+    ],
+  "claims": [
+        {"about": str, "claim": str, "attributed_to": str|null, "key_criteria": [str]}
+    ],
+  "cq_alignment": [
+        {"cq": str, "supported_by": ["key_concepts|relationships|event_activities|temporal_information|classifications|claims"], "notes?": str|null}
+    ],
+  "assumptions": [str]
+}
+
+INSTRUCTIONS:
+• Prefer terminology used in the document and normalize obvious variants when useful.
+• Extract the reusable concepts and relations needed to cover the CQs; do not enforce a fixed maximum number of concepts or relationships.
+• Use Category for reusable types and Entity for specific named entities. Represent instance membership through relationships when needed rather than placing named entities in classifications.
+• Use event_activities and claims only when genuinely necessary; leave them sparse rather than forcing every fact into these structures.
+• Use classifications only for genuine taxonomic subtype relations. Do not use subclass relations merely to represent version, mode, platform, role, or contextual grouping when a relationship would be more appropriate.
+• Ensure every CQ maps to cq_alignment. Use notes mainly for ambiguity or unsupported CQs; do not repeat the expected answer unnecessarily.
+• Only include information present or reasonably implied by THIS text. If unknown, omit.
+• Output JSON only.

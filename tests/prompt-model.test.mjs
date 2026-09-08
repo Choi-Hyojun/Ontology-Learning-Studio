@@ -21,10 +21,12 @@ test("specification uses four editable fields without ontology metrics, preservi
   const values = { ...source.defaults, persona: "Custom persona", domain_name: "Custom {keywords}",
     domain_description: "Custom description", keywords: "Alpha, Beta", ontology_metrics: "Classes: 7" };
   const result = assemblePrompt(source.stages[0].template, values, "");
-  assert.ok(result.user.startsWith("You are a Custom persona. The Custom {keywords} describes Custom description."));
-  assert.ok(result.user.includes("Use the following keywords: Alpha, Beta."));
+  assert.ok(result.user.startsWith("You are a Custom persona."));
+  assert.ok(result.user.includes("Custom {keywords}"));
+  assert.ok(result.user.includes("###start_document###\nCustom description\n###end_document###"));
+  assert.ok(result.user.includes("Alpha, Beta"));
   assert.doesNotMatch(result.user, /ontology_metrics|Classes: 7|previous metrics|subclass count/);
-  assert.deepEqual(source.stages[0].fields, ["persona", "domain_name", "domain_description", "keywords"]);
+  assert.deepEqual(new Set(source.stages[0].fields), new Set(["persona", "domain_name", "domain_description", "keywords"]));
   assert.ok(result.system.startsWith("Custom persona\n"));
 });
 
@@ -48,5 +50,5 @@ test("edited full messages are the actual mock request and output becomes the ne
   assert.notEqual(response.simulation.request.messages[1].content, edited.user);
   const second = assemblePrompt(source.stages[1].template, source.defaults, response.choices[0].message.content);
   assert.ok(second.user.includes("###start_previous###\nfirst-stage-response\n###end_previous###"));
-  assert.ok(second.user.includes("###start_previous_specification###\n    first-stage-response"));
+  assert.ok(second.user.includes("###start_previous_specification###\nfirst-stage-response"));
 });

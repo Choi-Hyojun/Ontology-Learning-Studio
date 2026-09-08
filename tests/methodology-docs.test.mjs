@@ -25,7 +25,7 @@ test("both concise paper summaries identify primary sources and separate local i
     assert.ok(doc.paper.url.startsWith("https://"));
     assert.ok(doc.paper.sections.includes("§3"));
     assert.equal(doc.flow.length, 5);
-    assert.equal(doc.studio.length, 3);
+    assert.equal(doc.studio.length, 4);
     const paperText = [doc.paper.title, doc.summary, doc.inputs, ...doc.flow.flatMap(s => [s.title, s.description]), doc.output, doc.evaluation, doc.limitations].join(" ");
     assert.ok(paperText.split(/\s+/).length <= 200, "Keep each paper summary concise");
   }
@@ -36,7 +36,8 @@ test("both concise paper summaries identify primary sources and separate local i
 test("paper capabilities are not presented as implemented Studio features or guaranteed results", () => {
   const neon = docs.METHODOLOGY_DOCS.neon, tao = docs.METHODOLOGY_DOCS.tao;
   assert.match(neon.studio.join(" "), /루프 전체를 구현한 것은 아닙니다/);
-  assert.match(tao.studio.join(" "), /수동 편집/);
+  assert.match(tao.studio.join(" "), /자동 연결/);
+  assert.match(tao.studio.join(" "), /미제공/);
   assert.match(tao.studio.join(" "), /실행하지 않습니다/);
   assert.match(tao.limitations, /항상 우수하다는 증거는 아니/);
   assert.match(docs.STUDIO_DOC_NOTE, /고정 예시/);

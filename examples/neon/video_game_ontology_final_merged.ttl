@@ -1,0 +1,1277 @@
+@prefix : <https://example.org/video-game-ontology#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <https://schema.org/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.org/video-game-ontology> a owl:Ontology ;
+    dcterms:description "A refined ontology for video games, releases, platforms, media and distribution, extensions and adaptations, input/output devices, gameplay, organizations, engines, monetization, ratings, reviews, historical context, competitive contexts, provenance, external links, release windows, series, and gameplay sessions. The model reuses Dublin Core Terms, PROV-O, SKOS/SKOS-XL, OWL-Time, and Schema.org where their terms already express the intended semantics."@en ;
+    dcterms:modified "2026-09-05"^^xsd:date ;
+    dcterms:title "Video Game Ontology"@en ;
+    rdfs:comment ":releaseOf specializes schema:exampleOfWork, preserving the ontology's distinction between an abstract VideoGame and a concrete GameRelease."@en,
+        "Abstract video games and concrete game releases remain distinct. GameRelease models an edition/version/release of a VideoGame rather than collapsing both levels into schema:VideoGame."@en,
+        "External identifiers reuse dcterms:identifier or schema:identifier directly. When the assigning system must be explicit, use schema:identifier with a schema:PropertyValue carrying schema:propertyID and schema:value rather than a local external-identifier predicate."@en,
+        "External related-resource links reuse rdfs:seeAlso; owl:sameAs and skos:exactMatch are reserved for stronger identity or exact-concept mappings."@en,
+        "For generic metadata, use dcterms:title, dcterms:identifier, and dcterms:description directly. Use schema:version for version literals on releases or cited source resources rather than introducing local duplicates."@en,
+        "Game extensions may use dcterms:creator with a prov:Agent creator. Video games and releases may use prov:qualifiedAssociation with prov:agent and prov:hadRole for role-qualified organizational participation."@en,
+        "GameplaySession is a prov:Activity. :usesGameRelease and :usedInputDevice specialize prov:used, while :hasPlayer specializes prov:wasAssociatedWith."@en,
+        "Genre hierarchies are modeled as :Genre instances using SKOS broader/narrower relations. This avoids duplicating the same genre taxonomy as an OWL class hierarchy."@en,
+        "Input-device support uses :supportsInputDevice and output routing uses :supportsOutputDevice; :providesFeedbackCapability describes the kind of feedback available. No additional synonymous controller/output properties are introduced."@en,
+        "Organization participation is represented with :developedBy, :publishedBy, and :distributedBy plus PROV qualified associations and named PROV roles. Developer and publisher are therefore modeled as contextual roles rather than redundant subclasses of :Organization."@en,
+        "Release windows and historical periods reuse OWL-Time: time:hasBeginning and time:hasEnd point to time:Instant values, whose calendar dates may be expressed with time:inXSDDate."@en,
+        "Reviews reuse schema:itemReviewed, schema:reviewBody, schema:reviewRating, and schema:ratingValue instead of parallel local review-target or rating-value properties."@en,
+        "SKOS concepts may use skos:prefLabel, skos:altLabel, skos:broader, skos:narrower, skos:scopeNote, and skos:historyNote. SKOS-XL labels may use skosxl:prefLabel, skosxl:altLabel, and skosxl:literalForm when label resources need contextual metadata."@en,
+        "SKOS-XL may be used when labels need region or historical-period context; :associatedWithRegion and :associatedWithHistoricalPeriod are specialized subproperties of Dublin Core spatial and temporal relations."@en,
+        "Standard metadata terms are reused directly where they already match the intended meaning: dcterms:title, dcterms:identifier, dcterms:description, dcterms:source, schema:version, schema:reviewBody, PROV derivation/influence properties, and OWL-Time interval boundaries."@en,
+        "Use dcterms:source for ordinary source citation and prov:hadPrimarySource when the stronger PROV primary-source relation is intended. Provenance records may use prov:wasDerivedFrom, prov:wasAttributedTo, and prov:generatedAtTime."@en,
+        "Use prov:wasDerivedFrom for generic derivation and prov:wasInfluencedBy for generic influence. The domain-specific :portOf, :conversionOf, :remasterOf, and :remakeOf properties specialize prov:wasDerivedFrom."@en ;
+    owl:versionInfo "2.1-refined"@en .
+
+:ACB a :RatingSystem ;
+    rdfs:label "ACB"@en ;
+    rdfs:comment "A named rating system value: ACB."@en ;
+    skos:prefLabel "ACB"@en ;
+    :appliesInRegion :Australia .
+
+:Advergame a owl:Class ;
+    rdfs:label "Advergame"@en ;
+    rdfs:comment "A serious game designed around advertising or promoting a product, service, or brand."@en ;
+    rdfs:subClassOf :SeriousGame .
+
+:ArcadeSystem a owl:Class ;
+    rdfs:label "Arcade System"@en ;
+    rdfs:comment "A type of platform."@en ;
+    rdfs:subClassOf :Platform .
+
+:Asymmetric a :MultiplayerStyle ;
+    rdfs:label "Asymmetric"@en ;
+    rdfs:comment "A named multiplayer style value: Asymmetric."@en ;
+    skos:prefLabel "Asymmetric"@en .
+
+:AudioFeedbackCapability a owl:Class ;
+    rdfs:label "Audio Feedback Capability"@en ;
+    rdfs:comment "A type of feedback capability."@en ;
+    rdfs:subClassOf :FeedbackCapability .
+
+:AugmentedRealityPlatform a owl:Class ;
+    rdfs:label "Augmented Reality Platform"@en ;
+    rdfs:comment "A platform that supports augmented-reality video-game experiences by combining game output with the player's physical environment."@en ;
+    rdfs:subClassOf :Platform .
+
+:BrowserPlatform a owl:Class ;
+    rdfs:label "Browser Platform"@en ;
+    rdfs:comment "A type of platform."@en ;
+    rdfs:subClassOf :Platform .
+
+:BuiltInScreen a owl:Class ;
+    rdfs:label "Built In Screen"@en ;
+    rdfs:comment "A type of display device."@en ;
+    rdfs:subClassOf :DisplayDevice .
+
+:CDROM a owl:Class ;
+    rdfs:label "CD-ROM"@en ;
+    rdfs:comment "A type of optical disc."@en ;
+    rdfs:subClassOf :OpticalDisc .
+
+:CERO a :RatingSystem ;
+    rdfs:label "CERO"@en ;
+    rdfs:comment "A named rating system value: CERO."@en ;
+    skos:prefLabel "CERO"@en ;
+    :appliesInRegion :Japan .
+
+:CRTDisplay a owl:Class ;
+    rdfs:label "CRT display"@en ;
+    rdfs:comment "A type of display device."@en ;
+    rdfs:subClassOf :DisplayDevice .
+
+:CloudDelivery a :DistributionMethod ;
+    rdfs:label "Cloud Delivery"@en ;
+    rdfs:comment "Distribution or access in which game execution or delivery is provided through cloud infrastructure."@en ;
+    skos:prefLabel "Cloud Delivery"@en .
+
+:CloudGamingService a owl:Class ;
+    rdfs:label "Cloud Gaming Service"@en ;
+    rdfs:comment "A type of online service."@en ;
+    rdfs:subClassOf :OnlineService .
+
+:Competitive a :MultiplayerStyle ;
+    rdfs:label "Competitive"@en ;
+    rdfs:comment "A named multiplayer style value: Competitive."@en ;
+    skos:prefLabel "Competitive"@en .
+
+:ComputerMonitor a owl:Class ;
+    rdfs:label "Computer Monitor"@en ;
+    rdfs:comment "A type of display device."@en ;
+    rdfs:subClassOf :DisplayDevice .
+
+:ComputerSpace a :VideoGame ;
+    rdfs:label "Computer Space"@en ;
+    prov:wasInfluencedBy :Spacewar .
+
+:Cooperative a :MultiplayerStyle ;
+    rdfs:label "Cooperative"@en ;
+    rdfs:comment "A named multiplayer style value: Cooperative."@en ;
+    skos:prefLabel "Cooperative"@en .
+
+:CoreGame a owl:Class ;
+    rdfs:label "Core Game"@en ;
+    rdfs:comment "A type of video game."@en ;
+    rdfs:subClassOf :VideoGame .
+
+:DVD a owl:Class ;
+    rdfs:label "DVD"@en ;
+    rdfs:comment "A type of optical disc."@en ;
+    rdfs:subClassOf :OpticalDisc .
+
+:DancePad a owl:Class ;
+    rdfs:label "Dance Pad"@en ;
+    rdfs:comment "A specialized game controller operated primarily with the feet."@en ;
+    rdfs:subClassOf :GameController .
+
+:DeveloperRole a prov:Role ;
+    rdfs:label "Developer Role"@en ;
+    rdfs:comment "A PROV role used to qualify an organization's participation as a developer."@en .
+
+:DigitalDownload a :DistributionMethod ;
+    rdfs:label "Digital Download"@en ;
+    rdfs:comment "Distribution by downloading a digital game package."@en ;
+    skos:prefLabel "Digital Download"@en .
+
+:DigitalMediaFormat a owl:Class ;
+    rdfs:label "Digital Media Format"@en ;
+    rdfs:comment "A type of media format."@en ;
+    rdfs:subClassOf :MediaFormat .
+
+:DistributorRole a prov:Role ;
+    rdfs:label "Distributor Role"@en ;
+    rdfs:comment "A PROV role used to qualify an organization's participation as a distributor."@en .
+
+:DownloadableContent a owl:Class ;
+    rdfs:label "Downloadable Content"@en ;
+    rdfs:comment "A type of game extension."@en ;
+    rdfs:subClassOf :GameExtension .
+
+:ESRB a :RatingSystem ;
+    rdfs:label "ESRB"@en ;
+    rdfs:comment "A named rating system value: ESRB."@en ;
+    skos:prefLabel "ESRB"@en ;
+    :appliesInRegion :UnitedStates .
+
+:EdutainmentGame a owl:Class ;
+    rdfs:label "Edutainment Game"@en ;
+    rdfs:comment "An educational game emphasizing entertainment and accessible learning activities."@en ;
+    rdfs:subClassOf :EducationalGame .
+
+:EsportsEvent a owl:Class ;
+    rdfs:label "Esports Event"@en ;
+    rdfs:comment "A class that is a subtype of competitive context and prov:Activity."@en ;
+    rdfs:subClassOf prov:Activity,
+        :CompetitiveContext .
+
+:ExpansionPack a owl:Class ;
+    rdfs:label "Expansion Pack"@en ;
+    rdfs:comment "A type of game extension."@en ;
+    rdfs:subClassOf :GameExtension .
+
+:FitnessGame a owl:Class ;
+    rdfs:label "Fitness Game"@en ;
+    rdfs:comment "A serious game that incorporates significant physical exercise or fitness-oriented activity."@en ;
+    rdfs:subClassOf :SeriousGame .
+
+:FlashMemoryCard a owl:Class ;
+    rdfs:label "Flash Memory Card"@en ;
+    rdfs:comment "A type of physical media format."@en ;
+    rdfs:subClassOf :PhysicalMediaFormat .
+
+:FloppyDisk a owl:Class ;
+    rdfs:label "Floppy Disk"@en ;
+    rdfs:comment "A type of physical media format."@en ;
+    rdfs:subClassOf :PhysicalMediaFormat .
+
+:GameBoy a :HandheldConsole ;
+    rdfs:label "Game Boy"@en ;
+    :hasPlatformHolder :Nintendo .
+
+:Gamepad a owl:Class ;
+    rdfs:label "Gamepad"@en ;
+    rdfs:comment "A handheld game controller with buttons, directional controls, or analog inputs."@en ;
+    rdfs:subClassOf :GameController .
+
+:GamesAsAService a :MonetizationModel ;
+    rdfs:label "Games as a Service"@en ;
+    rdfs:comment "A monetization model in which a game is operated and updated as an ongoing service."@en ;
+    skos:prefLabel "Games as a Service"@en .
+
+:HapticFeedbackCapability a owl:Class ;
+    rdfs:label "Haptic Feedback Capability"@en ;
+    rdfs:comment "A type of feedback capability."@en ;
+    rdfs:subClassOf :FeedbackCapability .
+
+:Headphones a owl:Class ;
+    rdfs:label "Headphones"@en ;
+    rdfs:comment "A type of output device."@en ;
+    rdfs:subClassOf :OutputDevice .
+
+:HeadsUpDisplay a owl:Class ;
+    rdfs:label "Heads-up Display"@en ;
+    rdfs:comment "An on-screen user interface that presents gameplay information over the rendered game view."@en ;
+    rdfs:subClassOf :UserInterface .
+
+:HyperCasualGame a owl:Class ;
+    rdfs:label "Hyper-casual Game"@en ;
+    rdfs:comment "A casual game characterized by especially simple rules and short, readily replayable play sessions."@en ;
+    rdfs:subClassOf :CasualGame .
+
+:InternetOnline a :MultiplayerConnectivityMode ;
+    rdfs:label "Internet/online"@en ;
+    rdfs:comment "A named multiplayer connectivity mode value: Internet/online."@en ;
+    skos:prefLabel "Internet/online"@en .
+
+:Joystick a owl:Class ;
+    rdfs:label "Joystick"@en ;
+    rdfs:comment "A game controller centered on a movable stick for directional or analog input."@en ;
+    rdfs:subClassOf :GameController .
+
+:Keyboard a owl:Class ;
+    rdfs:label "Keyboard"@en ;
+    rdfs:comment "A type of input device."@en ;
+    rdfs:subClassOf :InputDevice .
+
+:LCDDisplay a owl:Class ;
+    rdfs:label "LCD display"@en ;
+    rdfs:comment "A type of display device."@en ;
+    rdfs:subClassOf :DisplayDevice .
+
+:LightGun a owl:Class ;
+    rdfs:label "Light Gun"@en ;
+    rdfs:comment "A game controller designed for aiming at or interacting with a display."@en ;
+    rdfs:subClassOf :GameController .
+
+:LocalNetwork a :MultiplayerConnectivityMode ;
+    rdfs:label "Local Network"@en ;
+    rdfs:comment "A named multiplayer connectivity mode value: Local Network."@en ;
+    skos:prefLabel "Local Network"@en .
+
+:LocalSameDevice a :MultiplayerConnectivityMode ;
+    rdfs:label "Local same-device"@en ;
+    rdfs:comment "A named multiplayer connectivity mode value: Local same-device."@en ;
+    skos:prefLabel "Local same-device"@en .
+
+:MagnavoxOdyssey a :HomeConsole ;
+    rdfs:label "Magnavox Odyssey"@en .
+
+:MagneticTape a owl:Class ;
+    rdfs:label "Magnetic Tape"@en ;
+    rdfs:comment "A type of physical media format."@en ;
+    rdfs:subClassOf :PhysicalMediaFormat .
+
+:MarketerRole a prov:Role ;
+    rdfs:label "Marketer Role"@en ;
+    rdfs:comment "A PROV role used when an organization participates in promoting or marketing a game or release."@en .
+
+:MassivelyMultiplayer a :MultiplayerStyle ;
+    rdfs:label "Massively Multiplayer"@en ;
+    rdfs:comment "A named multiplayer style value: Massively Multiplayer."@en ;
+    skos:prefLabel "Massively Multiplayer"@en .
+
+:MobilePlatform a owl:Class ;
+    rdfs:label "Mobile Platform"@en ;
+    rdfs:comment "A type of platform."@en ;
+    rdfs:subClassOf :Platform .
+
+:MotionSensor a owl:Class ;
+    rdfs:label "Motion Sensor"@en ;
+    rdfs:comment "A type of input device."@en ;
+    rdfs:subClassOf :InputDevice .
+
+:Mouse a owl:Class ;
+    rdfs:label "Mouse"@en ;
+    rdfs:comment "A type of input device."@en ;
+    rdfs:subClassOf :InputDevice .
+
+:Multiplayer a :GameMode ;
+    rdfs:label "Multiplayer"@en ;
+    rdfs:comment "A named game mode value: Multiplayer."@en ;
+    skos:prefLabel "Multiplayer"@en .
+
+:Newsgame a owl:Class ;
+    rdfs:label "Newsgame"@en ;
+    rdfs:comment "A serious game designed to communicate or explore a news-related, political, or advocacy-oriented subject."@en ;
+    rdfs:subClassOf :SeriousGame .
+
+:NonPlayerCharacter a owl:Class ;
+    rdfs:label "Non Player Character"@en ;
+    rdfs:comment "A type of character."@en ;
+    rdfs:subClassOf :Character .
+
+:PEGI a :RatingSystem ;
+    rdfs:label "PEGI"@en ;
+    rdfs:comment "A named rating system value: PEGI."@en ;
+    skos:prefLabel "PEGI"@en ;
+    :appliesInRegion :UnitedKingdom .
+
+:Passage a :ArtGame ;
+    rdfs:label "Passage"@en .
+
+:PersonalComputerPlatform a owl:Class ;
+    rdfs:label "Personal Computer Platform"@en ;
+    rdfs:comment "A type of platform."@en ;
+    rdfs:subClassOf :Platform .
+
+:PhysicalMediaDistribution a :DistributionMethod ;
+    rdfs:label "Physical Media Distribution"@en ;
+    rdfs:comment "Distribution through a physical carrier such as a cartridge, disc, tape, or memory card."@en ;
+    skos:prefLabel "Physical Media Distribution"@en .
+
+:PlayStation2 a :HomeConsole ;
+    rdfs:label "PlayStation 2"@en ;
+    :backwardCompatibleWith :PlayStation .
+
+:PlayStationNow a :CloudGamingPlatform ;
+    rdfs:label "PlayStation Now"@en .
+
+:PlayerCharacter a owl:Class ;
+    rdfs:label "Player Character"@en ;
+    rdfs:comment "A type of character."@en ;
+    rdfs:subClassOf :Character .
+
+:Pong a :VideoGame ;
+    rdfs:label "Pong"@en .
+
+:Projector a owl:Class ;
+    rdfs:label "Projector"@en ;
+    rdfs:comment "A type of display device."@en ;
+    rdfs:subClassOf :DisplayDevice .
+
+:PublisherRole a prov:Role ;
+    rdfs:label "Publisher Role"@en ;
+    rdfs:comment "A PROV role used to qualify an organization's participation as a publisher."@en .
+
+:ROMCartridge a owl:Class ;
+    rdfs:label "ROM cartridge"@en ;
+    rdfs:comment "A type of physical media format."@en ;
+    rdfs:subClassOf :PhysicalMediaFormat .
+
+:RacingWheel a owl:Class ;
+    rdfs:label "Racing Wheel"@en ;
+    rdfs:comment "A game controller designed to simulate steering in driving games."@en ;
+    rdfs:subClassOf :GameController .
+
+:RetailerRole a prov:Role ;
+    rdfs:label "Retailer Role"@en ;
+    rdfs:comment "A PROV role used when an organization participates in bringing a game or release to consumers as a retailer."@en .
+
+:Review a owl:Class ;
+    rdfs:label "Review"@en ;
+    rdfs:comment "A review of a GameRelease. Use schema:itemReviewed for the reviewed release, schema:reviewBody for review text, schema:reviewRating with schema:ratingValue for a structured score, and dcterms:source for source citation when applicable."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty schema:itemReviewed ;
+            owl:someValuesFrom :GameRelease ],
+        prov:Entity,
+        schema:Review .
+
+:SinglePlayer a :GameMode ;
+    rdfs:label "Single Player"@en ;
+    rdfs:comment "A named game mode value: Single Player."@en ;
+    skos:prefLabel "Single Player"@en .
+
+:Speaker a owl:Class ;
+    rdfs:label "Speaker"@en ;
+    rdfs:comment "A type of output device."@en ;
+    rdfs:subClassOf :OutputDevice .
+
+:TeamBased a :MultiplayerStyle ;
+    rdfs:label "Team Based"@en ;
+    rdfs:comment "A named multiplayer style value: Team Based."@en ;
+    skos:prefLabel "Team Based"@en .
+
+:Tetris a :CasualGame ;
+    rdfs:label "Tetris"@en .
+
+:TheOregonTrail a :EducationalGame ;
+    rdfs:label "The Oregon Trail"@en .
+
+:Touchscreen a owl:Class ;
+    rdfs:label "Touchscreen"@en ;
+    rdfs:comment "A combined display and touch-sensitive input device; it can therefore function as both an InputDevice and a DisplayDevice."@en ;
+    rdfs:subClassOf :DisplayDevice,
+        :InputDevice .
+
+:USK a :RatingSystem ;
+    rdfs:label "USK"@en ;
+    rdfs:comment "A named rating system value: USK."@en ;
+    skos:prefLabel "USK"@en ;
+    :appliesInRegion :Germany .
+
+:VRController a owl:Class ;
+    rdfs:label "VR controller"@en ;
+    rdfs:comment "A class that is a subtype of vr input device and game controller."@en ;
+    rdfs:subClassOf :GameController,
+        :VRInputDevice .
+
+:VRHeadset a owl:Class ;
+    rdfs:label "VR headset"@en ;
+    rdfs:comment "A class that is a subtype of display device and vr output device."@en ;
+    rdfs:subClassOf :DisplayDevice,
+        :VROutputDevice .
+
+:VirtualRealityPlatform a owl:Class ;
+    rdfs:label "Virtual Reality Platform"@en ;
+    rdfs:comment "A type of platform."@en ;
+    rdfs:subClassOf :Platform .
+
+:VisualFeedbackCapability a owl:Class ;
+    rdfs:label "Visual Feedback Capability"@en ;
+    rdfs:comment "A type of feedback capability."@en ;
+    rdfs:subClassOf :FeedbackCapability .
+
+:Wii a :HomeConsole ;
+    rdfs:label "Wii"@en ;
+    :backwardCompatibleWith :GameCube .
+
+:WiiFit a :SeriousGame ;
+    rdfs:label "Wii Fit"@en .
+
+:XboxCloudGaming a :CloudGamingPlatform ;
+    rdfs:label "Xbox Cloud Gaming"@en .
+
+:ZeroPlayer a :GameMode ;
+    rdfs:label "Zero Player"@en ;
+    rdfs:comment "A named game mode value: Zero Player."@en ;
+    skos:prefLabel "Zero Player"@en .
+
+:administeredBy a owl:ObjectProperty ;
+    rdfs:label "administered by"@en ;
+    rdfs:comment "Identifies the rating authority that administers a RatingSystem."@en ;
+    rdfs:domain :RatingSystem ;
+    rdfs:range :RatingAuthority .
+
+:appliesInRegion a owl:ObjectProperty ;
+    rdfs:label "applies in region"@en ;
+    rdfs:comment "Identifies a Region in which a RatingSystem applies."@en ;
+    rdfs:domain :RatingSystem ;
+    rdfs:range :Region .
+
+:associatedWithHistoricalPeriod a owl:ObjectProperty ;
+    rdfs:label "associated with historical period"@en ;
+    rdfs:comment "Associates a resource or contextualized label with a HistoricalPeriod."@en ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range :HistoricalPeriod ;
+    rdfs:subPropertyOf dcterms:temporal .
+
+:associatedWithRegion a owl:ObjectProperty ;
+    rdfs:label "associated with region"@en ;
+    rdfs:comment "Associates a resource or contextualized label with a Region."@en ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range :Region ;
+    rdfs:subPropertyOf dcterms:spatial .
+
+:availableInRegion a owl:ObjectProperty ;
+    rdfs:label "available in region"@en ;
+    rdfs:comment "Indicates a Region in which a GameRelease is available."@en ;
+    rdfs:domain :GameRelease ;
+    rdfs:range :Region .
+
+:backwardCompatibleWith a owl:ObjectProperty ;
+    rdfs:label "backward compatible with"@en ;
+    rdfs:comment "Indicates an older Platform whose software a newer Platform can run or otherwise support through backward compatibility."@en ;
+    rdfs:domain :Platform ;
+    rdfs:range :Platform .
+
+:conversionOf a owl:ObjectProperty ;
+    rdfs:label "conversion of"@en ;
+    rdfs:comment "Identifies the earlier GameResource from which this GameResource was converted; conversion is a form of PROV derivation."@en ;
+    rdfs:domain :GameResource ;
+    rdfs:range :GameResource ;
+    rdfs:subPropertyOf prov:wasDerivedFrom .
+
+:developedBy a owl:ObjectProperty ;
+    rdfs:label "developed by"@en ;
+    rdfs:comment "Identifies an Organization that developed a VideoGame or GameRelease; use :DeveloperRole in a qualified PROV association when the role needs explicit qualification."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :Organization ;
+    rdfs:subPropertyOf :hasParticipatingOrganization,
+        schema:creator .
+
+:developedWithEngine a owl:ObjectProperty ;
+    rdfs:label "developed with engine"@en ;
+    rdfs:comment "Identifies the GameEngine used to develop a VideoGame or GameRelease."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :GameEngine .
+
+:distributedBy a owl:ObjectProperty ;
+    rdfs:label "distributed by"@en ;
+    rdfs:comment "Identifies an Organization that distributed a VideoGame or GameRelease; use :DistributorRole in a qualified PROV association when the role needs explicit qualification."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :Organization ;
+    rdfs:subPropertyOf :hasParticipatingOrganization .
+
+:distributedOnMediaFormat a owl:ObjectProperty ;
+    rdfs:label "distributed on media format"@en ;
+    rdfs:comment "Identifies a MediaFormat on which a GameRelease was distributed."@en ;
+    rdfs:domain :GameRelease ;
+    rdfs:range :MediaFormat ;
+    rdfs:subPropertyOf :usesMediaFormat .
+
+:distributedVia a owl:ObjectProperty ;
+    rdfs:label "distributed via"@en ;
+    rdfs:comment "Identifies the DistributionMethod used for a GameRelease."@en ;
+    rdfs:domain :GameRelease ;
+    rdfs:range :DistributionMethod .
+
+:emulatableOnPlatform a owl:ObjectProperty ;
+    rdfs:label "emulatable on platform"@en ;
+    rdfs:comment "Indicates a Platform on which a VideoGame or GameRelease can be run through emulation."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :Platform .
+
+:engineSupportsPlatform a owl:ObjectProperty ;
+    rdfs:label "engine supports platform"@en ;
+    rdfs:comment "Indicates a Platform supported by a GameEngine."@en ;
+    rdfs:domain :GameEngine ;
+    rdfs:range :Platform .
+
+:exclusiveToPlatformHolder a owl:ObjectProperty ;
+    rdfs:label "exclusive to platform holder"@en ;
+    rdfs:comment "Identifies the Organization holding the platform to which a GameRelease is exclusive. This relation can be inferred from :exclusiveToPlatform followed by :hasPlatformHolder."@en ;
+    rdfs:domain :GameRelease ;
+    rdfs:range :Organization ;
+    owl:propertyChainAxiom ( :exclusiveToPlatform :hasPlatformHolder ) .
+
+:featuresGame a owl:ObjectProperty ;
+    rdfs:label "features game"@en ;
+    rdfs:comment "Identifies a VideoGame featured in a CompetitiveContext."@en ;
+    rdfs:domain :CompetitiveContext ;
+    rdfs:range :VideoGame ;
+    owl:propertyChainAxiom ( :featuresGameRelease :releaseOf ) .
+
+:hasAgeCategory a owl:ObjectProperty ;
+    rdfs:label "has age category"@en ;
+    rdfs:comment "Associates a ContentRating with its age-category concept."@en ;
+    rdfs:domain :ContentRating ;
+    rdfs:range :AgeCategory .
+
+:hasCharacter a owl:ObjectProperty ;
+    rdfs:label "has character"@en ;
+    rdfs:comment "Associates a VideoGame with a Character appearing in the game."@en ;
+    rdfs:domain :VideoGame ;
+    rdfs:range :Character .
+
+:hasCompetitor a owl:ObjectProperty ;
+    rdfs:label "has competitor"@en ;
+    rdfs:comment "Identifies an agent competing in a CompetitiveContext."@en ;
+    rdfs:domain :CompetitiveContext ;
+    rdfs:range prov:Agent .
+
+:hasContentDescriptor a owl:ObjectProperty ;
+    rdfs:label "has content descriptor"@en ;
+    rdfs:comment "Associates a ContentRating with a content-descriptor concept."@en ;
+    rdfs:domain :ContentRating ;
+    rdfs:range :ContentDescriptor .
+
+:hasContentRating a owl:ObjectProperty ;
+    rdfs:label "has content rating"@en ;
+    rdfs:comment "Associates a GameRelease with an assigned ContentRating."@en ;
+    rdfs:domain :GameRelease ;
+    rdfs:range :ContentRating .
+
+:hasGameMode a owl:ObjectProperty ;
+    rdfs:label "has game mode"@en ;
+    rdfs:comment "Associates a VideoGame or GameRelease with a supported GameMode."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :GameMode .
+
+:hasGameplayMechanic a owl:ObjectProperty ;
+    rdfs:label "has gameplay mechanic"@en ;
+    rdfs:comment "Associates a VideoGame with a GameplayMechanic."@en ;
+    rdfs:domain :VideoGame ;
+    rdfs:range :GameplayMechanic .
+
+:hasGenre a owl:ObjectProperty ;
+    rdfs:label "has genre"@en ;
+    rdfs:comment "Associates a VideoGame with a Genre concept."@en ;
+    rdfs:domain :VideoGame ;
+    rdfs:range :Genre ;
+    rdfs:subPropertyOf schema:genre .
+
+:hasMonetizationModel a owl:ObjectProperty ;
+    rdfs:label "has monetization model"@en ;
+    rdfs:comment "Associates a VideoGame or GameRelease with a MonetizationModel."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :MonetizationModel .
+
+:hasPlayer a owl:ObjectProperty ;
+    rdfs:label "has player"@en ;
+    rdfs:comment "Identifies an agent participating as a player in a GameplaySession; it specializes PROV association."@en ;
+    rdfs:domain :GameplaySession ;
+    rdfs:range prov:Agent ;
+    rdfs:subPropertyOf prov:wasAssociatedWith .
+
+:hasProvenanceRecord a owl:ObjectProperty ;
+    rdfs:label "has provenance record"@en ;
+    rdfs:comment "Links a resource to a ProvenanceRecord describing its provenance."@en ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range :ProvenanceRecord .
+
+:hasReleaseWindow a owl:ObjectProperty ;
+    rdfs:label "has release window"@en ;
+    rdfs:comment "Associates a GameRelease with an OWL-Time interval representing a release window. Use time:hasBeginning/time:hasEnd for interval boundaries and time:inXSDDate on the boundary instants."@en ;
+    rdfs:domain :GameRelease ;
+    rdfs:range time:Interval .
+
+:hasUserInterface a owl:ObjectProperty ;
+    rdfs:label "has user interface"@en ;
+    rdfs:comment "Associates a VideoGame or GameRelease with a UserInterface through which gameplay information or controls are presented."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :UserInterface .
+
+:installedFromMediaFormat a owl:ObjectProperty ;
+    rdfs:label "installed from media format"@en ;
+    rdfs:comment "Identifies a MediaFormat from which a GameRelease is installed."@en ;
+    rdfs:domain :GameRelease ;
+    rdfs:range :MediaFormat ;
+    rdfs:subPropertyOf :usesMediaFormat .
+
+:intendedForPlatform a owl:ObjectProperty ;
+    rdfs:label "intended for platform"@en ;
+    rdfs:comment "Indicates the Platform for which a VideoGame or GameRelease was originally or intentionally designed."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :Platform ;
+    rdfs:subPropertyOf schema:gamePlatform .
+
+:manufacturedBy a owl:ObjectProperty ;
+    rdfs:label "manufactured by"@en ;
+    rdfs:comment "Identifies the Organization that manufactured a Platform."@en ;
+    rdfs:domain :Platform ;
+    rdfs:range :Organization .
+
+:maximumPlayerCount a owl:DatatypeProperty ;
+    rdfs:label "maximum player count"@en ;
+    rdfs:comment "Records the maximum number of simultaneous players supported by a VideoGame or GameRelease."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range xsd:nonNegativeInteger .
+
+:minimumAge a owl:DatatypeProperty ;
+    rdfs:label "minimum age"@en ;
+    rdfs:comment "Records the minimum age associated with a ContentRating."@en ;
+    rdfs:domain :ContentRating ;
+    rdfs:range xsd:nonNegativeInteger .
+
+:officiallySupported a owl:DatatypeProperty ;
+    rdfs:label "officially supported"@en ;
+    rdfs:comment "Indicates whether game-related content is officially supported by the relevant rights holder, publisher, developer, or platform authority."@en ;
+    rdfs:domain :GameRelatedContent ;
+    rdfs:range xsd:boolean .
+
+:operatedBy a owl:ObjectProperty ;
+    rdfs:label "operated by"@en ;
+    rdfs:comment "Identifies the agent that operates an OnlineService."@en ;
+    rdfs:domain :OnlineService ;
+    rdfs:range prov:Agent .
+
+:optionallySupportsInputDevice a owl:ObjectProperty ;
+    rdfs:label "optionally supports input device"@en ;
+    rdfs:comment "Identifies an optional InputDevice supported by a GameRelease."@en ;
+    rdfs:domain :GameRelease ;
+    rdfs:range :InputDevice ;
+    rdfs:subPropertyOf :supportsInputDevice .
+
+:organizedBy a owl:ObjectProperty ;
+    rdfs:label "organized by"@en ;
+    rdfs:comment "Identifies an agent that organizes a CompetitiveContext."@en ;
+    rdfs:domain :CompetitiveContext ;
+    rdfs:range prov:Agent .
+
+:ownedBy a owl:ObjectProperty ;
+    rdfs:label "owned by"@en ;
+    rdfs:comment "Identifies the Organization that owns a Platform."@en ;
+    rdfs:domain :Platform ;
+    rdfs:range :Organization .
+
+:partOfSeries a owl:ObjectProperty ;
+    rdfs:label "part of series"@en ;
+    rdfs:comment "Associates a VideoGame with the VideoGameSeries of which it is a part."@en ;
+    rdfs:domain :VideoGame ;
+    rdfs:range :VideoGameSeries ;
+    rdfs:subPropertyOf dcterms:isPartOf,
+        schema:isPartOf .
+
+:participatesInCompetitiveContext a owl:ObjectProperty ;
+    rdfs:label "participates in competitive context"@en ;
+    rdfs:comment "Associates a VideoGame or GameRelease with a CompetitiveContext in which it participates."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :CompetitiveContext .
+
+:precededBy a owl:ObjectProperty ;
+    rdfs:label "preceded by"@en ;
+    rdfs:comment "Relates a resource to an earlier resource that precedes it in a relevant sequence or historical lineage."@en ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range rdfs:Resource .
+
+:providesFeedbackCapability a owl:ObjectProperty ;
+    rdfs:label "provides feedback capability"@en ;
+    rdfs:comment "Identifies a FeedbackCapability provided by a resource, such as visual, audio, or haptic feedback."@en ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range :FeedbackCapability .
+
+:publishedBy a owl:ObjectProperty ;
+    rdfs:label "published by"@en ;
+    rdfs:comment "Identifies an Organization that published a VideoGame or GameRelease; use :PublisherRole in a qualified PROV association when the role needs explicit qualification."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :Organization ;
+    rdfs:subPropertyOf :hasParticipatingOrganization,
+        schema:publisher .
+
+:ratingCode a owl:DatatypeProperty ;
+    rdfs:label "rating code"@en ;
+    rdfs:comment "Records the code assigned to a ContentRating by its RatingSystem, such as an age or classification code."@en ;
+    rdfs:domain :ContentRating ;
+    rdfs:range xsd:string .
+
+:releaseDate a owl:DatatypeProperty ;
+    rdfs:label "release date"@en ;
+    rdfs:comment "Records the formal release date of a GameRelease; it specializes dcterms:issued and schema:datePublished."@en ;
+    rdfs:domain :GameRelease ;
+    rdfs:range xsd:date ;
+    rdfs:subPropertyOf dcterms:issued,
+        schema:datePublished .
+
+:requiresInputDevice a owl:ObjectProperty ;
+    rdfs:label "requires input device"@en ;
+    rdfs:comment "Identifies an InputDevice required to use a GameRelease."@en ;
+    rdfs:domain :GameRelease ;
+    rdfs:range :InputDevice ;
+    rdfs:subPropertyOf :supportsInputDevice .
+
+:requiresOnlineService a owl:ObjectProperty ;
+    rdfs:label "requires online service"@en ;
+    rdfs:comment "Identifies an OnlineService that is required to access or use a GameResource."@en ;
+    rdfs:domain :GameResource ;
+    rdfs:range :OnlineService ;
+    rdfs:subPropertyOf :accessibleViaOnlineService .
+
+:supportsDisplayTechnology a owl:ObjectProperty ;
+    rdfs:label "supports display technology"@en ;
+    rdfs:comment "Identifies a DisplayTechnology supported by a VideoGame or GameRelease."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :DisplayTechnology .
+
+:supportsMultiplayerConnectivity a owl:ObjectProperty ;
+    rdfs:label "supports multiplayer connectivity"@en ;
+    rdfs:comment "Associates a VideoGame or GameRelease with a supported multiplayer connectivity mode."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :MultiplayerConnectivityMode .
+
+:supportsMultiplayerStyle a owl:ObjectProperty ;
+    rdfs:label "supports multiplayer style"@en ;
+    rdfs:comment "Associates a VideoGame or GameRelease with a supported multiplayer style."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :MultiplayerStyle .
+
+:supportsOutputDevice a owl:ObjectProperty ;
+    rdfs:label "supports output device"@en ;
+    rdfs:comment "Identifies an OutputDevice through which a VideoGame or GameRelease can present output."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :OutputDevice .
+
+:usedMicrophoneForInGameCommunication a owl:ObjectProperty ;
+    rdfs:label "used microphone for in-game communication"@en ;
+    rdfs:comment "Identifies a Microphone used during a GameplaySession for in-game communication."@en ;
+    rdfs:domain :GameplaySession ;
+    rdfs:range :Microphone ;
+    rdfs:subPropertyOf :usedInputDevice .
+
+:usedWebcamForLivestreaming a owl:ObjectProperty ;
+    rdfs:label "used webcam for livestreaming"@en ;
+    rdfs:comment "Identifies a Webcam used during a GameplaySession for livestreaming."@en ;
+    rdfs:domain :GameplaySession ;
+    rdfs:range :Webcam ;
+    rdfs:subPropertyOf :usedInputDevice .
+
+:userCreated a owl:DatatypeProperty ;
+    rdfs:label "user created"@en ;
+    rdfs:comment "Indicates whether game-related content was created by users rather than as official first-party or licensed content."@en ;
+    rdfs:domain :GameRelatedContent ;
+    rdfs:range xsd:boolean .
+
+:validInRegion a owl:ObjectProperty ;
+    rdfs:label "valid in region"@en ;
+    rdfs:comment "Identifies a Region in which a ContentRating is valid."@en ;
+    rdfs:domain :ContentRating ;
+    rdfs:range :Region .
+
+:AgeCategory a owl:Class ;
+    rdfs:label "Age Category"@en ;
+    rdfs:comment "A SKOS concept representing an age category in a rating system."@en ;
+    rdfs:subClassOf skos:Concept .
+
+:ArtGame a owl:Class ;
+    rdfs:label "Art Game"@en ;
+    rdfs:comment "A type of video game."@en ;
+    rdfs:subClassOf :VideoGame .
+
+:Australia a :Region ;
+    rdfs:label "Australia"@en .
+
+:ContentDescriptor a owl:Class ;
+    rdfs:label "Content Descriptor"@en ;
+    rdfs:comment "A SKOS concept describing content reflected in a content rating."@en ;
+    rdfs:subClassOf skos:Concept .
+
+:DigitalCamera a owl:Class ;
+    rdfs:label "Digital Camera"@en ;
+    rdfs:comment "A type of input device."@en ;
+    rdfs:subClassOf :InputDevice .
+
+:DisplayTechnology a owl:Class ;
+    rdfs:label "Display Technology"@en ;
+    rdfs:comment "A controlled concept for a display technology supported by a game or release."@en ;
+    rdfs:subClassOf skos:Concept .
+
+:GameCube a :HomeConsole ;
+    rdfs:label "GameCube"@en .
+
+:GameplayMechanic a owl:Class ;
+    rdfs:label "Gameplay Mechanic"@en ;
+    rdfs:comment "A controlled concept for a gameplay rule, system, or mechanic."@en ;
+    rdfs:subClassOf skos:Concept .
+
+:Genre a owl:Class ;
+    rdfs:label "Genre"@en ;
+    rdfs:comment "A SKOS concept used to classify a VideoGame by genre. Genre taxonomies should use skos:broader/skos:narrower (and scope/history notes when useful) rather than duplicating genre names as OWL subclasses."@en ;
+    rdfs:subClassOf skos:Concept .
+
+:Germany a :Region ;
+    rdfs:label "Germany"@en .
+
+:HandheldConsole a owl:Class ;
+    rdfs:label "Handheld Console"@en ;
+    rdfs:comment "A type of platform."@en ;
+    rdfs:subClassOf :Platform .
+
+:HistoricalPeriod a owl:Class ;
+    rdfs:label "Historical Period"@en ;
+    rdfs:comment "A named historical period modeled as both a Dublin Core period of time and an OWL-Time interval; represent boundaries with time:hasBeginning/time:hasEnd and time:Instant resources."@en ;
+    rdfs:subClassOf dcterms:PeriodOfTime,
+        time:Interval .
+
+:Japan a :Region ;
+    rdfs:label "Japan"@en .
+
+:Microphone a owl:Class ;
+    rdfs:label "Microphone"@en ;
+    rdfs:comment "A type of input device."@en ;
+    rdfs:subClassOf :InputDevice .
+
+:Mod a owl:Class ;
+    rdfs:label "Mod"@en ;
+    rdfs:comment "A GameExtension that modifies at least one GameResource; :modifiesResource also specializes :extendsResource."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :modifiesResource ;
+            owl:someValuesFrom :GameResource ],
+        :GameExtension .
+
+:Nintendo a :Organization ;
+    rdfs:label "Nintendo"@en .
+
+:PlayStation a :HomeConsole ;
+    rdfs:label "PlayStation"@en .
+
+:Port a owl:Class ;
+    rdfs:label "Port"@en ;
+    rdfs:comment "A game release adapted to run on a platform or technical environment different from an earlier release."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :portOf ;
+            owl:someValuesFrom :GameRelease ],
+        :GameRelease .
+
+:ProvenanceRecord a owl:Class ;
+    rdfs:label "Provenance Record"@en ;
+    rdfs:comment "A PROV entity used to group provenance assertions for a resource; it may cite derivation sources, attribution agents, and generation time using PROV-O properties."@en ;
+    rdfs:subClassOf prov:Entity .
+
+:RatingAuthority a owl:Class ;
+    rdfs:label "Rating Authority"@en ;
+    rdfs:comment "An organization that administers a content-rating system."@en ;
+    rdfs:subClassOf :Organization .
+
+:Remake a owl:Class ;
+    rdfs:label "Remake"@en ;
+    rdfs:comment "A game release that recreates an earlier game release as a new derived release."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :remakeOf ;
+            owl:someValuesFrom :GameRelease ],
+        :GameRelease .
+
+:Remaster a owl:Class ;
+    rdfs:label "Remaster"@en ;
+    rdfs:comment "A game release derived from an earlier release with revised presentation or technical treatment while substantially preserving the original game."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :remasterOf ;
+            owl:someValuesFrom :GameRelease ],
+        :GameRelease .
+
+:Spacewar a :VideoGame ;
+    rdfs:label "Spacewar!"@en .
+
+:UnitedKingdom a :Region ;
+    rdfs:label "United Kingdom"@en .
+
+:UnitedStates a :Region ;
+    rdfs:label "United States"@en .
+
+:VRInputDevice a owl:Class ;
+    rdfs:label "VR input device"@en ;
+    rdfs:comment "A type of input device."@en ;
+    rdfs:subClassOf :InputDevice .
+
+:VROutputDevice a owl:Class ;
+    rdfs:label "VR output device"@en ;
+    rdfs:comment "A type of output device."@en ;
+    rdfs:subClassOf :OutputDevice .
+
+:VideoGameSeries a owl:Class ;
+    rdfs:label "Video Game Series"@en ;
+    rdfs:comment "A creative-work series to which one or more VideoGame resources belong."@en ;
+    rdfs:subClassOf schema:CreativeWorkSeries .
+
+:Webcam a owl:Class ;
+    rdfs:label "Webcam"@en ;
+    rdfs:comment "A DigitalCamera used as an input device for live video capture, communication, streaming, or gameplay-related sensing."@en ;
+    rdfs:subClassOf :DigitalCamera .
+
+:accessibleViaOnlineService a owl:ObjectProperty ;
+    rdfs:label "accessible via online service"@en ;
+    rdfs:comment "Indicates an online service through which a GameResource can be accessed."@en ;
+    rdfs:domain :GameResource ;
+    rdfs:range :OnlineService .
+
+:associatedWithGame a owl:ObjectProperty ;
+    rdfs:label "associated with game"@en ;
+    rdfs:comment "Links game-related content to the VideoGame with which it is associated. For a GameExtension that extends a GameRelease, the association can be inferred through :extendsResource followed by :releaseOf."@en ;
+    rdfs:domain :GameRelatedContent ;
+    rdfs:range :VideoGame ;
+    owl:propertyChainAxiom ( :extendsResource :releaseOf ) .
+
+:exclusiveToPlatform a owl:ObjectProperty ;
+    rdfs:label "exclusive to platform"@en ;
+    rdfs:comment "Indicates a Platform to which a GameRelease is exclusive; this is a specialization of :availableOnPlatform."@en ;
+    rdfs:domain :GameRelease ;
+    rdfs:range :Platform ;
+    rdfs:subPropertyOf :availableOnPlatform .
+
+:featuresGameRelease a owl:ObjectProperty ;
+    rdfs:label "features game release"@en ;
+    rdfs:comment "Identifies a particular GameRelease featured in a CompetitiveContext."@en ;
+    rdfs:domain :CompetitiveContext ;
+    rdfs:range :GameRelease .
+
+:hasPlatformHolder a owl:ObjectProperty ;
+    rdfs:label "has platform holder"@en ;
+    rdfs:comment "Identifies the Organization that holds or controls a Platform."@en ;
+    rdfs:domain :Platform ;
+    rdfs:range :Organization .
+
+:issuedByRatingSystem a owl:ObjectProperty ;
+    rdfs:label "issued by rating system"@en ;
+    rdfs:comment "Identifies the RatingSystem that issued a ContentRating."@en ;
+    rdfs:domain :ContentRating ;
+    rdfs:range :RatingSystem .
+
+:modifiesResource a owl:ObjectProperty ;
+    rdfs:label "modifies resource"@en ;
+    rdfs:comment "Identifies the GameResource modified by a Mod. Because Mod is a GameExtension, this relation specializes :extendsResource."@en ;
+    rdfs:domain :Mod ;
+    rdfs:range :GameResource ;
+    rdfs:subPropertyOf :extendsResource .
+
+:portOf a owl:ObjectProperty ;
+    rdfs:label "port of"@en ;
+    rdfs:comment "Identifies the earlier GameRelease from which a Port was derived."@en ;
+    rdfs:domain :Port ;
+    rdfs:range :GameRelease ;
+    rdfs:subPropertyOf prov:wasDerivedFrom .
+
+:remakeOf a owl:ObjectProperty ;
+    rdfs:label "remake of"@en ;
+    rdfs:comment "Identifies the earlier GameRelease from which a Remake was derived."@en ;
+    rdfs:domain :Remake ;
+    rdfs:range :GameRelease ;
+    rdfs:subPropertyOf prov:wasDerivedFrom .
+
+:remasterOf a owl:ObjectProperty ;
+    rdfs:label "remaster of"@en ;
+    rdfs:comment "Identifies the earlier GameRelease from which a Remaster was derived."@en ;
+    rdfs:domain :Remaster ;
+    rdfs:range :GameRelease ;
+    rdfs:subPropertyOf prov:wasDerivedFrom .
+
+:usesGameRelease a owl:ObjectProperty ;
+    rdfs:label "uses game release"@en ;
+    rdfs:comment "Identifies the GameRelease used in a GameplaySession."@en ;
+    rdfs:domain :GameplaySession ;
+    rdfs:range :GameRelease ;
+    rdfs:subPropertyOf prov:used .
+
+:CasualGame a owl:Class ;
+    rdfs:label "Casual Game"@en ;
+    rdfs:comment "A type of video game."@en ;
+    rdfs:subClassOf :VideoGame .
+
+:CloudGamingPlatform a owl:Class ;
+    rdfs:label "Cloud Gaming Platform"@en ;
+    rdfs:comment "A type of platform."@en ;
+    rdfs:subClassOf :Platform .
+
+:Device a owl:Class ;
+    rdfs:label "Device"@en ;
+    rdfs:comment "A physical or virtual device used for game input or output."@en ;
+    rdfs:subClassOf prov:Entity .
+
+:EducationalGame a owl:Class ;
+    rdfs:label "Educational Game"@en ;
+    rdfs:comment "A type of serious game."@en ;
+    rdfs:subClassOf :SeriousGame .
+
+:GameEngine a owl:Class ;
+    rdfs:label "Game Engine"@en ;
+    rdfs:comment "Software used to develop or run a video game or game release."@en ;
+    rdfs:subClassOf schema:SoftwareApplication .
+
+:MonetizationModel a owl:Class ;
+    rdfs:label "Monetization Model"@en ;
+    rdfs:comment "A controlled concept describing how a game or release is monetized."@en ;
+    rdfs:subClassOf skos:Concept .
+
+:OpticalDisc a owl:Class ;
+    rdfs:label "Optical Disc"@en ;
+    rdfs:comment "A type of physical media format."@en ;
+    rdfs:subClassOf :PhysicalMediaFormat .
+
+:UserInterface a owl:Class ;
+    rdfs:label "User Interface"@en ;
+    rdfs:comment "An interface through which a player receives game state information or interacts with a video game."@en .
+
+:availableOnPlatform a owl:ObjectProperty ;
+    rdfs:label "available on platform"@en ;
+    rdfs:comment "Indicates a Platform on which a GameRelease is available."@en ;
+    rdfs:domain :GameRelease ;
+    rdfs:range :Platform ;
+    rdfs:subPropertyOf schema:gamePlatform .
+
+:supportsInputDevice a owl:ObjectProperty ;
+    rdfs:label "supports input device"@en ;
+    rdfs:comment "Identifies an InputDevice supported by a VideoGame or GameRelease."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :InputDevice .
+
+:usedInputDevice a owl:ObjectProperty ;
+    rdfs:label "used input device"@en ;
+    rdfs:comment "Identifies an InputDevice actually used during a GameplaySession."@en ;
+    rdfs:domain :GameplaySession ;
+    rdfs:range :InputDevice ;
+    rdfs:subPropertyOf prov:used .
+
+:usesMediaFormat a owl:ObjectProperty ;
+    rdfs:label "uses media format"@en ;
+    rdfs:comment "Identifies a MediaFormat used to distribute or install a GameRelease."@en ;
+    rdfs:domain :GameRelease ;
+    rdfs:range :MediaFormat .
+
+:Character a owl:Class ;
+    rdfs:label "Character"@en ;
+    rdfs:comment "A character appearing in a video game."@en .
+
+:extendsResource a owl:ObjectProperty ;
+    rdfs:label "extends resource"@en ;
+    rdfs:comment "Identifies the GameResource extended by a GameExtension."@en ;
+    rdfs:domain :GameExtension ;
+    rdfs:range :GameResource .
+
+:hasParticipatingOrganization a owl:ObjectProperty ;
+    rdfs:label "has participating organization"@en ;
+    rdfs:comment "Relates a VideoGame or GameRelease to an Organization participating in its development, publication, or distribution."@en ;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf ( :VideoGame :GameRelease ) ] ;
+    rdfs:range :Organization .
+
+:releaseOf a owl:ObjectProperty ;
+    rdfs:label "release of"@en ;
+    rdfs:comment "Links a particular GameRelease to the VideoGame work that it releases."@en ;
+    rdfs:domain :GameRelease ;
+    rdfs:range :VideoGame ;
+    rdfs:subPropertyOf schema:exampleOfWork .
+
+:DistributionMethod a owl:Class ;
+    rdfs:label "Distribution Method"@en ;
+    rdfs:comment "A controlled concept describing how a GameRelease is delivered or distributed."@en ;
+    rdfs:subClassOf skos:Concept .
+
+:FeedbackCapability a owl:Class ;
+    rdfs:label "Feedback Capability"@en ;
+    rdfs:comment "A visual, audio, haptic, or other feedback capability."@en .
+
+:GameExtension a owl:Class ;
+    rdfs:label "Game Extension"@en ;
+    rdfs:comment "A game-related creative resource that extends another GameResource, such as an expansion, downloadable content, or mod. Use dcterms:creator with a prov:Agent when creator attribution is recorded."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :extendsResource ;
+            owl:someValuesFrom :GameResource ],
+        :GameRelatedContent,
+        :GameResource .
+
+:GameMode a owl:Class ;
+    rdfs:label "Game Mode"@en ;
+    rdfs:comment "A controlled concept describing a mode of play supported by a game or release."@en ;
+    rdfs:subClassOf skos:Concept .
+
+:GameRelatedContent a owl:Class ;
+    rdfs:label "Game-related content"@en ;
+    rdfs:comment "Content associated with at least one VideoGame, including official or user-created material that is not necessarily itself a game release."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :associatedWithGame ;
+            owl:someValuesFrom :VideoGame ],
+        prov:Entity,
+        schema:CreativeWork .
+
+:MultiplayerConnectivityMode a owl:Class ;
+    rdfs:label "Multiplayer Connectivity Mode"@en ;
+    rdfs:comment "A controlled concept describing how multiplayer participants connect."@en ;
+    rdfs:subClassOf skos:Concept .
+
+:OnlineService a owl:Class ;
+    rdfs:label "Online Service"@en ;
+    rdfs:comment "An online service through which a GameResource can be accessed or whose availability may be required."@en ;
+    rdfs:subClassOf schema:Service .
+
+:GameplaySession a owl:Class ;
+    rdfs:label "Gameplay Session"@en ;
+    rdfs:comment "An occurrence of playing a particular GameRelease; modeled as a PROV activity."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :usesGameRelease ;
+            owl:someValuesFrom :GameRelease ],
+        prov:Activity .
+
+:HomeConsole a owl:Class ;
+    rdfs:label "Home Console"@en ;
+    rdfs:comment "A type of platform."@en ;
+    rdfs:subClassOf :Platform .
+
+:MediaFormat a owl:Class ;
+    rdfs:label "Media Format"@en ;
+    rdfs:comment "A physical or digital format used to distribute or install a game release."@en .
+
+:OutputDevice a owl:Class ;
+    rdfs:label "Output Device"@en ;
+    rdfs:comment "A device used to present visual, audio, haptic, or other game output."@en ;
+    rdfs:subClassOf :Device .
+
+:PhysicalMediaFormat a owl:Class ;
+    rdfs:label "Physical Media Format"@en ;
+    rdfs:comment "A type of media format."@en ;
+    rdfs:subClassOf :MediaFormat .
+
+:SeriousGame a owl:Class ;
+    rdfs:label "Serious Game"@en ;
+    rdfs:comment "A type of video game."@en ;
+    rdfs:subClassOf :VideoGame .
+
+:CompetitiveContext a owl:Class ;
+    rdfs:label "Competitive Context"@en ;
+    rdfs:comment "A competitive context in which a game or release may participate."@en .
+
+:GameController a owl:Class ;
+    rdfs:label "Game Controller"@en ;
+    rdfs:comment "An input device designed primarily for controlling gameplay."@en ;
+    rdfs:subClassOf :InputDevice ;
+    skos:altLabel "Controller"@en .
+
+:MultiplayerStyle a owl:Class ;
+    rdfs:label "Multiplayer Style"@en ;
+    rdfs:comment "A controlled concept describing the structure of multiplayer play."@en ;
+    rdfs:subClassOf skos:Concept .
+
+:ContentRating a owl:Class ;
+    rdfs:label "Content Rating"@en ;
+    rdfs:comment "A provenance-capable content-rating assignment for a GameRelease that is issued by at least one RatingSystem; it may also carry a rating code, age category, content descriptors, and source metadata via dcterms:source."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :issuedByRatingSystem ;
+            owl:someValuesFrom :RatingSystem ],
+        prov:Entity .
+
+:DisplayDevice a owl:Class ;
+    rdfs:label "Display Device"@en ;
+    rdfs:comment "A type of output device."@en ;
+    rdfs:subClassOf :OutputDevice .
+
+:RatingSystem a owl:Class ;
+    rdfs:label "Rating System"@en ;
+    rdfs:comment "A content-classification scheme that defines or issues age categories, content descriptors, and rating codes."@en ;
+    rdfs:subClassOf skos:ConceptScheme .
+
+:Region a owl:Class ;
+    rdfs:label "Region"@en ;
+    rdfs:comment "A geographic or market region relevant to releases, labels, rating systems, or rating validity."@en ;
+    rdfs:subClassOf dcterms:Location,
+        schema:Place .
+
+:Organization a owl:Class ;
+    rdfs:label "Organization"@en ;
+    rdfs:comment "An organization participating in the video-game ecosystem."@en ;
+    rdfs:subClassOf prov:Agent,
+        schema:Organization .
+
+:GameResource a owl:Class ;
+    rdfs:label "Game Resource"@en ;
+    rdfs:comment "A domain resource representing a video game, a particular game release, or an extension; modeled as a PROV entity so derivation provenance can be reused directly."@en ;
+    rdfs:subClassOf prov:Entity .
+
+:InputDevice a owl:Class ;
+    rdfs:label "Input Device"@en ;
+    rdfs:comment "A device used to provide input to a game or gameplay session."@en ;
+    rdfs:subClassOf :Device .
+
+:Platform a owl:Class ;
+    rdfs:label "Platform"@en ;
+    rdfs:comment "A hardware, software, browser, mobile, cloud, or virtual-reality platform on which games may run."@en .
+
+:VideoGame a owl:Class ;
+    rdfs:label "Video Game"@en ;
+    rdfs:comment "A video game considered as a creative work independent of a particular release."@en ;
+    rdfs:subClassOf :GameResource,
+        schema:VideoGame ;
+    owl:disjointWith :GameRelease .
+
+:GameRelease a owl:Class ;
+    rdfs:label "Game Release"@en ;
+    rdfs:comment "A particular release, edition, or version of a VideoGame. Every GameRelease is related to at least one VideoGame through :releaseOf; use dcterms:title and dcterms:identifier for generic metadata, schema:version for version text, and :releaseDate for its formal release date."@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty :releaseOf ;
+            owl:someValuesFrom :VideoGame ],
+        [ a owl:Restriction ;
+            owl:onProperty :availableOnPlatform ;
+            owl:someValuesFrom :Platform ],
+        :GameResource,
+        schema:CreativeWork .
+

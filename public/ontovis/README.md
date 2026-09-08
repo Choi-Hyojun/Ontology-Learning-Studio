@@ -15,6 +15,8 @@ Parsing is local: no GPT calls, uploads, RDF import fetching or CDN requests.
 It is checked in for direct `npx vinext dev` usage. After updating dependencies,
 run the sync script again. Library license files are included alongside the bundles.
 
-The current simulator generates fixed example Turtle at NeOn-GPT step 08 and
-TAO step 04, with an expanded example at TAO step 08. ABox may be empty until
-instances exist. This viewer shows those snapshots, not a document-derived ontology.
+The simulator replays supplied video-game Turtle: NeOn-GPT step 08, its separately
+supplied final merged file at step 20, and TAO's ver2 file at step 04. TAO's later
+QA/repair results were not supplied, so those stages retain step 04's snapshot.
+ABox shows the instances actually present in each file. Editing the input in
+simulation mode does not regenerate these fixed, source-backed snapshots.

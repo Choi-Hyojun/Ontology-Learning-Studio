@@ -1,0 +1,304 @@
+{
+"Game Wiki": [
+{
+"competency_question": "What broader category of games includes video games?",
+"key_entities": ["Video Game", "Electronic Game"],
+"odp_hint": "Taxonomy / Subclass ",
+"expected_answer": "Electronic games. "
+},
+{
+"competency_question": "What kind of interactivity is considered necessary for a video game?",
+"key_entities": ["Video Game", "Player Interaction", "Visual Display"],
+"odp_hint": "None",
+"expected_answer": "Interactivity that affects the visual display. "
+},
+{
+"competency_question": "Can a video game lack a winning condition?",
+"key_entities": ["Video Game", "Winning Condition", "Game World", "Player"],
+"odp_hint": "Qualified Statement",
+"expected_answer": "Yes. Games without winning conditions can still be considered video games when players can interact with their game worlds. "
+},
+{
+"competency_question": "What are most video games divided into for player progression?",
+"key_entities": ["Video Game", "Level"],
+"odp_hint": "Part-Whole / Qualified Statement",
+"expected_answer": "Most video games are divided into levels. "
+},
+{
+"competency_question": "What effect can a power-up have on an avatar?",
+"key_entities": ["Power-Up", "Avatar", "Avatar Attribute"],
+"odp_hint": "Simple Relation",
+"expected_answer": "A power-up can boost the avatar's innate attributes. "
+},
+{
+"competency_question": "What effect does taking damage have on an avatar's health?",
+"key_entities": ["Avatar", "Damage", "Health"],
+"odp_hint": "Simple Relation",
+"expected_answer": "Taking damage depletes the avatar's health. "
+},
+{
+"competency_question": "Under what conditions does a player lose a life in the gameplay described?",
+"key_entities": ["Player", "Avatar", "Health", "Life", "Game Location"],
+"odp_hint": "None",
+"expected_answer": "When the avatar's health falls to zero or the avatar enters an impossible-to-escape location. "
+},
+{
+"competency_question": "When does a player reach the game-over screen in the gameplay described?",
+"key_entities": ["Player", "Life", "Extra Life", "Game-Over Screen"],
+"odp_hint": "None",
+"expected_answer": "When the player loses all lives without gaining an extra life. "
+},
+{
+"competency_question": "What can a saved game allow a player to do?",
+"key_entities": ["Saved Game", "Player", "Video Game"],
+"odp_hint": "Functional Relation",
+"expected_answer": "Restart the game after losing all lives or after stopping play. "
+},
+{
+"competency_question": "How does a heads-up display present gameplay information?",
+"key_entities": ["Heads-Up Display", "Gameplay Information", "On-Screen User Interface"],
+"odp_hint": "Functional Relation",
+"expected_answer": "Through an on-screen user interface overlaid on the rendered game. "
+},
+{
+"competency_question": "What components make up a video game platform?",
+"key_entities": ["Video Game Platform", "Hardware", "Software"],
+"odp_hint": "Part-Whole",
+"expected_answer": "Electronic components or computer hardware and associated software. "
+},
+{
+"competency_question": "Which major platform-based categories of video games are identified in the document?",
+"key_entities": ["Video Game", "Hardware Platform", "Arcade Video Game", "Console Game", "Computer Game", "Mobile Game", "Virtual Reality System", "Augmented Reality System", "Cloud Gaming"],
+"odp_hint": "Classification",
+"expected_answer": "Arcade video games, console games, computer games, mobile games, games for virtual and augmented reality systems, and cloud gaming. "
+},
+{
+"competency_question": "How many platforms are video games typically designed for?",
+"key_entities": ["Video Game", "Video Game Platform"],
+"odp_hint": "Qualified Statement",
+"expected_answer": "Typically one or a limited number of platforms. "
+},
+{
+"competency_question": "What are games developed for platforms other than those originally intended called?",
+"key_entities": ["Video Game", "Video Game Platform", "Port", "Conversion"],
+"odp_hint": "None",
+"expected_answer": "Ports or conversions. "
+},
+{
+"competency_question": "How much of an original game's source code is reused in a remaster?",
+"key_entities": ["Remaster", "Original Game", "Source Code"],
+"odp_hint": "Qualified Statement",
+"expected_answer": "Most of the original game's source code. "
+},
+{
+"competency_question": "How extensively is the original game reworked in a remake?",
+"key_entities": ["Remake", "Original Game"],
+"odp_hint": "Qualified Statement",
+"expected_answer": "The original game is significantly reworked, possibly from scratch. "
+},
+{
+"competency_question": "What components are integrated into a handheld game console's single unit?",
+"key_entities": ["Handheld Game Console", "Console", "Screen", "Speaker", "Game Controller"],
+"odp_hint": "Part-Whole",
+"expected_answer": "The console, a small screen, speakers, and buttons, a joystick, or other game controllers. "
+},
+{
+"competency_question": "Which mobile-device features may support augmented reality gameplay?",
+"key_entities": ["Mobile Device", "Augmented Reality Gameplay", "Accelerometer", "Global Positioning Information", "Camera"],
+"odp_hint": "Functional Relation / Qualified Statement",
+"expected_answer": "Features that may be used include accelerometers, global positioning information, and cameras. "
+},
+{
+"competency_question": "Where is a cloud game computed and rendered?",
+"key_entities": ["Cloud Game", "Remote Hardware", "Cloud Gaming Provider"],
+"odp_hint": "Simple Relation",
+"expected_answer": "On remote hardware provided by the cloud gaming provider. "
+},
+{
+"competency_question": "What features does the head-mounted unit generally required for virtual reality games provide?",
+"key_entities": ["Virtual Reality Game", "Head-Mounted Unit", "Stereoscopic Screen", "Motion Tracking"],
+"odp_hint": "Part-Whole / Qualified Statement",
+"expected_answer": "Stereoscopic screens and motion tracking. "
+},
+{
+"competency_question": "How does an emulator enable games from another system to run on a modern system?",
+"key_entities": ["Emulator", "Video Game", "Original System", "Modern System", "Virtual Machine"],
+"odp_hint": "Functional Relation",
+"expected_answer": "By simulating the original system's hardware in a virtual machine. "
+},
+{
+"competency_question": "How does backward compatibility typically enable older games to run on newer platforms?",
+"key_entities": ["Backward Compatibility", "Older Game", "Newer Platform", "Hardware", "Built-In Software"],
+"odp_hint": "Functional Relation / Qualified Statement",
+"expected_answer": "Typically, directly through the newer platform's hardware and built-in software. "
+},
+{
+"competency_question": "On which physical media formats can video games be distributed?",
+"key_entities": ["Video Game", "Physical Game Media", "ROM Cartridge", "Magnetic Storage", "Optical Media", "Flash Memory Card"],
+"odp_hint": "Classification",
+"expected_answer": "ROM cartridges; magnetic storage such as magnetic tape and floppy discs; optical media such as CD-ROMs and DVDs; and flash memory cards. "
+},
+{
+"competency_question": "What forms of game extension can provide new content and software patches?",
+"key_entities": ["Video Game", "Expansion Pack", "Downloadable Content", "Software Patch", "Game Content"],
+"odp_hint": "Functional Relation",
+"expected_answer": "Expansion packs and downloadable content. "
+},
+{
+"competency_question": "What changes can user-created modifications make to a game?",
+"key_entities": ["User-Created Modification", "Video Game", "Player"],
+"odp_hint": "Simple Relation",
+"expected_answer": "They can alter the game or add to it. "
+},
+{
+"competency_question": "Which kinds of parties are involved in bringing a video game to consumers?",
+"key_entities": ["Video Game", "Developer", "Publisher", "Distributor", "Retailer", "Hardware Manufacturer", "Marketer", "Consumer"],
+"odp_hint": "Participation / Role",
+"expected_answer": "Developers, publishers, distributors, retailers, hardware manufacturers, and other marketers. "
+},
+{
+"competency_question": "What do video game input devices translate into game input?",
+"key_entities": ["Input Device", "Human Action", "Game Input"],
+"odp_hint": "Functional Relation",
+"expected_answer": "Human actions. "
+},
+{
+"competency_question": "Which specialized controllers may be used for certain game genres?",
+"key_entities": ["Specialized Controller", "Game Genre", "Racing Wheel", "Light Gun", "Dance Pad"],
+"odp_hint": "Classification / Qualified Statement",
+"expected_answer": "Racing wheels, light guns, and dance pads may be used. "
+},
+{
+"competency_question": "What devices can display video game graphics?",
+"key_entities": ["Video Game Graphics", "Display Device", "Television", "Built-In Screen", "Projector", "Computer Monitor"],
+"odp_hint": "Functional Relation",
+"expected_answer": "Televisions, built-in screens, projectors, and computer monitors. "
+},
+{
+"competency_question": "What kind of player feedback can haptic technology provide?",
+"key_entities": ["Haptic Technology", "Tactile Feedback", "Game Controller", "Player"],
+"odp_hint": "Functional Relation",
+"expected_answer": "Tactile sensations, such as a controller shaking in the player's hands.  "
+},
+{
+"competency_question": "What forms can a video game's visual output take?",
+"key_entities": ["Video Game", "Visual Output", "Fixed Display", "Text-Based Game", "Two-Dimensional Graphics", "Three-Dimensional Graphics", "Augmented Reality Display"],
+"odp_hint": "Classification",
+"expected_answer": "Fixed displays using LED or LCD elements, text-based output, two-dimensional graphics, three-dimensional graphics, and augmented reality displays. "
+},
+{
+"competency_question": "On what basis are video games generally assigned to genres?",
+"key_entities": ["Video Game", "Game Genre", "Gameplay Interaction"],
+"odp_hint": "Classification / Qualified Statement",
+"expected_answer": "Video games are generally assigned to genres based on their gameplay interaction. "
+},
+{
+"competency_question": "What subgenres of shooter games are described?",
+"key_entities": ["Shooter Game", "First-Person Shooter", "Third-Person Shooter"],
+"odp_hint": "Taxonomy / Subclass",
+"expected_answer": "First-person shooters and third-person shooters. "
+},
+{
+"competency_question": "Can a cross-genre game type belong to multiple top-level genres?",
+"key_entities": ["Cross-Genre Game Type", "Top-Level Genre", "Action-Adventure Game"],
+"odp_hint": "Classification",
+"expected_answer": "Yes. Cross-genre types such as action-adventure games can fall under multiple top-level genres. "
+},
+{
+"competency_question": "What does a video game's mode describe?",
+"key_entities": ["Video Game", "Game Mode", "Simultaneous Player Count"],
+"odp_hint": "None",
+"expected_answer": "How many players can use the game at the same time. "
+},
+{
+"competency_question": "What primary game-mode categories are distinguished by simultaneous player participation?",
+"key_entities": ["Game Mode", "Single-Player Game", "Multiplayer Game"],
+"odp_hint": "Classification",
+"expected_answer": "Single-player and multiplayer games. "
+},
+{
+"competency_question": "In what device and network arrangements can multiplayer games be played?",
+"key_entities": ["Multiplayer Game", "Device", "Local Network", "Internet Connection"],
+"odp_hint": "Classification",
+"expected_answer": "Locally on the same device, on separate devices connected through a local network, or online through separate Internet connections. "
+},
+{
+"competency_question": "What gameplay styles can multiplayer games offer?",
+"key_entities": ["Multiplayer Game", "Competitive Gameplay", "Cooperative Gameplay", "Team-Based Gameplay", "Asymmetric Gameplay"],
+"odp_hint": "Classification / Qualified Statement",
+"expected_answer": "Most are based on competitive gameplay, while many also offer cooperative, team-based, and asymmetric gameplay. "
+},
+{
+"competency_question": "How much player interaction do zero-player games involve?",
+"key_entities": ["Zero-Player Game", "Player Interaction", "Starting State", "Passive Observer"],
+"odp_hint": "Qualified Statement",
+"expected_answer": "Very limited interaction; the player may establish a starting state and then passively observe the game proceeding on its own. "
+},
+{
+"competency_question": "What learning and mastery commitment do core games typically require?",
+"key_entities": ["Core Game", "Learning Time", "Mastery"],
+"odp_hint": "Qualified Statement",
+"expected_answer": "They typically require a fair amount of time to learn and master. "
+},
+{
+"competency_question": "What design characteristics distinguish casual games?",
+"key_entities": ["Casual Game", "Accessibility", "Gameplay", "Rule Set"],
+"odp_hint": "None",
+"expected_answer": "Ease of accessibility, simple-to-understand gameplay, and quickly grasped rule sets. "
+},
+{
+"competency_question": "What broad categories of educational games are described?",
+"key_entities": ["Educational Game", "Edutainment Game", "Educational Video Game"],
+"odp_hint": "Taxonomy / Subclass",
+"expected_answer": "Edutainment games and educational video games geared toward problem solving. "
+},
+{
+"competency_question": "What game types are included among serious games?",
+"key_entities": ["Serious Game", "Educational Game", "Fitness Game", "Simulator Game", "Advergame", "Newsgame"],
+"odp_hint": "Taxonomy / Subclass",
+"expected_answer": "Educational games, fitness games, simulator games, advergames, and newsgames. "
+},
+{
+"competency_question": "How can other purposes affect the entertainment factor in serious games?",
+"key_entities": ["Serious Game", "Entertainment", "Non-Entertainment Purpose"],
+"odp_hint": "Qualified Statement",
+"expected_answer": "Other purposes may augment, overshadow, or eliminate the entertainment factor. "
+},
+{
+"competency_question": "What player responses are art games designed to generate?",
+"key_entities": ["Art Game", "Player", "Emotion", "Empathy"],
+"odp_hint": "Simple Relation",
+"expected_answer": "Emotion and empathy. "
+},
+{
+"competency_question": "What information do nearly all video game content-rating systems provide?",
+"key_entities": ["Content Rating System", "Minimum-Age Identifier", "Content Descriptor"],
+"odp_hint": "Part-Whole / Qualified Statement",
+"expected_answer": "Nearly all systems provide a primary identifier based on minimum age, along with descriptors identifying specific content. "
+},
+{
+"competency_question": "Which content themes can influence video game content ratings?",
+"key_entities": ["Video Game", "Content Rating", "Violence", "Sexual Content", "Drug Use", "Alcohol Use", "Gambling"],
+"odp_hint": "Simple Relation",
+"expected_answer": "Violence, including its type and graphic presentation; sexual content; drug and alcohol use; and gambling. "
+},
+{
+"competency_question": "Which organizations assign video game content ratings in the regions described in the document?",
+"key_entities": ["Video Game", "Content Rating Organization", "Region", "ESRB", "PEGI", "ACB", "CERO", "USK"],
+"odp_hint": "Contextual Relation",
+"expected_answer": "ESRB: the United States.  PEGI: the United Kingdom, most of the European Union, and other European countries.  ACB: Australia.  CERO: Japan.  USK: Germany. "
+},
+{
+"competency_question": "How are video game content-rating systems generally upheld?",
+"key_entities": ["Content Rating System", "Vendor Practice", "Country", "Regulation"],
+"odp_hint": "Qualified Statement",
+"expected_answer": "They are generally voluntary systems upheld by vendor practices, with regulations varying by country. "
+},
+{
+"competency_question": "What cross-region content-rating process does the International Age Rating Coalition support?",
+"key_entities": ["International Age Rating Coalition", "Publisher", "Content Rating Review", "Rating Provider", "Region"],
+"odp_hint": "Contextual Relation",
+"expected_answer": "Publishers can complete a content-rating review with one provider and use IARC to affirm content ratings for other regions. "
+}
+]
+}

@@ -34,8 +34,8 @@ test("ontology export is generated Turtle only, isolated by method and valid sta
     "tao-08": { ontology: simulatedOntology("tao", "08"), completedAt: "3" },
   };
   assert.equal(currentOntology(records, "neon"), simulatedOntology("neon", "08"));
-  assert.equal(currentOntology(records, "tao"), simulatedOntology("tao", "08"));
-  assert.doesNotMatch(currentOntology(records, "neon"), /###|전달받은 이전 출력|TOOL CALL/);
+  assert.equal(currentOntology(records, "tao"), simulatedOntology("tao", "04"));
+  assert.doesNotMatch(currentOntology(records, "neon"), /###start_turtle###|###end_turtle###|전달받은 이전 출력|TOOL CALL/);
   delete records["tao-08"];
   assert.equal(currentOntology(records, "tao"), simulatedOntology("tao", "04"));
   delete records["neon-08"];
@@ -50,7 +50,7 @@ test("full log preserves both attempts, source documents and ontology after curr
   assert.equal(log.apiCalls, 0);
   assert.deepEqual(log.history, history);
   assert.equal(log.attachments["neon-domain_description"].text, "문서 원문");
-  assert.ok(log.ontologies.neon.startsWith("# LOCAL SIMULATION"));
+  assert.equal(log.ontologies.neon, simulatedOntology("neon", "08"));
 });
 
 test("download button uses a Blob, filename, click and delayed URL cleanup", async () => {

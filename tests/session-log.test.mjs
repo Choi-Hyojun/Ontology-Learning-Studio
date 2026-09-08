@@ -56,8 +56,21 @@ test("save/load restores both methods, documents, saved templates, overrides and
   assert.ok(prompt.user.includes("neon-02의 저장된 출력"));
   assert.ok(prompt.user.includes("저장된 템플릿 수정된 문서 내용 {persona}"));
   assert.equal(currentOntology(restored.currentRecords, "neon"), simulatedOntology("neon", "08"));
-  assert.equal(currentOntology(restored.currentRecords, "tao"), simulatedOntology("tao", "08"));
+  assert.equal(currentOntology(restored.currentRecords, "tao"), simulatedOntology("tao", "04"));
   assert.equal(restored.currentOutputs["neon-03"], undefined);
+});
+
+test("older v2/v3 logs without the new NeOn CQ field preserve their original domain", () => {
+  for (const version of [2, 3]) {
+    const log = fixture();
+    log.version = version;
+    if (version === 3) { log.current.engine = "simulation"; log.current.provider = "openai"; }
+    delete log.valuesByMethod.neon.competency_questions;
+    const restored = parseSessionLog(JSON.stringify(log), defaults);
+    assert.equal(restored.valuesByMethod.neon.competency_questions, "");
+    assert.equal(restored.valuesByMethod.neon.domain_description, log.valuesByMethod.neon.domain_description);
+    assert.deepEqual(restored.currentRecords, log.currentRecords);
+  }
 });
 
 test("editing a restored intermediate prompt removes only current/downstream results, preserving history and other method", () => {
@@ -140,7 +153,7 @@ test("version 3 preserves real API output, errors and engine config without auto
   assert.equal(restored.apiCalls, 2);
   assert.equal(restored.currentRecords["tao-08"].response.execution.provider, "anthropic");
   assert.equal(restored.history.at(-1).event, "execution_error");
-  assert.equal(currentOntology(restored.currentRecords, "tao"), simulatedOntology("tao", "08"));
+  assert.equal(currentOntology(restored.currentRecords, "tao"), simulatedOntology("tao", "04"));
 });
 
 test("old v1/v2/v3 NeOn metrics migrate out of active context, without rewriting historical records or TAO", () => {

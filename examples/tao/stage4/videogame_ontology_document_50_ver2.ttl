@@ -1,0 +1,1757 @@
+@prefix : <http://www.example.org/videogame#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<http://www.example.org/videogame> a owl:Ontology ;
+    rdfs:label "Document-grounded video game ontology"@en ;
+    dcterms:source "ontology_instruction.txt; source and modeling priority. fileciteturn0file0L13-L18"@en,
+        "videogame_tip_document_50_ver2.md; class registry and implementation policy. fileciteturn0file1L94-L110 fileciteturn0file1L171-L193"@en,
+        "Video Game Document.txt; factual source, including named game examples and rating coverage. fileciteturn0file2L131-L143 fileciteturn0file2L151-L161"@en ;
+    rdfs:comment "OWL 2 DL ontology implementing the supplied TIP. Classes, properties and restrictions follow the TIP; named examples and factual qualifications come from the supplied document. No external background instances or invented game, player, review or rating records are included. Historical, regional and legal statements are document reports, not independently verified current claims. Missing assertions do not establish negation."@en .
+
+dcterms:source a owl:AnnotationProperty .
+
+:sourceLocator a owl:AnnotationProperty ;
+    rdfs:label "source locator"@en ;
+    rdfs:comment "Identifies a supplied file and its section or line range supporting the annotated statement."@en .
+
+:qualification a owl:AnnotationProperty ;
+    rdfs:label "qualification"@en ;
+    rdfs:comment "Preserves scoped typicality, possibility, prevalence, relative extent, design intent or source-report limitations without asserting a universal logical rule."@en .
+
+:condition a owl:AnnotationProperty ;
+    rdfs:label "condition"@en ;
+    rdfs:comment "Preserves a source-described condition; the text is not an executable state transition or an OWL cardinality constraint."@en .
+
+:Cl_ElectronicGame a owl:Class ;
+    rdfs:label "Electronic game"@en ;
+    rdfs:comment "The broader electronic-game category includes video games and electronic games without video output."@en ;
+    :sourceLocator "Video Game Document.txt, Terminology, lines 13-17"@en .
+
+:Cl_VideoGame a owl:Class ;
+    rdfs:label "Video game"@en ;
+    rdfs:subClassOf :Cl_ElectronicGame ;
+    rdfs:comment "An electronic game with player interaction affecting its visual output."@en ;
+    :qualification "A winning condition is not necessary when a player can interact with the game world. Most games have levels, but levels are not universally required. Most video games are intended for entertainment."@en ;
+    :sourceLocator "Video Game Document.txt, Definition, lines 25-27; Video game terminology, line 33; Types, line 123"@en .
+
+:Cl_ShooterGame a owl:Class ;
+    rdfs:label "Shooter game"@en ;
+    rdfs:subClassOf :Cl_VideoGame ;
+    rdfs:comment "A gameplay-based game class with first-person and third-person shooter subclasses; it is not also a genre-descriptor individual."@en ;
+    :sourceLocator "Video Game Document.txt, Genre, lines 111-113"@en .
+
+:Cl_FirstPersonShooter a owl:Class ;
+    rdfs:label "First-person shooter"@en ;
+    rdfs:subClassOf :Cl_ShooterGame ;
+    :sourceLocator "Video Game Document.txt, Genre, line 113"@en .
+
+:Cl_ThirdPersonShooter a owl:Class ;
+    rdfs:label "Third-person shooter"@en ;
+    rdfs:subClassOf :Cl_ShooterGame ;
+    :sourceLocator "Video Game Document.txt, Genre, line 113"@en .
+
+:Cl_CoreGame a owl:Class ;
+    rdfs:label "Core game"@en ;
+    rdfs:subClassOf :Cl_VideoGame ;
+    :qualification "Also called hard-core games. Typically require a fair amount of time to learn and master and are most appealing to gamers rather than a broader audience. No numeric learning or mastery duration is specified."@en ;
+    :sourceLocator "Video Game Document.txt, Core games, line 127"@en .
+
+:Cl_CasualGame a owl:Class ;
+    rdfs:label "Casual game"@en ;
+    rdfs:subClassOf :Cl_VideoGame ;
+    :qualification "Designed for a mass-market audience. Frequently support entering and leaving play on demand; numerous browser and mobile games are casual. Often use low-intensity gameplay and may use social-network mechanics."@en ;
+    :sourceLocator "Video Game Document.txt, Casual games, line 131"@en .
+
+:Cl_SeriousGame a owl:Class ;
+    rdfs:label "Serious game"@en ;
+    rdfs:subClassOf :Cl_VideoGame ;
+    rdfs:comment "Game design reinforces a purpose beyond entertainment."@en ;
+    :qualification "Other purposes may augment, overshadow or eliminate the entertainment factor. Serious games need not lack entertainment and are not disjoint from other purpose-based game types."@en ;
+    :sourceLocator "Video Game Document.txt, Serious games, line 139"@en .
+
+:Cl_ArtGame a owl:Class ;
+    rdfs:label "Art game"@en ;
+    rdfs:subClassOf :Cl_VideoGame ;
+    rdfs:comment "Also called an arthouse game; designed to communicate a story or message through the medium as a work of art."@en ;
+    :qualification "Emotion and empathy are intended responses, not guaranteed outcomes. Art games may lack a winning condition, allow exploration, and are mostly indie games based on personal experiences or stories."@en ;
+    :sourceLocator "Video Game Document.txt, Art games, line 143"@en .
+
+:Cl_EducationalGame a owl:Class ;
+    rdfs:label "Educational game"@en ;
+    rdfs:subClassOf :Cl_SeriousGame ;
+    rdfs:comment "Uses interactivity and game-design elements for education. The document names The Oregon Trail and the Carmen Sandiego series as examples."@en ;
+    :sourceLocator "Video Game Document.txt, Educational games, line 135; Serious games, line 139"@en .
+
+:Cl_EdutainmentGame a owl:Class ;
+    rdfs:label "Edutainment game"@en ;
+    rdfs:subClassOf :Cl_EducationalGame ;
+    :qualification "Tends to emphasize entertainment and rote learning and is described as unlikely to engage critical thinking."@en ;
+    :sourceLocator "Video Game Document.txt, Educational games, line 135"@en .
+
+:Cl_EducationalVideoGame a owl:Class ;
+    rdfs:label "Educational video game"@en ;
+    rdfs:subClassOf :Cl_EducationalGame ;
+    rdfs:comment "The narrower educational branch geared toward problem solving through motivation and positive reinforcement while downplaying entertainment, rather than a synonym for every educational game."@en ;
+    :sourceLocator "Video Game Document.txt, Educational games, line 135"@en .
+
+:Cl_FitnessGame a owl:Class ;
+    rdfs:label "Fitness game"@en ;
+    rdfs:subClassOf :Cl_SeriousGame ;
+    rdfs:comment "Incorporates significant physical exercise to help keep the player fit."@en ;
+    :sourceLocator "Video Game Document.txt, Serious games, line 139"@en .
+
+:Cl_SimulatorGame a owl:Class ;
+    rdfs:label "Simulator game"@en ;
+    rdfs:subClassOf :Cl_SeriousGame ;
+    rdfs:comment "Serious-game simulation, exemplified by flight simulation for piloting aircraft."@en ;
+    :sourceLocator "Video Game Document.txt, Serious games, line 139"@en .
+
+:Cl_Advergame a owl:Class ;
+    rdfs:label "Advergame"@en ;
+    rdfs:subClassOf :Cl_SeriousGame ;
+    rdfs:comment "A game built around advertising a product."@en ;
+    :sourceLocator "Video Game Document.txt, Serious games, line 139"@en .
+
+:Cl_Newsgame a owl:Class ;
+    rdfs:label "Newsgame"@en ;
+    rdfs:subClassOf :Cl_SeriousGame ;
+    rdfs:comment "A game aimed at conveying a specific advocacy message."@en ;
+    :sourceLocator "Video Game Document.txt, Serious games, line 139"@en .
+
+:Cl_PlayerInteraction a owl:Class ;
+    rdfs:label "Player interaction"@en ;
+    rdfs:comment "Interaction between a player and a game, including limited setup interaction. Only the defining interaction is required to affect visual output; not every action must do so."@en ;
+    :sourceLocator "Video Game Document.txt, Definition, line 25; Mode, line 119"@en .
+
+:Cl_GameWorld a owl:Class ;
+    rdfs:label "Game world"@en ;
+    rdfs:comment "The world with which a player can interact within a game."@en ;
+    :sourceLocator "Video Game Document.txt, Definition, line 27"@en .
+
+:Cl_WinningCondition a owl:Class ;
+    rdfs:label "Winning condition"@en ;
+    :qualification "Most video games feature a victory condition, such as a scoring mechanism or final boss fight, but a winning condition is not necessary for video-game status."@en ;
+    :sourceLocator "Video Game Document.txt, Definition, line 27"@en .
+
+:Cl_Avatar a owl:Class ;
+    rdfs:label "Avatar"@en ;
+    rdfs:comment "The in-game representation controlled by a player in the described gameplay."@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:Cl_AvatarAttribute a owl:Class ;
+    rdfs:label "Avatar attribute"@en ;
+    rdfs:comment "An innate attribute of an avatar that a power-up may boost."@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:Cl_Health a owl:Class ;
+    rdfs:label "Health"@en ;
+    rdfs:subClassOf :Cl_AvatarAttribute ;
+    rdfs:comment "An avatar attribute depleted by damage in the described gameplay. A zero-health loss threshold is not an assertion about any actual avatar health value."@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:Cl_PowerUp a owl:Class ;
+    rdfs:label "Power-up"@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:Cl_Damage a owl:Class ;
+    rdfs:label "Damage"@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:Cl_Life a owl:Class ;
+    rdfs:label "Life"@en ;
+    rdfs:comment "A countable allowance that a player can lose or gain in the described gameplay. An extra life is also called a 1-UP."@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:Cl_SavedGame a owl:Class ;
+    rdfs:label "Saved game"@en ;
+    rdfs:comment "A recorded game state on storage media, or a passage that can be written down and re-entered, supporting a restart."@en ;
+    :qualification "Available in some games, including through intermediate save points; availability is not required for every game."@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:Cl_GameplayInformation a owl:Class ;
+    rdfs:label "Gameplay information"@en ;
+    rdfs:comment "Information about gameplay relayed to the player through an on-screen interface."@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:Cl_OnScreenUserInterface a owl:Class ;
+    rdfs:label "On-screen user interface"@en ;
+    rdfs:comment "An interface presented on screen, rather than the physical display device."@en ;
+    :sourceLocator "videogame_tip_document_50_ver2.md, section 2, gameplay class registry"@en .
+
+:Cl_HeadsUpDisplay a owl:Class ;
+    rdfs:label "Heads-up display"@en ;
+    rdfs:subClassOf :Cl_OnScreenUserInterface ;
+    rdfs:comment "An on-screen user interface that presents gameplay information atop the rendered game."@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:Cl_GameOverScreen a owl:Class ;
+    rdfs:label "Game-over screen"@en ;
+    rdfs:subClassOf :Cl_OnScreenUserInterface ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:Cl_GameContent a owl:Class ;
+    rdfs:label "Game content"@en ;
+    rdfs:comment "Reusable parent for art assets, in-game models and levels."@en ;
+    :sourceLocator "videogame_tip_document_50_ver2.md, section 2, content class registry"@en .
+
+:Cl_ArtAsset a owl:Class ;
+    rdfs:label "Art asset"@en ;
+    rdfs:subClassOf :Cl_GameContent ;
+    :sourceLocator "Video Game Document.txt, Platform, line 43"@en .
+
+:Cl_GameModel a owl:Class ;
+    rdfs:label "In-game model"@en ;
+    rdfs:subClassOf :Cl_GameContent ;
+    :sourceLocator "Video Game Document.txt, Platform, line 43"@en .
+
+:Cl_Level a owl:Class ;
+    rdfs:label "Level"@en ;
+    rdfs:subClassOf :Cl_GameContent ;
+    :sourceLocator "Video Game Document.txt, Platform, line 43"@en .
+
+:Cl_SourceCode a owl:Class ;
+    rdfs:label "Source code"@en ;
+    :sourceLocator "Video Game Document.txt, Platform, line 43"@en .
+
+:Cl_VisualOutput a owl:Class ;
+    rdfs:label "Visual output"@en ;
+    rdfs:comment "Visual output produced by a game, distinct from the device displaying it. Output forms can overlap."@en ;
+    :sourceLocator "Video Game Document.txt, Display and output, line 99"@en .
+
+:Cl_HumanAction a owl:Class ;
+    rdfs:label "Human action"@en ;
+    :sourceLocator "Video Game Document.txt, Input device, line 95"@en .
+
+:Cl_GameInput a owl:Class ;
+    rdfs:label "Game input"@en ;
+    :sourceLocator "Video Game Document.txt, Input device, line 95"@en .
+
+:Cl_GlobalPositioningInformation a owl:Class ;
+    rdfs:label "Global positioning information"@en ;
+    rdfs:comment "Information available from a mobile device, not a device or hardware component."@en ;
+    :qualification "May support augmented reality gameplay; no mobile device is required to provide it."@en ;
+    :sourceLocator "Video Game Document.txt, Mobile game, line 69"@en .
+
+:Cl_AugmentedRealityGameplay a owl:Class ;
+    rdfs:label "Augmented reality gameplay"@en ;
+    :sourceLocator "Video Game Document.txt, Mobile game, line 69"@en .
+
+:Cl_MotionTracking a owl:Class ;
+    rdfs:label "Motion tracking"@en ;
+    :sourceLocator "Video Game Document.txt, Virtual reality, line 77"@en .
+
+:Cl_HapticTechnology a owl:Class ;
+    rdfs:label "Haptic technology"@en ;
+    rdfs:comment "Technology providing tactile sensations, such as shaking a controller in the player's hands."@en ;
+    :qualification "Some platforms support this additional feedback; it is commonly built into controllers."@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 3; Display and output, line 103"@en .
+
+:Cl_TactileFeedback a owl:Class ;
+    rdfs:label "Tactile feedback"@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 3; Display and output, line 103"@en .
+
+:Cl_VideoGamePlatform a owl:Class ;
+    rdfs:label "Video game platform"@en ;
+    rdfs:comment "A combination of electronic components or computer hardware and associated software required to operate a game."@en ;
+    :sourceLocator "Video Game Document.txt, Platform, line 43"@en .
+
+:Cl_VideoGamePlatform rdfs:label "System"@en .
+
+:Cl_PlatformComponent a owl:Class ;
+    rdfs:label "Platform component"@en ;
+    rdfs:comment "Reusable parent for the hardware and software components of a platform."@en ;
+    :sourceLocator "videogame_tip_document_50_ver2.md, section 2, platform component class registry"@en .
+
+:Cl_Hardware a owl:Class ;
+    rdfs:label "Hardware"@en ;
+    rdfs:subClassOf :Cl_PlatformComponent .
+
+:Cl_Software a owl:Class ;
+    rdfs:label "Software"@en ;
+    rdfs:subClassOf :Cl_PlatformComponent .
+
+:Cl_Device a owl:Class ;
+    rdfs:label "Device"@en ;
+    rdfs:subClassOf :Cl_Hardware ;
+    rdfs:comment "Physical equipment used in platforms, input or output."@en ;
+    :sourceLocator "videogame_tip_document_50_ver2.md, section 2, device class registry"@en .
+
+:Cl_RemoteHardware a owl:Class ;
+    rdfs:label "Remote hardware"@en ;
+    rdfs:subClassOf :Cl_Hardware ;
+    :sourceLocator "Video Game Document.txt, Cloud gaming, line 73"@en .
+
+:Cl_Emulator a owl:Class ;
+    rdfs:label "Emulator"@en ;
+    rdfs:subClassOf :Cl_Software ;
+    rdfs:comment "Software enabling games from a different system to run by simulating the original hardware in a virtual machine on a host platform."@en ;
+    :sourceLocator "Video Game Document.txt, Emulation, line 81"@en .
+
+:Cl_SoftwarePatch a owl:Class ;
+    rdfs:label "Software patch"@en ;
+    rdfs:subClassOf :Cl_Software ;
+    :sourceLocator "Video Game Document.txt, Game media, line 91"@en .
+
+:Cl_VirtualMachine a owl:Class ;
+    rdfs:label "Virtual machine"@en ;
+    rdfs:comment "The execution environment used for hardware simulation by an emulator and running on a host platform."@en ;
+    :sourceLocator "Video Game Document.txt, Emulation, line 81"@en .
+
+:Cl_BackwardCompatibility a owl:Class ;
+    rdfs:label "Backward compatibility"@en ;
+    rdfs:comment "A platform capability enabling older games to be played on newer platforms; not a subtype of emulator."@en ;
+    :qualification "Typically operates directly through the newer platform hardware and built-in software. This mechanism is typical, not universal."@en ;
+    :sourceLocator "Video Game Document.txt, Backward compatibility, line 85"@en .
+
+:Cl_Console a owl:Class ;
+    rdfs:label "Console"@en ;
+    rdfs:subClassOf :Cl_Device ;
+    :sourceLocator "Video Game Document.txt, Home console, line 53"@en .
+
+:Cl_HandheldGameConsole a owl:Class ;
+    rdfs:label "Handheld game console"@en ;
+    rdfs:subClassOf :Cl_Device ;
+    :sourceLocator "Video Game Document.txt, Handheld console, line 57"@en .
+
+:Cl_MobileDevice a owl:Class ;
+    rdfs:label "Mobile device"@en ;
+    rdfs:subClassOf :Cl_Device ;
+    :sourceLocator "Video Game Document.txt, Mobile game, line 69"@en .
+
+:Cl_InputDevice a owl:Class ;
+    rdfs:label "Input device"@en ;
+    rdfs:subClassOf :Cl_Device ;
+    :sourceLocator "Video Game Document.txt, Input device, line 95"@en .
+
+:Cl_DisplayDevice a owl:Class ;
+    rdfs:label "Display device"@en ;
+    rdfs:subClassOf :Cl_Device ;
+    :sourceLocator "Video Game Document.txt, Display and output, line 99"@en .
+
+:Cl_Speaker a owl:Class ;
+    rdfs:label "Speaker"@en ;
+    rdfs:subClassOf :Cl_Device ;
+    :sourceLocator "Video Game Document.txt, Display and output, line 101"@en .
+
+:Cl_HeadMountedUnit a owl:Class ;
+    rdfs:label "Head-mounted unit"@en ;
+    rdfs:subClassOf :Cl_Device ;
+    :sourceLocator "Video Game Document.txt, Virtual reality, line 77"@en .
+
+:Cl_Accelerometer a owl:Class ;
+    rdfs:label "Accelerometer"@en ;
+    rdfs:subClassOf :Cl_Device ;
+    :sourceLocator "Video Game Document.txt, Mobile game, line 69"@en .
+
+:Cl_Camera a owl:Class ;
+    rdfs:label "Camera"@en ;
+    rdfs:subClassOf :Cl_Device ;
+    :sourceLocator "Video Game Document.txt, Mobile game, line 69"@en .
+
+:Cl_GameController a owl:Class ;
+    rdfs:label "Game controller"@en ;
+    rdfs:subClassOf :Cl_InputDevice ;
+    :sourceLocator "Video Game Document.txt, Input device, line 95"@en .
+
+:Cl_SpecializedController a owl:Class ;
+    rdfs:label "Specialized controller"@en ;
+    rdfs:subClassOf :Cl_GameController ;
+    :sourceLocator "Video Game Document.txt, Input device, line 95"@en .
+
+:Cl_RacingWheel a owl:Class ;
+    rdfs:label "Racing wheel"@en ;
+    rdfs:subClassOf :Cl_SpecializedController ;
+    :sourceLocator "Video Game Document.txt, Input device, line 95"@en .
+
+:Cl_LightGun a owl:Class ;
+    rdfs:label "Light gun"@en ;
+    rdfs:subClassOf :Cl_SpecializedController ;
+    :sourceLocator "Video Game Document.txt, Input device, line 95"@en .
+
+:Cl_DancePad a owl:Class ;
+    rdfs:label "Dance pad"@en ;
+    rdfs:subClassOf :Cl_SpecializedController ;
+    :sourceLocator "Video Game Document.txt, Input device, line 95"@en .
+
+:Cl_Television a owl:Class ;
+    rdfs:label "Television"@en ;
+    rdfs:subClassOf :Cl_DisplayDevice ;
+    :sourceLocator "Video Game Document.txt, Display and output, line 99"@en .
+
+:Cl_BuiltInScreen a owl:Class ;
+    rdfs:label "Built-in screen"@en ;
+    rdfs:subClassOf :Cl_DisplayDevice ;
+    :sourceLocator "Video Game Document.txt, Handheld console, line 57; Display and output, line 99"@en .
+
+:Cl_Projector a owl:Class ;
+    rdfs:label "Projector"@en ;
+    rdfs:subClassOf :Cl_DisplayDevice ;
+    :sourceLocator "Video Game Document.txt, Display and output, line 99"@en .
+
+:Cl_ComputerMonitor a owl:Class ;
+    rdfs:label "Computer monitor"@en ;
+    rdfs:subClassOf :Cl_DisplayDevice ;
+    :sourceLocator "Video Game Document.txt, Display and output, line 99"@en .
+
+:Cl_StereoscopicScreen a owl:Class ;
+    rdfs:label "Stereoscopic screen"@en ;
+    rdfs:subClassOf :Cl_DisplayDevice ;
+    :sourceLocator "Video Game Document.txt, Virtual reality, line 77"@en .
+
+:Cl_HandheldGameConsole rdfs:comment "A small, self-contained, portable unit integrating a console, small screen, speakers and controls. Buttons, a joystick or other game controllers are alternatives, not jointly mandatory control types."@en ;
+    :qualification "Handheld hardware is usually less powerful than PC or home-console hardware."@en .
+
+:Cl_InputDevice rdfs:comment "Translates human actions into game input. The document mentions controllers, keyboards, mice, touchscreens, motion sensors, cameras and microphones as possible input equipment."@en .
+
+:Cl_SpecializedController :qualification "Racing wheels, light guns and dance pads may be used for certain game genres. No particular controller-to-genre pairing is supplied."@en .
+
+:Cl_DisplayDevice rdfs:comment "A physical device that displays game graphics; it is neither the visual output itself nor an on-screen user interface."@en .
+
+:Cl_ClassificationValue a owl:Class ;
+    rdfs:label "Classification value"@en ;
+    rdfs:comment "A descriptor used in relational classification, not a game instance."@en ;
+    :sourceLocator "videogame_tip_document_50_ver2.md, section 2, classification value registry"@en .
+
+:Cl_PlatformCategory a owl:Class ;
+    rdfs:label "Platform category"@en ;
+    rdfs:subClassOf :Cl_ClassificationValue .
+
+:Cl_VersionForm a owl:Class ;
+    rdfs:label "Version form"@en ;
+    rdfs:subClassOf :Cl_ClassificationValue .
+
+:Cl_GameMode a owl:Class ;
+    rdfs:label "Game mode"@en ;
+    rdfs:subClassOf :Cl_ClassificationValue .
+
+:Cl_VisualOutputForm a owl:Class ;
+    rdfs:label "Visual output form"@en ;
+    rdfs:subClassOf :Cl_ClassificationValue .
+
+:Cl_PlayArrangement a owl:Class ;
+    rdfs:label "Play arrangement"@en ;
+    rdfs:subClassOf :Cl_ClassificationValue .
+
+:Cl_GameplayStyle a owl:Class ;
+    rdfs:label "Gameplay style"@en ;
+    rdfs:subClassOf :Cl_ClassificationValue .
+
+:Cl_GameGenre a owl:Class ;
+    rdfs:label "Game genre"@en ;
+    rdfs:subClassOf :Cl_ClassificationValue .
+
+:Cl_TopLevelGenre a owl:Class ;
+    rdfs:label "Top-level genre"@en ;
+    rdfs:subClassOf :Cl_GameGenre ;
+    :sourceLocator "Video Game Document.txt, Genre, line 113"@en .
+
+:Cl_CrossGenreType a owl:Class ;
+    rdfs:label "Cross-genre type"@en ;
+    rdfs:subClassOf :Cl_GameGenre ;
+    :qualification "Cross-genre types can fall under multiple top-level genres. Specific action-adventure parents are not asserted."@en ;
+    :sourceLocator "Video Game Document.txt, Genre, line 113"@en .
+
+:Cl_GameMode rdfs:comment "A participation classification describing how many players can use a game at the same time. Single-player and multiplayer are the primary categories; zero-player involves very limited interaction, not necessarily no human involvement."@en ;
+    :sourceLocator "Video Game Document.txt, Mode, lines 117-119"@en .
+
+:Cl_GameGenre :qualification "Genres are generally based on gameplay interaction rather than narrative setting. Horror is a narrative-based exception. Genre names may change over time; no single-parent hierarchy is imposed."@en ;
+    :sourceLocator "Video Game Document.txt, Genre, lines 111-113"@en .
+
+:Cl_VersionForm rdfs:comment "Port, Remaster and Remake are potentially overlapping version-form values, not video-game subclasses."@en ;
+    :sourceLocator "videogame_tip_document_50_ver2.md, section 1, VersionForm; Video Game Document.txt, Platform, line 43"@en .
+
+:Cl_GameExtension a owl:Class ;
+    rdfs:label "Game extension"@en ;
+    rdfs:comment "An addition or modification that extends or changes an existing game."@en ;
+    :sourceLocator "videogame_tip_document_50_ver2.md, section 2, game extension registry"@en .
+
+:Cl_ExpansionPack a owl:Class ;
+    rdfs:label "Expansion pack"@en ;
+    rdfs:subClassOf :Cl_GameExtension ;
+    :qualification "Can provide new game content and software patches; typically available as physical media. May be free or used for post-release monetization."@en ;
+    :sourceLocator "Video Game Document.txt, Game media, line 91"@en .
+
+:Cl_DownloadableContent a owl:Class ;
+    rdfs:label "Downloadable content"@en ;
+    rdfs:subClassOf :Cl_GameExtension ;
+    :qualification "Can provide new game content and software patches; nominally available through digital distribution. May be free or used for post-release monetization."@en ;
+    :sourceLocator "Video Game Document.txt, Game media, line 91"@en .
+
+:Cl_UserCreatedModification a owl:Class ;
+    rdfs:label "User-created modification"@en ;
+    rdfs:subClassOf :Cl_GameExtension ;
+    rdfs:comment "Also called a mod; a player-created alteration or addition to a game."@en ;
+    :qualification "Mostly described for personal-computer games. Often unofficial and developed through reverse engineering, but some games officially support modding."@en ;
+    :sourceLocator "Video Game Document.txt, Game media, line 91"@en .
+
+:Cl_PhysicalGameMedia a owl:Class ;
+    rdfs:label "Physical game media"@en ;
+    :qualification "Physical delivery is optional; digital distribution and cloud gaming can remove the need for physical media. Media may be used directly or for installing assets to local storage."@en ;
+    :sourceLocator "Video Game Document.txt, Game media, line 89"@en .
+
+:Cl_ROMCartridge a owl:Class ;
+    rdfs:label "ROM cartridge"@en ;
+    rdfs:subClassOf :Cl_PhysicalGameMedia ;
+    :sourceLocator "Video Game Document.txt, Game media, line 89"@en .
+
+:Cl_MagneticStorage a owl:Class ;
+    rdfs:label "Magnetic storage"@en ;
+    rdfs:subClassOf :Cl_PhysicalGameMedia ;
+    :sourceLocator "Video Game Document.txt, Game media, line 89"@en .
+
+:Cl_OpticalMedia a owl:Class ;
+    rdfs:label "Optical media"@en ;
+    rdfs:subClassOf :Cl_PhysicalGameMedia ;
+    :sourceLocator "Video Game Document.txt, Game media, line 89"@en .
+
+:Cl_FlashMemoryCard a owl:Class ;
+    rdfs:label "Flash memory card"@en ;
+    rdfs:subClassOf :Cl_PhysicalGameMedia ;
+    :sourceLocator "Video Game Document.txt, Game media, line 89"@en .
+
+:Cl_MagneticTape a owl:Class ;
+    rdfs:label "Magnetic tape"@en ;
+    rdfs:subClassOf :Cl_MagneticStorage ;
+    :sourceLocator "Video Game Document.txt, Game media, line 89"@en .
+
+:Cl_FloppyDisc a owl:Class ;
+    rdfs:label "Floppy disc"@en ;
+    rdfs:subClassOf :Cl_MagneticStorage ;
+    :sourceLocator "Video Game Document.txt, Game media, line 89"@en .
+
+:Cl_CDROM a owl:Class ;
+    rdfs:label "CD-ROM"@en ;
+    rdfs:subClassOf :Cl_OpticalMedia ;
+    :sourceLocator "Video Game Document.txt, Game media, line 89"@en .
+
+:Cl_DVD a owl:Class ;
+    rdfs:label "DVD"@en ;
+    rdfs:subClassOf :Cl_OpticalMedia ;
+    :sourceLocator "Video Game Document.txt, Game media, line 89"@en .
+
+:Cl_DesignCharacteristic a owl:Class ;
+    rdfs:label "Design characteristic"@en ;
+    :sourceLocator "Video Game Document.txt, Casual games, line 131"@en .
+
+:Cl_GamePurpose a owl:Class ;
+    rdfs:label "Game purpose"@en ;
+    rdfs:comment "A purpose motivating game design, rather than a guaranteed effect on a player."@en ;
+    :sourceLocator "Video Game Document.txt, Types, lines 123-143"@en .
+
+:Cl_IntendedPlayerResponse a owl:Class ;
+    rdfs:label "Intended player response"@en ;
+    rdfs:comment "A response intended by game design; it need not actually occur."@en ;
+    :sourceLocator "Video Game Document.txt, Art games, line 143"@en .
+
+:Cl_Party a owl:Class ;
+    rdfs:label "Party"@en ;
+    rdfs:comment "A person or organization filling a contextual player, developer, publisher, distributor, retailer, marketer, manufacturer, provider or consumer role. A party may fill more than one role."@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 9; Content rating, line 161"@en .
+
+:Cl_ContentRatingOrganization a owl:Class ;
+    rdfs:label "Content rating organization"@en ;
+    rdfs:subClassOf :Cl_Party ;
+    rdfs:comment "An organization providing content ratings, distinct from a rating scheme and an assigned rating."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, lines 151-159"@en .
+
+:Cl_ContentRating a owl:Class ;
+    rdfs:label "Content rating"@en ;
+    rdfs:comment "An assigned classification of game content, distinct from the system and organization used to produce it."@en ;
+    :qualification "The document identifies target-age appropriateness, with most content review considering violence and sexual content; drug use, alcohol use and gambling may also influence ratings."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 147"@en .
+
+:Cl_ContentRatingSystem a owl:Class ;
+    rdfs:label "Content rating system"@en ;
+    rdfs:comment "A rating scheme, distinct from an organization or an assigned content rating."@en ;
+    :qualification "Nearly all systems use a primary minimum-age identifier and additional specific-content descriptors. Systems are generally voluntary and upheld by vendor practices; regulations vary by country. The document reports penalties or fines for publisher misuse and an ACB legal-enforcement exception. These are source reports, not independently verified current rules."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, lines 147-155"@en .
+
+:Cl_MinimumAgeIdentifier a owl:Class ;
+    rdfs:label "Minimum-age identifier"@en ;
+    rdfs:comment "A lexical primary identifier based on minimum age. No specific rating-age values or scale mappings are populated."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 147"@en .
+
+:Cl_ContentDescriptor a owl:Class ;
+    rdfs:label "Content descriptor"@en ;
+    rdfs:comment "Identifies specific content that players and parents should be aware of."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 147"@en .
+
+:Cl_ContentTheme a owl:Class ;
+    rdfs:label "Content theme"@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 147"@en .
+
+:Cl_Region a owl:Class ;
+    rdfs:label "Region"@en ;
+    rdfs:comment "A geographical jurisdiction or grouping within which ratings are provided; a coverage relation does not assert coverage of every place in the region."@en ;
+    :sourceLocator "videogame_tip_document_50_ver2.md, section 2, parties and ratings registry"@en .
+
+:Cl_ContentRatingProcess a owl:Class ;
+    rdfs:label "Content rating process"@en ;
+    rdfs:comment "Parent for the source-described rating review and subsequent cross-region affirmation, rather than an event model for every domain relationship."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 161"@en .
+
+:Cl_ContentRatingReview a owl:Class ;
+    rdfs:label "Content rating review"@en ;
+    rdfs:subClassOf :Cl_ContentRatingProcess ;
+    rdfs:comment "Scopes a publisher submission, reviewing provider and content rating to a single review. No actual review occurrence is supplied."@en ;
+    :qualification "Completing a review with one provider is sufficient for the described IARC route; this is not an exact-one-provider constraint."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 161"@en .
+
+:Cl_CrossRegionRatingAffirmation a owl:Class ;
+    rdfs:label "Cross-region rating affirmation"@en ;
+    rdfs:subClassOf :Cl_ContentRatingProcess ;
+    rdfs:comment "The IARC-facilitated process that follows a completed provider review and affirms its content rating for other regions."@en ;
+    :qualification "The target is another region relative to the completed review. Relative ordering and regional difference are retained as source conditions, without a timeline, scale mapping or fabricated occurrence."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 161"@en .
+
+:hasDefiningInteraction a owl:ObjectProperty ;
+    rdfs:label "has defining interaction"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_PlayerInteraction ;
+    rdfs:comment "Links a video game to the interaction required by its definition."@en .
+
+:affectsVisualOutput a owl:ObjectProperty ;
+    rdfs:label "affects visual output"@en ;
+    rdfs:domain :Cl_PlayerInteraction ;
+    rdfs:range :Cl_VisualOutput .
+
+:producesVisualOutput a owl:ObjectProperty ;
+    rdfs:label "produces visual output"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_VisualOutput .
+
+:hasVisualOutputForm a owl:ObjectProperty ;
+    rdfs:label "has visual output form"@en ;
+    rdfs:domain :Cl_VisualOutput ;
+    rdfs:range :Cl_VisualOutputForm ;
+    :qualification "Output forms are not exclusive."@en .
+
+:hasGameWorld a owl:ObjectProperty ;
+    rdfs:label "has game world"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_GameWorld .
+
+:hasWinningCondition a owl:ObjectProperty ;
+    rdfs:label "has winning condition"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_WinningCondition ;
+    :qualification "Most games have some victory condition, but interaction with a game world can support video-game status without one."@en ;
+    :sourceLocator "Video Game Document.txt, Definition, line 27"@en .
+
+:hasLevel a owl:ObjectProperty ;
+    rdfs:label "has level"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_Level ;
+    :qualification "Most games are divided into levels for progression. This is not a requirement for every video game."@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:playedBy a owl:ObjectProperty ;
+    rdfs:label "played by"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_Party ;
+    rdfs:comment "Identifies the player in relation to a particular game; it does not create a permanent player identity."@en .
+
+:controlsAvatar a owl:ObjectProperty ;
+    rdfs:label "controls avatar"@en ;
+    rdfs:domain :Cl_Party ;
+    rdfs:range :Cl_Avatar .
+
+:interactsWithWorld a owl:ObjectProperty ;
+    rdfs:label "interacts with world"@en ;
+    rdfs:domain :Cl_Party ;
+    rdfs:range :Cl_GameWorld .
+
+:hasAttribute a owl:ObjectProperty ;
+    rdfs:label "has attribute"@en ;
+    rdfs:domain :Cl_Avatar ;
+    rdfs:range :Cl_AvatarAttribute .
+
+:mayBoostAttribute a owl:ObjectProperty ;
+    rdfs:label "may boost attribute"@en ;
+    rdfs:domain :Cl_PowerUp ;
+    rdfs:range :Cl_AvatarAttribute ;
+    :qualification "In the described gameplay, collecting a power-up can boost an avatar's innate attributes."@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:depletesHealth a owl:ObjectProperty ;
+    rdfs:label "depletes health"@en ;
+    rdfs:domain :Cl_Damage ;
+    rdfs:range :Cl_Health ;
+    rdfs:comment "Taking damage depletes avatar health in the described gameplay; no numeric update rule is asserted."@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:losesLife a owl:ObjectProperty ;
+    rdfs:label "loses life"@en ;
+    rdfs:domain :Cl_Party ;
+    rdfs:range :Cl_Life ;
+    :condition "In the described gameplay, one life is lost when avatar health reaches zero OR the avatar enters an impossible-to-escape location. This conditional count is not an OWL cardinality constraint."@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:gainsExtraLife a owl:ObjectProperty ;
+    rdfs:label "gains extra life"@en ;
+    rdfs:domain :Cl_Party ;
+    rdfs:range :Cl_Life ;
+    rdfs:comment "An extra life is also called a 1-UP."@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:reachesGameOverScreen a owl:ObjectProperty ;
+    rdfs:label "reaches game-over screen"@en ;
+    rdfs:domain :Cl_Party ;
+    rdfs:range :Cl_GameOverScreen ;
+    :condition "In the described gameplay, the player reaches the game-over screen after losing all lives without gaining an extra life, also called a 1-UP."@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:enablesRestartOf a owl:ObjectProperty ;
+    rdfs:label "enables restart of"@en ;
+    rdfs:domain :Cl_SavedGame ;
+    rdfs:range :Cl_VideoGame ;
+    :qualification "Saved-game availability is optional."@en ;
+    :condition "A saved game can allow restarting after losing all lives or after stopping play and resuming at a later time. A written passage may be re-entered at the title screen."@en ;
+    :sourceLocator "Video Game Document.txt, Video game terminology, line 33"@en .
+
+:presentsInformation a owl:ObjectProperty ;
+    rdfs:label "presents information"@en ;
+    rdfs:domain :Cl_HeadsUpDisplay ;
+    rdfs:range :Cl_GameplayInformation .
+
+:overlaysVisualOutput a owl:ObjectProperty ;
+    rdfs:label "overlays visual output"@en ;
+    rdfs:domain :Cl_HeadsUpDisplay ;
+    rdfs:range :Cl_VisualOutput ;
+    rdfs:comment "Places the interface atop the rendering of the game, rather than making it a physical display."@en .
+
+:requiresPlatform a owl:ObjectProperty ;
+    rdfs:label "requires platform"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_VideoGamePlatform ;
+    rdfs:comment "The operational platform requirement, not a platform-count limit."@en .
+
+:designedFor a owl:ObjectProperty ;
+    rdfs:label "designed for"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_VideoGamePlatform ;
+    :qualification "Games are typically designed for one or a limited number of platforms; no maximum or exact count is asserted."@en ;
+    :sourceLocator "Video Game Document.txt, Platform, line 43"@en .
+
+:originallyIntendedFor a owl:ObjectProperty ;
+    rdfs:label "originally intended for"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_VideoGamePlatform ;
+    rdfs:comment "Records positive evidence of original platform intent."@en .
+
+:targetsPlatform a owl:ObjectProperty ;
+    rdfs:label "targets platform"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_VideoGamePlatform ;
+    rdfs:comment "Records a derivative game's target platform. Alternative-platform status requires positive evidence, not absence of an original-platform assertion."@en .
+
+:hasComponent a owl:ObjectProperty ;
+    rdfs:label "has component"@en ;
+    rdfs:domain :Cl_VideoGamePlatform ;
+    rdfs:range :Cl_PlatformComponent ;
+    rdfs:comment "A platform-component relation without transitivity or component counts."@en .
+
+:hasDevicePart a owl:ObjectProperty ;
+    rdfs:label "has device part"@en ;
+    rdfs:domain :Cl_Device ;
+    rdfs:range :Cl_Device ;
+    rdfs:comment "Integrated equipment parthood, without transitivity or exact part counts."@en .
+
+:hasPlatformCategory a owl:ObjectProperty ;
+    rdfs:label "has platform category"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_PlatformCategory ;
+    rdfs:comment "Relational classification of games by platform; it does not classify platforms as games."@en .
+
+:hasVersionForm a owl:ObjectProperty ;
+    rdfs:label "has version form"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_VersionForm ;
+    :qualification "Version forms can overlap."@en .
+
+:isVersionOf a owl:ObjectProperty ;
+    rdfs:label "is version of"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_VideoGame ;
+    rdfs:comment "A direct derivation relation between games, not a subclass relation."@en .
+
+:reusesSourceCode a owl:ObjectProperty ;
+    rdfs:label "reuses source code"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_SourceCode ;
+    rdfs:comment "Links a derivative game to reused source code. The extent qualifier for remasters belongs to the Remaster form."@en .
+
+:updatesContent a owl:ObjectProperty ;
+    rdfs:label "updates content"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_GameContent ;
+    rdfs:comment "Links a derivative to the content it updates; modern-system context and reworking extent are qualified on the relevant version form."@en .
+
+:computedAndRenderedOn a owl:ObjectProperty ;
+    rdfs:label "computed and rendered on"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_RemoteHardware .
+
+:providedBy a owl:ObjectProperty ;
+    rdfs:label "provided by"@en ;
+    rdfs:domain :Cl_RemoteHardware ;
+    rdfs:range :Cl_Party ;
+    rdfs:comment "Identifies the cloud gaming provider supplying the remote hardware."@en .
+
+:requiresHeadMountedUnit a owl:ObjectProperty ;
+    rdfs:label "requires head-mounted unit"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_HeadMountedUnit ;
+    :qualification "VR games generally require this equipment; no universal headset restriction is imposed on VR-tagged games."@en ;
+    :sourceLocator "Video Game Document.txt, Virtual reality, line 77"@en .
+
+:providesMotionTracking a owl:ObjectProperty ;
+    rdfs:label "provides motion tracking"@en ;
+    rdfs:domain :Cl_HeadMountedUnit ;
+    rdfs:range :Cl_MotionTracking .
+
+:providesPositioningInformation a owl:ObjectProperty ;
+    rdfs:label "provides positioning information"@en ;
+    rdfs:domain :Cl_MobileDevice ;
+    rdfs:range :Cl_GlobalPositioningInformation ;
+    :qualification "A possible mobile-device feature, not a requirement on every mobile device."@en ;
+    :sourceLocator "Video Game Document.txt, Mobile game, line 69"@en .
+
+:maySupportARGameplay a owl:ObjectProperty ;
+    rdfs:label "may support augmented reality gameplay"@en ;
+    rdfs:domain [ a owl:Class ; owl:unionOf ( :Cl_Device :Cl_GlobalPositioningInformation ) ] ;
+    rdfs:range :Cl_AugmentedRealityGameplay ;
+    :qualification "Mobile accelerometers, cameras and global positioning information may support augmented reality gameplay. Positioning information is not a device."@en ;
+    :sourceLocator "Video Game Document.txt, Mobile game, line 69"@en .
+
+:simulatesHardware a owl:ObjectProperty ;
+    rdfs:label "simulates hardware"@en ;
+    rdfs:domain :Cl_Emulator ;
+    rdfs:range :Cl_Hardware ;
+    rdfs:comment "The hardware simulated is that of the original system."@en ;
+    :sourceLocator "Video Game Document.txt, Emulation, line 81"@en .
+
+:usesVirtualMachine a owl:ObjectProperty ;
+    rdfs:label "uses virtual machine"@en ;
+    rdfs:domain :Cl_Emulator ;
+    rdfs:range :Cl_VirtualMachine .
+
+:runsOnPlatform a owl:ObjectProperty ;
+    rdfs:label "runs on platform"@en ;
+    rdfs:domain :Cl_VirtualMachine ;
+    rdfs:range :Cl_VideoGamePlatform ;
+    rdfs:comment "Identifies the virtual machine's host platform, described as a modern system in the source."@en ;
+    :sourceLocator "Video Game Document.txt, Emulation, line 81"@en .
+
+:hasBackwardCompatibility a owl:ObjectProperty ;
+    rdfs:label "has backward compatibility"@en ;
+    rdfs:domain :Cl_VideoGamePlatform ;
+    rdfs:range :Cl_BackwardCompatibility .
+
+:enablesExecutionOf a owl:ObjectProperty ;
+    rdfs:label "enables execution of"@en ;
+    rdfs:domain [ a owl:Class ; owl:unionOf ( :Cl_Emulator :Cl_BackwardCompatibility ) ] ;
+    rdfs:range :Cl_VideoGame ;
+    rdfs:comment "Enables execution of games from another or older system, preserving the distinction between emulation software and backward-compatibility capability."@en ;
+    :sourceLocator "Video Game Document.txt, Emulation, line 81; Backward compatibility, line 85"@en .
+
+:mayBeDistributedOn a owl:ObjectProperty ;
+    rdfs:label "may be distributed on"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_PhysicalGameMedia ;
+    :qualification "Physical distribution is optional; digital distribution and cloud gaming can avoid physical game media."@en ;
+    :sourceLocator "Video Game Document.txt, Game media, line 89"@en .
+
+:extendsGame a owl:ObjectProperty ;
+    rdfs:label "extends game"@en ;
+    rdfs:domain :Cl_GameExtension ;
+    rdfs:range :Cl_VideoGame .
+
+:altersOrAddsTo a owl:ObjectProperty ;
+    rdfs:label "alters or adds to"@en ;
+    rdfs:domain :Cl_UserCreatedModification ;
+    rdfs:range :Cl_VideoGame ;
+    rdfs:subPropertyOf :extendsGame .
+
+:createdByPlayer a owl:ObjectProperty ;
+    rdfs:label "created by player"@en ;
+    rdfs:domain :Cl_UserCreatedModification ;
+    rdfs:range :Cl_Party ;
+    rdfs:comment "Identifies the party in its player-creator role for a modification."@en .
+
+:providesContent a owl:ObjectProperty ;
+    rdfs:label "provides content"@en ;
+    rdfs:domain :Cl_GameExtension ;
+    rdfs:range :Cl_GameContent ;
+    :qualification "Expansion packs and downloadable content can provide new content. The domain does not imply that every extension, or every extension subtype, provides content."@en ;
+    :sourceLocator "Video Game Document.txt, Game media, line 91"@en .
+
+:providesPatch a owl:ObjectProperty ;
+    rdfs:label "provides patch"@en ;
+    rdfs:domain :Cl_GameExtension ;
+    rdfs:range :Cl_SoftwarePatch ;
+    :qualification "Expansion packs and downloadable content can provide software patches. This is not a universal provision requirement on game extensions."@en ;
+    :sourceLocator "Video Game Document.txt, Game media, line 91"@en .
+
+:translatesHumanAction a owl:ObjectProperty ;
+    rdfs:label "translates human action"@en ;
+    rdfs:domain :Cl_InputDevice ;
+    rdfs:range :Cl_HumanAction .
+
+:producesGameInput a owl:ObjectProperty ;
+    rdfs:label "produces game input"@en ;
+    rdfs:domain :Cl_InputDevice ;
+    rdfs:range :Cl_GameInput .
+
+:mayBeUsedForGenre a owl:ObjectProperty ;
+    rdfs:label "may be used for genre"@en ;
+    rdfs:domain :Cl_SpecializedController ;
+    rdfs:range :Cl_GameGenre ;
+    :qualification "Specialized controllers may serve certain genres, but the document supplies no specific controller-to-genre pairs."@en ;
+    :sourceLocator "Video Game Document.txt, Input device, line 95"@en .
+
+:displaysVisualOutput a owl:ObjectProperty ;
+    rdfs:label "displays visual output"@en ;
+    rdfs:domain :Cl_DisplayDevice ;
+    rdfs:range :Cl_VisualOutput .
+
+:providesTactileFeedback a owl:ObjectProperty ;
+    rdfs:label "provides tactile feedback"@en ;
+    rdfs:domain :Cl_HapticTechnology ;
+    rdfs:range :Cl_TactileFeedback ;
+    rdfs:comment "Includes tactile sensations such as a controller shaking in the player's hands."@en ;
+    :sourceLocator "Video Game Document.txt, Display and output, line 103"@en .
+
+:hasGenre a owl:ObjectProperty ;
+    rdfs:label "has genre"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_GameGenre ;
+    :qualification "Generally based on gameplay interaction; horror is a narrative-based exception. More than one genre may apply."@en ;
+    :sourceLocator "Video Game Document.txt, Genre, lines 111-113"@en .
+
+:broaderGenre a owl:ObjectProperty ;
+    rdfs:label "broader genre"@en ;
+    rdfs:domain :Cl_GameGenre ;
+    rdfs:range :Cl_GameGenre ;
+    rdfs:comment "A broader-descriptor relation with potentially multiple parents. No action-adventure parents are inferred."@en .
+
+:hasMode a owl:ObjectProperty ;
+    rdfs:label "has mode"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_GameMode ;
+    :qualification "Mode facets need not be exclusive. No universal player cardinality is imposed."@en .
+
+:allowsPlayArrangement a owl:ObjectProperty ;
+    rdfs:label "allows play arrangement"@en ;
+    rdfs:domain :Cl_GameMode ;
+    rdfs:range :Cl_PlayArrangement ;
+    rdfs:comment "An available option within a mode category, not a requirement for every game with that mode."@en .
+
+:hasPossibleGameplayStyle a owl:ObjectProperty ;
+    rdfs:label "has possible gameplay style"@en ;
+    rdfs:domain :Cl_GameMode ;
+    rdfs:range :Cl_GameplayStyle ;
+    rdfs:comment "A possible style within a mode category; prevalence is qualified on the specific assertion."@en .
+
+:hasDesignCharacteristic a owl:ObjectProperty ;
+    rdfs:label "has design characteristic"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_DesignCharacteristic .
+
+:hasPurpose a owl:ObjectProperty ;
+    rdfs:label "has purpose"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_GamePurpose .
+
+:intendedToGenerate a owl:ObjectProperty ;
+    rdfs:label "intended to generate"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_IntendedPlayerResponse ;
+    rdfs:comment "Expresses design intention, not an observed or guaranteed player response."@en .
+
+:developedBy a owl:ObjectProperty ;
+    rdfs:label "developed by"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_Party .
+
+:publishedBy a owl:ObjectProperty ;
+    rdfs:label "published by"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_Party .
+
+:distributedBy a owl:ObjectProperty ;
+    rdfs:label "distributed by"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_Party .
+
+:retailedBy a owl:ObjectProperty ;
+    rdfs:label "retailed by"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_Party .
+
+:marketedBy a owl:ObjectProperty ;
+    rdfs:label "marketed by"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_Party .
+
+:hasConsumer a owl:ObjectProperty ;
+    rdfs:label "has consumer"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_Party .
+
+:manufacturedBy a owl:ObjectProperty ;
+    rdfs:label "manufactured by"@en ;
+    rdfs:domain :Cl_Hardware ;
+    rdfs:range :Cl_Party ;
+    rdfs:comment "Relates hardware, not a video game, to its manufacturer."@en .
+
+:hasContentRating a owl:ObjectProperty ;
+    rdfs:label "has content rating"@en ;
+    rdfs:domain :Cl_VideoGame ;
+    rdfs:range :Cl_ContentRating .
+
+:usesMinimumAgeIdentifier a owl:ObjectProperty ;
+    rdfs:label "uses minimum-age identifier"@en ;
+    rdfs:domain :Cl_ContentRatingSystem ;
+    rdfs:range :Cl_MinimumAgeIdentifier ;
+    :qualification "Nearly all systems use a primary identifier based on minimum age; no universal restriction or numeric age is asserted."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 147"@en .
+
+:usesContentDescriptor a owl:ObjectProperty ;
+    rdfs:label "uses content descriptor"@en ;
+    rdfs:domain :Cl_ContentRatingSystem ;
+    rdfs:range :Cl_ContentDescriptor ;
+    :qualification "Nearly all systems provide additional descriptors identifying specific content; not a universal requirement."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 147"@en .
+
+:influencedByTheme a owl:ObjectProperty ;
+    rdfs:label "influenced by theme"@en ;
+    rdfs:domain :Cl_ContentRating ;
+    rdfs:range :Cl_ContentTheme ;
+    :qualification "Most review is based on violence, including its type and graphic presentation, and sexual content. Drug use, alcohol use and gambling may also be identified. No actual game rating is supplied."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 147"@en .
+
+:providesRatingsIn a owl:ObjectProperty ;
+    rdfs:label "provides ratings in"@en ;
+    rdfs:domain [ a owl:Class ; owl:unionOf ( :Cl_ContentRatingOrganization :Cl_ContentRatingSystem ) ] ;
+    rdfs:range :Cl_Region ;
+    rdfs:comment "Coverage within a region, not necessarily every jurisdiction or place in it. The union domain does not equate organizations and systems."@en .
+
+:concernsRating a owl:ObjectProperty ;
+    rdfs:label "concerns rating"@en ;
+    rdfs:domain :Cl_ContentRatingProcess ;
+    rdfs:range :Cl_ContentRating .
+
+:submittedBy a owl:ObjectProperty ;
+    rdfs:label "submitted by"@en ;
+    rdfs:domain :Cl_ContentRatingReview ;
+    rdfs:range :Cl_Party ;
+    rdfs:comment "Identifies the publisher submitting the content-rating review, scoped to that review."@en .
+
+:reviewedWith a owl:ObjectProperty ;
+    rdfs:label "reviewed with"@en ;
+    rdfs:domain :Cl_ContentRatingReview ;
+    rdfs:range :Cl_Party ;
+    rdfs:comment "Identifies the provider with which the publisher completes this review."@en ;
+    :qualification "One provider suffices in the described IARC route; the property is not functional and has no exact-one constraint."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 161"@en .
+
+:basedOnCompletedReview a owl:ObjectProperty ;
+    rdfs:label "based on completed review"@en ;
+    rdfs:domain :Cl_CrossRegionRatingAffirmation ;
+    rdfs:range :Cl_ContentRatingReview ;
+    :condition "The provider review is completed before its rating is affirmed for other regions through IARC."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 161"@en .
+
+:affirmsRating a owl:ObjectProperty ;
+    rdfs:label "affirms rating"@en ;
+    rdfs:domain :Cl_CrossRegionRatingAffirmation ;
+    rdfs:range :Cl_ContentRating ;
+    rdfs:subPropertyOf :concernsRating .
+
+:affirmedForRegion a owl:ObjectProperty ;
+    rdfs:label "affirmed for region"@en ;
+    rdfs:domain :Cl_CrossRegionRatingAffirmation ;
+    rdfs:range :Cl_Region ;
+    :qualification "Another region relative to the completed review; no exhaustive list of regions or rating-scale equivalence is asserted."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 161"@en .
+
+:facilitatedBy a owl:ObjectProperty ;
+    rdfs:label "facilitated by"@en ;
+    rdfs:domain :Cl_CrossRegionRatingAffirmation ;
+    rdfs:range :Cl_Party ;
+    rdfs:comment "Identifies the facilitator, not necessarily a rating-assigning organization."@en .
+
+:healthValue a owl:DatatypeProperty ;
+    rdfs:label "health value"@en ;
+    rdfs:domain :Cl_Health ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Records a supplied health value. The zero-health loss condition does not provide an actual avatar health measurement."@en ;
+    :sourceLocator "videogame_tip_document_50_ver2.md, section 2, data properties; Video Game Document.txt, line 33"@en .
+
+:simultaneousPlayerCount a owl:DatatypeProperty ;
+    rdfs:label "simultaneous player count"@en ;
+    rdfs:domain :Cl_GameMode ;
+    rdfs:range xsd:nonNegativeInteger ;
+    rdfs:comment "An explicitly supplied simultaneous-player count for a mode value. Only Single-Player is assigned the value 1; no exact multiplayer count or zero-human-involvement count is asserted."@en ;
+    :sourceLocator "videogame_tip_document_50_ver2.md, section 2, data properties; Video Game Document.txt, Mode, lines 117-119"@en .
+
+:Ind_ArcadeVideoGame a owl:NamedIndividual, :Cl_PlatformCategory ;
+    rdfs:label "Arcade video game"@en ;
+    :qualification "Generally played on specialized equipment in a large coin-operated cabinet with a built-in console, controls, screen, amplifier and speakers. Typically dedicated to one game, but some offer a choice of games."@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 5; Arcade video game, line 61"@en .
+
+:Ind_ConsoleGame a owl:NamedIndividual, :Cl_PlatformCategory ;
+    rdfs:label "Console game"@en ;
+    rdfs:comment "The home-console grouping; a home console connects to a television or composite video monitor and offers a dedicated hardware environment."@en ;
+    :qualification "Often comes with a specific game controller. The source describes restrictions on which platforms' games normally run, rather than an ontology-wide exclusion rule."@en ;
+    :sourceLocator "Video Game Document.txt, Home console, line 53"@en .
+
+:Ind_ComputerGame a owl:NamedIndividual, :Cl_PlatformCategory ;
+    rdfs:label "Computer game"@en ;
+    rdfs:comment "The PC/platform grouping, not the unrestricted lexical synonym for all video games."@en ;
+    :qualification "Personal computers are not dedicated game platforms; hardware differences can affect execution. The source also describes mainframe and shared-system gaming."@en ;
+    :sourceLocator "Video Game Document.txt, Terminology, line 15; PC games, line 49"@en .
+
+:Ind_MobileGame a owl:NamedIndividual, :Cl_PlatformCategory ;
+    rdfs:label "Mobile game"@en ;
+    :qualification "Mobile devices such as smartphones and tablets may use accelerometers, global positioning information and cameras for augmented reality gameplay; those features are optional."@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 5; Mobile game, line 69"@en .
+
+:Ind_VirtualRealityGame a owl:NamedIndividual, :Cl_PlatformCategory ;
+    rdfs:label "Virtual reality game"@en ;
+    :qualification "Generally requires a head-mounted unit providing stereoscopic screens and motion tracking. Some systems include hand controls; systems generally use a separate computer, console or other processing device."@en ;
+    :sourceLocator "Video Game Document.txt, Virtual reality, line 77"@en .
+
+:Ind_AugmentedRealityGame a owl:NamedIndividual, :Cl_PlatformCategory ;
+    rdfs:label "Augmented reality game"@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 5; Mobile game, line 69"@en .
+
+:Ind_CloudGame a owl:NamedIndividual, :Cl_PlatformCategory ;
+    rdfs:label "Cloud game"@en ;
+    rdfs:comment "Computed and rendered on remote hardware supplied by the cloud gaming provider."@en ;
+    :qualification "The source describes a minimal local device connected to a display and good Internet connectivity, with predictive methods to reduce input-to-output network latency."@en ;
+    :sourceLocator "Video Game Document.txt, Cloud gaming, line 73"@en .
+
+:Ind_Port a owl:NamedIndividual, :Cl_VersionForm ;
+    rdfs:label "Port"@en ;
+    rdfs:label "Conversion"@en ;
+    rdfs:comment "A game developed for an alternative platform to the one originally intended."@en ;
+    :qualification "Alternative-platform status requires positive source evidence. A port may also be a remaster or remake; the forms are not exclusive."@en ;
+    :sourceLocator "Video Game Document.txt, Platform, line 43"@en .
+
+:Ind_Remaster a owl:NamedIndividual, :Cl_VersionForm ;
+    rdfs:label "Remaster"@en ;
+    :qualification "Reuses most of the original game's source code and updates art assets, in-game models and levels for modern systems. No percentage, total-code-reuse condition or platform maximum is supplied."@en ;
+    :sourceLocator "Video Game Document.txt, Platform, line 43"@en .
+
+:Ind_Remake a owl:NamedIndividual, :Cl_VersionForm ;
+    rdfs:label "Remake"@en ;
+    :qualification "Includes asset improvements and significant reworking of the original game, possibly from scratch. Starting from scratch is possible, not mandatory; a remake is not required to avoid source-code reuse."@en ;
+    :sourceLocator "Video Game Document.txt, Platform, line 43"@en .
+
+:Ind_SinglePlayer a owl:NamedIndividual, :Cl_GameMode ;
+    rdfs:label "Single-player"@en ;
+    :simultaneousPlayerCount "1"^^xsd:nonNegativeInteger ;
+    :sourceLocator "Video Game Document.txt, Mode, line 117; videogame_tip_document_50_ver2.md, section 2, data properties"@en .
+
+:Ind_Multiplayer a owl:NamedIndividual, :Cl_GameMode ;
+    rdfs:label "Multiplayer"@en ;
+    :allowsPlayArrangement :Ind_SameDevice, :Ind_SeparateDevicesLocalNetwork, :Ind_SeparateDevicesInternet ;
+    :hasPossibleGameplayStyle :Ind_CompetitiveGameplay, :Ind_CooperativeGameplay, :Ind_TeamBasedGameplay, :Ind_AsymmetricGameplay ;
+    :qualification "Most multiplayer games are based on competitive gameplay; many offer cooperative and team-based options as well as asymmetric gameplay. The arrangements and styles are category options, not obligations for each multiplayer game. The source describes MMOs supporting hundreds of simultaneous players without giving an exact multiplayer count."@en ;
+    :sourceLocator "Video Game Document.txt, Mode, line 117"@en .
+
+:Ind_ZeroPlayer a owl:NamedIndividual, :Cl_GameMode ;
+    rdfs:label "Zero-player"@en ;
+    :qualification "A small number of games have very limited player interaction. The player may establish a starting state and then passively observe the game proceeding on its own. These are most commonly simulations, exemplified by many computerized simulations of Conway's Game of Life. This does not mean zero human involvement."@en ;
+    :sourceLocator "Video Game Document.txt, Mode, line 119"@en .
+
+:Ind_FixedDisplay a owl:NamedIndividual, :Cl_VisualOutputForm ;
+    rdfs:label "Fixed display"@en ;
+    rdfs:comment "Uses LED or LCD elements."@en ;
+    :sourceLocator "Video Game Document.txt, Display and output, line 99"@en .
+
+:Ind_TextBasedOutput a owl:NamedIndividual, :Cl_VisualOutputForm ;
+    rdfs:label "Text-based output"@en ;
+    :sourceLocator "Video Game Document.txt, Display and output, line 99"@en .
+
+:Ind_TwoDimensionalGraphics a owl:NamedIndividual, :Cl_VisualOutputForm ;
+    rdfs:label "Two-dimensional graphics"@en ;
+    :sourceLocator "Video Game Document.txt, Display and output, line 99"@en .
+
+:Ind_ThreeDimensionalGraphics a owl:NamedIndividual, :Cl_VisualOutputForm ;
+    rdfs:label "Three-dimensional graphics"@en ;
+    :sourceLocator "Video Game Document.txt, Display and output, line 99"@en .
+
+:Ind_AugmentedRealityDisplay a owl:NamedIndividual, :Cl_VisualOutputForm ;
+    rdfs:label "Augmented reality display"@en ;
+    :sourceLocator "Video Game Document.txt, Display and output, line 99"@en .
+
+:Ind_SameDevice a owl:NamedIndividual, :Cl_PlayArrangement ;
+    rdfs:label "Locally on the same device"@en ;
+    :sourceLocator "Video Game Document.txt, Mode, line 117"@en .
+
+:Ind_SeparateDevicesLocalNetwork a owl:NamedIndividual, :Cl_PlayArrangement ;
+    rdfs:label "Separate devices connected through a local network"@en ;
+    :sourceLocator "Video Game Document.txt, Mode, line 117"@en .
+
+:Ind_SeparateDevicesInternet a owl:NamedIndividual, :Cl_PlayArrangement ;
+    rdfs:label "Separate devices connected through separate Internet connections"@en ;
+    :sourceLocator "Video Game Document.txt, Mode, line 117"@en .
+
+:Ind_CompetitiveGameplay a owl:NamedIndividual, :Cl_GameplayStyle ;
+    rdfs:label "Competitive gameplay"@en ;
+    :sourceLocator "Video Game Document.txt, Mode, line 117"@en .
+
+:Ind_CooperativeGameplay a owl:NamedIndividual, :Cl_GameplayStyle ;
+    rdfs:label "Cooperative gameplay"@en ;
+    :sourceLocator "Video Game Document.txt, Mode, line 117"@en .
+
+:Ind_TeamBasedGameplay a owl:NamedIndividual, :Cl_GameplayStyle ;
+    rdfs:label "Team-based gameplay"@en ;
+    :sourceLocator "Video Game Document.txt, Mode, line 117"@en .
+
+:Ind_AsymmetricGameplay a owl:NamedIndividual, :Cl_GameplayStyle ;
+    rdfs:label "Asymmetric gameplay"@en ;
+    :sourceLocator "Video Game Document.txt, Mode, line 117"@en .
+
+:Ind_ActionAdventure a owl:NamedIndividual, :Cl_CrossGenreType ;
+    rdfs:label "Action-adventure"@en ;
+    :qualification "A cross-genre type that can fall under multiple top-level genres; the TIP leaves its particular parent genres unasserted."@en ;
+    :sourceLocator "Video Game Document.txt, Genre, line 113; videogame_tip_document_50_ver2.md, section 1, GameGenre"@en .
+
+:Ind_Horror a owl:NamedIndividual, :Cl_GameGenre ;
+    rdfs:label "Horror"@en ;
+    :qualification "An exception to generally interaction-based genre classification: based on narrative elements of horror fiction, the supernatural and psychological horror."@en ;
+    :sourceLocator "Video Game Document.txt, Genre, line 111"@en .
+
+:Ind_EaseOfAccessibility a owl:NamedIndividual, :Cl_DesignCharacteristic ;
+    rdfs:label "Ease of accessibility"@en ;
+    :sourceLocator "Video Game Document.txt, Casual games, line 131"@en .
+
+:Ind_SimpleToUnderstandGameplay a owl:NamedIndividual, :Cl_DesignCharacteristic ;
+    rdfs:label "Simple-to-understand gameplay"@en ;
+    :sourceLocator "Video Game Document.txt, Casual games, line 131"@en .
+
+:Ind_QuickToGraspRuleSets a owl:NamedIndividual, :Cl_DesignCharacteristic ;
+    rdfs:label "Quick-to-grasp rule sets"@en ;
+    :sourceLocator "Video Game Document.txt, Casual games, line 131"@en .
+
+:Ind_NonEntertainmentPurpose a owl:NamedIndividual, :Cl_GamePurpose ;
+    rdfs:label "Non-entertainment purpose"@en ;
+    :sourceLocator "Video Game Document.txt, Serious games, line 139"@en .
+
+:Ind_Entertainment a owl:NamedIndividual, :Cl_GamePurpose ;
+    rdfs:label "Entertainment"@en ;
+    :sourceLocator "Video Game Document.txt, Types, line 123; Core games, line 127"@en .
+
+:Ind_Emotion a owl:NamedIndividual, :Cl_IntendedPlayerResponse ;
+    rdfs:label "Emotion"@en ;
+    :sourceLocator "Video Game Document.txt, Art games, line 143"@en .
+
+:Ind_Empathy a owl:NamedIndividual, :Cl_IntendedPlayerResponse ;
+    rdfs:label "Empathy"@en ;
+    :sourceLocator "Video Game Document.txt, Art games, line 143"@en .
+
+:Ind_Violence a owl:NamedIndividual, :Cl_ContentTheme ;
+    rdfs:label "Violence"@en ;
+    :qualification "Content review considers both the type of violence and how graphically it is represented; most review is based on violence and sexual content."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 147"@en .
+
+:Ind_SexualContent a owl:NamedIndividual, :Cl_ContentTheme ;
+    rdfs:label "Sexual content"@en ;
+    :qualification "Together with violence, described as a basis of most content review."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 147"@en .
+
+:Ind_DrugUse a owl:NamedIndividual, :Cl_ContentTheme ;
+    rdfs:label "Drug use"@en ;
+    :qualification "May be identified in content review as a theme that can influence children."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 147"@en .
+
+:Ind_AlcoholUse a owl:NamedIndividual, :Cl_ContentTheme ;
+    rdfs:label "Alcohol use"@en ;
+    :qualification "May be identified in content review as a theme that can influence children."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 147"@en .
+
+:Ind_Gambling a owl:NamedIndividual, :Cl_ContentTheme ;
+    rdfs:label "Gambling"@en ;
+    :qualification "May be identified in content review as a theme that can influence children."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 147"@en .
+
+:Ind_UnitedStates a owl:NamedIndividual, :Cl_Region ;
+    rdfs:label "United States"@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 151"@en .
+
+:Ind_UnitedKingdom a owl:NamedIndividual, :Cl_Region ;
+    rdfs:label "United Kingdom"@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 153"@en .
+
+:Ind_EuropeanUnion a owl:NamedIndividual, :Cl_Region ;
+    rdfs:label "European Union"@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 153"@en .
+
+:Ind_Australia a owl:NamedIndividual, :Cl_Region ;
+    rdfs:label "Australia"@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 155"@en .
+
+:Ind_Japan a owl:NamedIndividual, :Cl_Region ;
+    rdfs:label "Japan"@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 157"@en .
+
+:Ind_Germany a owl:NamedIndividual, :Cl_Region ;
+    rdfs:label "Germany"@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 159"@en .
+
+:Ind_ESRB a owl:NamedIndividual, :Cl_ContentRatingOrganization ;
+    rdfs:label "Entertainment Software Rating Board"@en ;
+    rdfs:label "ESRB"@en ;
+    :providesRatingsIn :Ind_UnitedStates ;
+    :qualification "The document describes ESRB ratings as voluntary; no current-law verification or rating-scale mapping is asserted."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 151"@en .
+
+:Ind_PEGI a owl:NamedIndividual, :Cl_ContentRatingSystem ;
+    rdfs:label "Pan European Game Information"@en ;
+    rdfs:label "PEGI"@en ;
+    :providesRatingsIn :Ind_UnitedKingdom, :Ind_EuropeanUnion ;
+    :qualification "Covers the United Kingdom, most of the European Union and other European countries not enumerated by the document. It is a rating system, not asserted to be a rating organization."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 153"@en .
+
+:Ind_ACB a owl:NamedIndividual, :Cl_ContentRatingOrganization ;
+    rdfs:label "Australian Classification Board"@en ;
+    rdfs:label "ACB"@en ;
+    :providesRatingsIn :Ind_Australia ;
+    :qualification "The document reports that ACB ratings are legally enforceable and that games lacking a rating or receiving Refused Classification cannot be imported or purchased digitally in Australia. This is the document's exception to general voluntariness, not independently verified current law."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 155"@en .
+
+:Ind_CERO a owl:NamedIndividual, :Cl_ContentRatingOrganization ;
+    rdfs:label "Computer Entertainment Rating Organization"@en ;
+    rdfs:label "CERO"@en ;
+    :providesRatingsIn :Ind_Japan ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 157"@en .
+
+:Ind_USK a owl:NamedIndividual, :Cl_ContentRatingOrganization ;
+    rdfs:label "Unterhaltungssoftware Selbstkontrolle"@en ;
+    rdfs:label "USK"@en ;
+    :providesRatingsIn :Ind_Germany ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 159"@en .
+
+:Ind_IARC a owl:NamedIndividual, :Cl_Party ;
+    rdfs:label "International Age Rating Coalition"@en ;
+    rdfs:label "IARC"@en ;
+    rdfs:comment "The facilitator of the described cross-region affirmation process, not asserted to assign ratings itself."@en ;
+    :qualification "Publishers may complete a content-rating review with one provider and use IARC to affirm the rating for other regions. No provider-to-provider scale mappings or process occurrences are supplied."@en ;
+    :sourceLocator "Video Game Document.txt, Content rating, line 161"@en .
+
+[] a owl:Axiom ;
+    owl:annotatedSource :Ind_PEGI ;
+    owl:annotatedProperty :providesRatingsIn ;
+    owl:annotatedTarget :Ind_EuropeanUnion ;
+    :qualification "Coverage within most of the European Union, not the entire Union. Other European countries are mentioned but not enumerated."@en ;
+    :sourceLocator "Video Game Document.txt, line 153"@en .
+
+[] a owl:Axiom ;
+    owl:annotatedSource :Ind_Multiplayer ;
+    owl:annotatedProperty :hasPossibleGameplayStyle ;
+    owl:annotatedTarget :Ind_CompetitiveGameplay ;
+    :qualification "Most multiplayer games are based on competitive gameplay."@en ;
+    :sourceLocator "Video Game Document.txt, line 117"@en .
+
+[] a owl:Axiom ;
+    owl:annotatedSource :Ind_Multiplayer ;
+    owl:annotatedProperty :hasPossibleGameplayStyle ;
+    owl:annotatedTarget :Ind_CooperativeGameplay ;
+    :qualification "Many multiplayer games offer cooperative gameplay; this is an option, not a requirement for every multiplayer game."@en ;
+    :sourceLocator "Video Game Document.txt, line 117"@en .
+
+[] a owl:Axiom ;
+    owl:annotatedSource :Ind_Multiplayer ;
+    owl:annotatedProperty :hasPossibleGameplayStyle ;
+    owl:annotatedTarget :Ind_TeamBasedGameplay ;
+    :qualification "Many multiplayer games offer team-based gameplay; this is an option, not a requirement for every multiplayer game."@en ;
+    :sourceLocator "Video Game Document.txt, line 117"@en .
+
+[] a owl:Axiom ;
+    owl:annotatedSource :Ind_Multiplayer ;
+    owl:annotatedProperty :hasPossibleGameplayStyle ;
+    owl:annotatedTarget :Ind_AsymmetricGameplay ;
+    :qualification "Many multiplayer games offer asymmetric gameplay; this is an option, not a requirement for every multiplayer game."@en ;
+    :sourceLocator "Video Game Document.txt, line 117"@en .
+
+:Cl_VideoGame rdfs:subClassOf
+    [ a owl:Restriction ; owl:onProperty :requiresPlatform ; owl:someValuesFrom :Cl_VideoGamePlatform ],
+    [ a owl:Restriction ; owl:onProperty :hasDefiningInteraction ;
+      owl:someValuesFrom [ a owl:Class ; owl:intersectionOf (
+          :Cl_PlayerInteraction
+          [ a owl:Restriction ; owl:onProperty :affectsVisualOutput ; owl:someValuesFrom :Cl_VisualOutput ]
+      ) ] ] .
+
+:producesVisualOutput owl:propertyChainAxiom ( :hasDefiningInteraction :affectsVisualOutput ) .
+
+:Cl_VideoGamePlatform rdfs:subClassOf
+    [ a owl:Restriction ; owl:onProperty :hasComponent ; owl:someValuesFrom :Cl_Hardware ],
+    [ a owl:Restriction ; owl:onProperty :hasComponent ; owl:someValuesFrom :Cl_Software ] .
+
+:Cl_HandheldGameConsole rdfs:subClassOf
+    [ a owl:Restriction ; owl:onProperty :hasDevicePart ; owl:someValuesFrom :Cl_Console ],
+    [ a owl:Restriction ; owl:onProperty :hasDevicePart ; owl:someValuesFrom :Cl_BuiltInScreen ],
+    [ a owl:Restriction ; owl:onProperty :hasDevicePart ; owl:someValuesFrom :Cl_Speaker ],
+    [ a owl:Restriction ; owl:onProperty :hasDevicePart ; owl:someValuesFrom :Cl_GameController ] .
+
+:Cl_HeadMountedUnit rdfs:subClassOf
+    [ a owl:Restriction ; owl:onProperty :hasDevicePart ; owl:someValuesFrom :Cl_StereoscopicScreen ],
+    [ a owl:Restriction ; owl:onProperty :providesMotionTracking ; owl:someValuesFrom :Cl_MotionTracking ] .
+
+[ a owl:Class ; owl:intersectionOf (
+    :Cl_VideoGame
+    [ a owl:Restriction ; owl:onProperty :hasPlatformCategory ; owl:hasValue :Ind_CloudGame ]
+) ] rdfs:subClassOf
+    [ a owl:Restriction ; owl:onProperty :computedAndRenderedOn ;
+      owl:someValuesFrom [ a owl:Class ; owl:intersectionOf (
+          :Cl_RemoteHardware
+          [ a owl:Restriction ; owl:onProperty :providedBy ; owl:someValuesFrom :Cl_Party ]
+      ) ] ] .
+
+[ a owl:Class ; owl:intersectionOf (
+    :Cl_VideoGame
+    [ a owl:Restriction ; owl:onProperty :hasVersionForm ; owl:hasValue :Ind_Remaster ]
+) ] rdfs:subClassOf
+    [ a owl:Restriction ; owl:onProperty :reusesSourceCode ; owl:someValuesFrom :Cl_SourceCode ],
+    [ a owl:Restriction ; owl:onProperty :updatesContent ; owl:someValuesFrom :Cl_ArtAsset ],
+    [ a owl:Restriction ; owl:onProperty :updatesContent ; owl:someValuesFrom :Cl_GameModel ],
+    [ a owl:Restriction ; owl:onProperty :updatesContent ; owl:someValuesFrom :Cl_Level ] .
+
+[ a owl:Class ; owl:intersectionOf (
+    :Cl_VideoGame
+    [ a owl:Restriction ; owl:onProperty :hasVersionForm ; owl:hasValue :Ind_Remake ]
+) ] rdfs:subClassOf
+    [ a owl:Restriction ; owl:onProperty :updatesContent ; owl:someValuesFrom :Cl_ArtAsset ] .
+
+:Cl_CoreGame rdfs:subClassOf
+    [ a owl:Restriction ; owl:onProperty :hasPurpose ; owl:hasValue :Ind_Entertainment ] .
+
+:Cl_CasualGame rdfs:subClassOf
+    [ a owl:Restriction ; owl:onProperty :hasDesignCharacteristic ; owl:hasValue :Ind_EaseOfAccessibility ],
+    [ a owl:Restriction ; owl:onProperty :hasDesignCharacteristic ; owl:hasValue :Ind_SimpleToUnderstandGameplay ],
+    [ a owl:Restriction ; owl:onProperty :hasDesignCharacteristic ; owl:hasValue :Ind_QuickToGraspRuleSets ] .
+
+:Cl_SeriousGame rdfs:subClassOf
+    [ a owl:Restriction ; owl:onProperty :hasPurpose ; owl:hasValue :Ind_NonEntertainmentPurpose ] .
+
+:Cl_ArtGame rdfs:subClassOf
+    [ a owl:Restriction ; owl:onProperty :intendedToGenerate ; owl:hasValue :Ind_Emotion ],
+    [ a owl:Restriction ; owl:onProperty :intendedToGenerate ; owl:hasValue :Ind_Empathy ] .
+
+:Cl_CrossRegionRatingAffirmation rdfs:subClassOf
+    [ a owl:Restriction ; owl:onProperty :basedOnCompletedReview ; owl:someValuesFrom :Cl_ContentRatingReview ],
+    [ a owl:Restriction ; owl:onProperty :affirmsRating ; owl:someValuesFrom :Cl_ContentRating ],
+    [ a owl:Restriction ; owl:onProperty :affirmedForRegion ; owl:someValuesFrom :Cl_Region ],
+    [ a owl:Restriction ; owl:onProperty :facilitatedBy ; owl:hasValue :Ind_IARC ] .
+
+:Ind_ActionGame a owl:NamedIndividual, :Cl_TopLevelGenre ;
+    rdfs:label "Action game"@en ;
+    :sourceLocator "Video Game Document.txt, Genre, line 113"@en .
+
+:Ind_RolePlayingGame a owl:NamedIndividual, :Cl_GameGenre ;
+    rdfs:label "Role-playing game"@en ;
+    :sourceLocator "Video Game Document.txt, Genre, line 113"@en .
+
+:Ind_ShootEmUp a owl:NamedIndividual, :Cl_GameGenre ;
+    rdfs:label "Shoot 'em up"@en ;
+    :sourceLocator "Video Game Document.txt, Genre, line 113"@en .
+
+:Ind_Roguelike a owl:NamedIndividual, :Cl_GameGenre ;
+    rdfs:label "Roguelike"@en ;
+    rdfs:comment "The genre name derives from the influential game Rogue."@en ;
+    :sourceLocator "Video Game Document.txt, Genre, line 113"@en .
+
+:Ind_GrandTheftAutoClone a owl:NamedIndividual, :Cl_GameGenre ;
+    rdfs:label "Grand Theft Auto clone"@en ;
+    rdfs:comment "The genre name derives from Grand Theft Auto III."@en ;
+    :sourceLocator "Video Game Document.txt, Genre, line 113"@en .
+
+:Ind_BattleRoyale a owl:NamedIndividual, :Cl_GameGenre ;
+    rdfs:label "Battle royale"@en ;
+    rdfs:comment "The genre name derives from the film Battle Royale; the film is not modeled as a video game."@en ;
+    :sourceLocator "Video Game Document.txt, Genre, line 113"@en .
+
+:Ind_Adventure a owl:NamedIndividual, :Cl_GameGenre ;
+    rdfs:label "Adventure"@en ;
+    :sourceLocator "Video Game Document.txt, Definition, line 27"@en .
+
+:Ind_WalkingSimulator a owl:NamedIndividual, :Cl_GameGenre ;
+    rdfs:label "Walking simulator"@en ;
+    :broaderGenre :Ind_Adventure ;
+    rdfs:comment "Adventure games allowing exploration but lacking objectives, as described in the document."@en ;
+    :sourceLocator "Video Game Document.txt, Definition, line 27"@en .
+
+:Ind_MatchThree a owl:NamedIndividual, :Cl_GameGenre ;
+    rdfs:label "Match three"@en ;
+    :qualification "Identified among genres often associated with low-intensity casual gameplay; not every game of the genre is asserted to be casual."@en ;
+    :sourceLocator "Video Game Document.txt, Casual games, line 131"@en .
+
+:Ind_HiddenObject a owl:NamedIndividual, :Cl_GameGenre ;
+    rdfs:label "Hidden object"@en ;
+    :qualification "Identified among genres often associated with low-intensity casual gameplay; not every game of the genre is asserted to be casual."@en ;
+    :sourceLocator "Video Game Document.txt, Casual games, line 131"@en .
+
+:Ind_TimeManagement a owl:NamedIndividual, :Cl_GameGenre ;
+    rdfs:label "Time management"@en ;
+    :qualification "Identified among genres often associated with low-intensity casual gameplay; not every game of the genre is asserted to be casual."@en ;
+    :sourceLocator "Video Game Document.txt, Casual games, line 131"@en .
+
+:Ind_PuzzleGame a owl:NamedIndividual, :Cl_GameGenre ;
+    rdfs:label "Puzzle game"@en ;
+    :qualification "Identified among genres often associated with low-intensity casual gameplay; not every game of the genre is asserted to be casual."@en ;
+    :sourceLocator "Video Game Document.txt, Casual games, line 131"@en .
+
+:Ind_ComputerSpace a owl:NamedIndividual, :Cl_VideoGame ;
+    rdfs:label "Computer Space"@en ;
+    :hasPlatformCategory :Ind_ArcadeVideoGame ;
+    rdfs:comment "The document identifies Computer Space, released in 1971, as the first consumer video game and says it took inspiration from the 1962 computer game Spacewar!. Inspiration is not asserted as isVersionOf."@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 7"@en .
+
+:Ind_Spacewar a owl:NamedIndividual, :Cl_VideoGame ;
+    rdfs:label "Spacewar!"@en ;
+    rdfs:comment "The document identifies this as a 1962 computer game and an inspiration for Computer Space."@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 7"@en .
+
+:Ind_Pong a owl:NamedIndividual, :Cl_VideoGame ;
+    rdfs:label "Pong"@en ;
+    rdfs:comment "The document places the introduction of Pong in 1972."@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 7"@en .
+
+:Ind_DragonsLair a owl:NamedIndividual, :Cl_VideoGame ;
+    rdfs:label "Dragon's Lair"@en ;
+    :qualification "An example of an interactive-film game using full-motion video and only limited user interaction. Limited interaction is not treated as absence of defining interaction."@en ;
+    :sourceLocator "Video Game Document.txt, Definition, line 25"@en .
+
+:Ind_GoneHome a owl:NamedIndividual, :Cl_VideoGame ;
+    rdfs:label "Gone Home"@en ;
+    :hasGenre :Ind_WalkingSimulator ;
+    :qualification "The source names Gone Home as a walking simulator, allowing exploration without objectives, in its discussion of games without winning conditions. No winning condition or synthetic game-world individual is asserted."@en ;
+    :sourceLocator "Video Game Document.txt, Definition, line 27"@en .
+
+:Ind_ThatDragonCancer a owl:NamedIndividual, :Cl_ArtGame ;
+    rdfs:label "That Dragon, Cancer"@en ;
+    :qualification "Named as an empathy game in the discussion of games without winning conditions and as an art-game example. No winning condition is fabricated."@en ;
+    :sourceLocator "Video Game Document.txt, Definition, line 27; Art games, line 143"@en .
+
+:Ind_FortniteCreative a owl:NamedIndividual, :Cl_VideoGame ;
+    rdfs:label "Fortnite Creative"@en ;
+    :qualification "The source discusses this among metaverses of interactive experiences in the 2021 Epic Games v. Apple case; whether the whole and its individual experiences counted as games was questioned. This typing follows the document's use of game, not a legal determination."@en ;
+    :sourceLocator "Video Game Document.txt, Definition, line 29"@en .
+
+:Ind_Roblox a owl:NamedIndividual, :Cl_VideoGame ;
+    rdfs:label "Roblox"@en ;
+    :qualification "The source discusses this among metaverses of interactive experiences in the 2021 Epic Games v. Apple case; whether the whole and its individual experiences counted as games was questioned. This typing follows the document's use of game, not a legal determination."@en ;
+    :sourceLocator "Video Game Document.txt, Definition, line 29"@en .
+
+:Ind_Rogue a owl:NamedIndividual, :Cl_VideoGame ;
+    rdfs:label "Rogue"@en ;
+    rdfs:comment "Named as the influential game from which the term roguelike derives."@en ;
+    :sourceLocator "Video Game Document.txt, Genre, line 113"@en .
+
+:Ind_GrandTheftAutoIII a owl:NamedIndividual, :Cl_VideoGame ;
+    rdfs:label "Grand Theft Auto III"@en ;
+    rdfs:comment "Named as the influential game from which the term Grand Theft Auto clone derives."@en ;
+    :sourceLocator "Video Game Document.txt, Genre, line 113"@en .
+
+:Ind_Doom a owl:NamedIndividual, :Cl_FirstPersonShooter ;
+    rdfs:label "Doom"@en ;
+    rdfs:comment "The document explains that first-person shooters were initially called Doom clones after this 1993 game."@en ;
+    :sourceLocator "Video Game Document.txt, Genre, line 113"@en .
+
+:Ind_Tetris a owl:NamedIndividual, :Cl_CasualGame ;
+    rdfs:label "Tetris"@en ;
+    :sourceLocator "Video Game Document.txt, Casual games, line 131"@en .
+
+:Ind_CandyCrushSaga a owl:NamedIndividual, :Cl_CasualGame ;
+    rdfs:label "Candy Crush Saga"@en ;
+    :sourceLocator "Video Game Document.txt, Casual games, line 131"@en .
+
+:Ind_FlappyBird a owl:NamedIndividual, :Cl_CasualGame ;
+    rdfs:label "Flappy Bird"@en ;
+    rdfs:comment "Named as an example of hyper-casual games with especially simple rules and short, replayable play; no additional game subclass is introduced."@en ;
+    :sourceLocator "Video Game Document.txt, Casual games, line 131"@en .
+
+:Ind_TheOregonTrail a owl:NamedIndividual, :Cl_EducationalGame ;
+    rdfs:label "The Oregon Trail"@en ;
+    :qualification "Named as an educational-game example; no assignment to the narrower edutainment or problem-solving branch is supplied."@en ;
+    :sourceLocator "Video Game Document.txt, Educational games, line 135"@en .
+
+:Ind_Minecraft a owl:NamedIndividual, :Cl_VideoGame ;
+    rdfs:label "Minecraft"@en ;
+    :qualification "Named as an open-world or virtual-sandbox game used in classrooms after release, although not initially developed for education. Classroom use is not treated as educational design intent."@en ;
+    :sourceLocator "Video Game Document.txt, Educational games, line 135"@en .
+
+:Ind_SpaceChem a owl:NamedIndividual, :Cl_VideoGame ;
+    rdfs:label "SpaceChem"@en ;
+    :hasGenre :Ind_PuzzleGame ;
+    :qualification "Named as a puzzle game offering critical-thinking skills and used in classrooms after release, although not initially developed for education."@en ;
+    :sourceLocator "Video Game Document.txt, Educational games, line 135"@en .
+
+:Ind_WiiFit a owl:NamedIndividual, :Cl_FitnessGame ;
+    rdfs:label "Wii Fit"@en ;
+    :sourceLocator "Video Game Document.txt, Serious games, line 139"@en .
+
+:Ind_MicrosoftFlightSimulator a owl:NamedIndividual, :Cl_SimulatorGame ;
+    rdfs:label "Microsoft Flight Simulator"@en ;
+    :sourceLocator "Video Game Document.txt, Serious games, line 139"@en .
+
+:Ind_Pepsiman a owl:NamedIndividual, :Cl_Advergame ;
+    rdfs:label "Pepsiman"@en ;
+    :sourceLocator "Video Game Document.txt, Serious games, line 139"@en .
+
+:Ind_NarcoGuerra a owl:NamedIndividual, :Cl_Newsgame ;
+    rdfs:label "NarcoGuerra"@en ;
+    :sourceLocator "Video Game Document.txt, Serious games, line 139"@en .
+
+:Ind_Passage a owl:NamedIndividual, :Cl_ArtGame ;
+    rdfs:label "Passage"@en ;
+    :sourceLocator "Video Game Document.txt, Art games, line 143"@en .
+
+:Ind_Flower a owl:NamedIndividual, :Cl_ArtGame ;
+    rdfs:label "Flower"@en ;
+    :sourceLocator "Video Game Document.txt, Art games, line 143"@en .
+
+:Ind_Merlin a owl:NamedIndividual, :Cl_ElectronicGame ;
+    rdfs:label "Merlin"@en ;
+    rdfs:comment "A handheld electronic-game example distinguished from video games because its LED indicators were not combined for imaging. No video-game type is asserted."@en ;
+    :sourceLocator "Video Game Document.txt, Terminology, line 13"@en .
+
+:Ind_CarmenSandiegoSeries a owl:NamedIndividual ;
+    rdfs:label "Carmen Sandiego series"@en ;
+    rdfs:comment "Named by the document as an educational-game series. It is retained as a series-level named entity, not incorrectly typed as a single video game."@en ;
+    :sourceLocator "Video Game Document.txt, Educational games, line 135"@en .
+
+:Ind_Atari a owl:NamedIndividual, :Cl_Party ;
+    rdfs:label "Atari"@en ;
+    rdfs:comment "The document identifies Atari among companies releasing successful home consoles during the early industry period."@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 7; Platform, line 43; Backward compatibility, line 85"@en .
+
+:Ind_Mattel a owl:NamedIndividual, :Cl_Party ;
+    rdfs:label "Mattel"@en ;
+    rdfs:comment "The document identifies Mattel among companies releasing successful home consoles during the early industry period."@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 7; Platform, line 43; Backward compatibility, line 85"@en .
+
+:Ind_Coleco a owl:NamedIndividual, :Cl_Party ;
+    rdfs:label "Coleco"@en ;
+    rdfs:comment "The document identifies Coleco among companies releasing successful home consoles during the early industry period."@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 7; Platform, line 43; Backward compatibility, line 85"@en .
+
+:Ind_Nintendo a owl:NamedIndividual, :Cl_Party ;
+    rdfs:label "Nintendo"@en ;
+    rdfs:comment "The document identifies Nintendo as a console manufacturer and platform holder, and associates it with the Game Boy line and Wii."@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 7; Platform, line 43; Backward compatibility, line 85"@en .
+
+:Ind_Sega a owl:NamedIndividual, :Cl_Party ;
+    rdfs:label "Sega"@en ;
+    rdfs:comment "The document describes Sega as a console-industry company and reports that it exited the console space by the 2000s."@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 7; Platform, line 43; Backward compatibility, line 85"@en .
+
+:Ind_Sony a owl:NamedIndividual, :Cl_Party ;
+    rdfs:label "Sony"@en ;
+    rdfs:comment "The document identifies Sony as a console manufacturer and platform holder."@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 7; Platform, line 43; Backward compatibility, line 85"@en .
+
+:Ind_Microsoft a owl:NamedIndividual, :Cl_Party ;
+    rdfs:label "Microsoft"@en ;
+    rdfs:comment "The document identifies Microsoft among the major console manufacturers in its historical account."@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 7; Platform, line 43; Backward compatibility, line 85"@en .
+
+:Ind_MicrosoftWindows a owl:NamedIndividual, :Cl_Software ;
+    rdfs:label "Microsoft Windows"@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 7"@en .
+
+:Ind_MSDOS a owl:NamedIndividual, :Cl_Software ;
+    rdfs:label "MS-DOS"@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 7"@en .
+
+:Ind_iOS a owl:NamedIndividual, :Cl_Software ;
+    rdfs:label "iOS"@en ;
+    :sourceLocator "Video Game Document.txt, Mobile game, line 69"@en .
+
+:Ind_Android a owl:NamedIndividual, :Cl_Software ;
+    rdfs:label "Android"@en ;
+    :sourceLocator "Video Game Document.txt, Mobile game, line 69"@en .
+
+:Ind_MagnavoxOdyssey a owl:NamedIndividual, :Cl_Console ;
+    rdfs:label "Magnavox Odyssey"@en ;
+    rdfs:comment "Identified in the document as the first home console, introduced in 1972."@en ;
+    :sourceLocator "Video Game Document.txt, Introduction, line 7"@en .
+
+:Ind_XboxPlatform a owl:NamedIndividual, :Cl_VideoGamePlatform ;
+    rdfs:label "Xbox"@en ;
+    rdfs:comment "Named as a major console platform; no particular Xbox model or specific supported game is asserted."@en ;
+    :sourceLocator "Video Game Document.txt, Home console, line 53"@en .
+
+:Ind_PlayStationPlatform a owl:NamedIndividual, :Cl_VideoGamePlatform ;
+    rdfs:label "PlayStation"@en ;
+    rdfs:comment "The original PlayStation platform in the source's backward-compatibility example, not a claim about every platform bearing the PlayStation brand."@en ;
+    :sourceLocator "Video Game Document.txt, Backward compatibility, line 85"@en .
+
+:Ind_PlayStation2Platform a owl:NamedIndividual, :Cl_VideoGamePlatform ;
+    rdfs:label "PlayStation 2"@en ;
+    :hasBackwardCompatibility :Ind_PlayStation2BackwardCompatibility ;
+    rdfs:comment "The source describes playing past-generation PlayStation games by inserting original game media into the newer console."@en ;
+    :sourceLocator "Video Game Document.txt, Backward compatibility, line 85"@en .
+
+:Ind_WiiPlatform a owl:NamedIndividual, :Cl_VideoGamePlatform ;
+    rdfs:label "Wii"@en ;
+    :hasComponent :Ind_WiiConsole ;
+    :hasBackwardCompatibility :Ind_WiiBackwardCompatibility ;
+    rdfs:comment "The source describes Wii playing GameCube titles using their original media."@en ;
+    :sourceLocator "Video Game Document.txt, Backward compatibility, line 85"@en .
+
+:Ind_WiiConsole a owl:NamedIndividual, :Cl_Console ;
+    rdfs:label "Wii console hardware"@en ;
+    :manufacturedBy :Ind_Nintendo ;
+    rdfs:comment "The console hardware associated with the source-named Wii platform; hardware and the platform combination are represented separately."@en ;
+    :sourceLocator "Video Game Document.txt, Backward compatibility, line 85"@en .
+
+:Ind_GameCubePlatform a owl:NamedIndividual, :Cl_VideoGamePlatform ;
+    rdfs:label "GameCube"@en ;
+    :sourceLocator "Video Game Document.txt, Backward compatibility, line 85"@en .
+
+:Ind_PlayStation2BackwardCompatibility a owl:NamedIndividual, :Cl_BackwardCompatibility ;
+    rdfs:label "PlayStation 2 backward compatibility with PlayStation games"@en ;
+    :qualification "The documented capability uses original game media. The document supplies no named compatible titles or assertion that every PlayStation game is compatible."@en ;
+    :sourceLocator "Video Game Document.txt, Backward compatibility, line 85"@en .
+
+:Ind_WiiBackwardCompatibility a owl:NamedIndividual, :Cl_BackwardCompatibility ;
+    rdfs:label "Wii backward compatibility with GameCube games"@en ;
+    :qualification "The documented capability uses original game media. The document supplies no named compatible titles or assertion that every GameCube game is compatible."@en ;
+    :sourceLocator "Video Game Document.txt, Backward compatibility, line 85"@en .
+
+:Ind_PlayStation2BackwardCompatibility a
+    [ a owl:Restriction ; owl:onProperty :enablesExecutionOf ;
+      owl:someValuesFrom [ a owl:Class ; owl:intersectionOf (
+          :Cl_VideoGame
+          [ a owl:Restriction ; owl:onProperty :originallyIntendedFor ; owl:hasValue :Ind_PlayStationPlatform ]
+      ) ] ] .
+
+:Ind_WiiBackwardCompatibility a
+    [ a owl:Restriction ; owl:onProperty :enablesExecutionOf ;
+      owl:someValuesFrom [ a owl:Class ; owl:intersectionOf (
+          :Cl_VideoGame
+          [ a owl:Restriction ; owl:onProperty :originallyIntendedFor ; owl:hasValue :Ind_GameCubePlatform ]
+      ) ] ] .
+
+:Ind_XboxCloudGamingPlatform a owl:NamedIndividual, :Cl_VideoGamePlatform ;
+    rdfs:label "Xbox Cloud Gaming"@en ;
+    rdfs:comment "The document describes dedicated custom server-blade hardware in cloud-computing centers for this platform. This is a document-reported platform example, not a claim about current service availability."@en ;
+    :sourceLocator "Video Game Document.txt, Cloud gaming, line 73"@en .
+
+:Ind_XboxCloudGamingPlatform a [ a owl:Restriction ; owl:onProperty :hasComponent ; owl:someValuesFrom :Cl_RemoteHardware ] .
+
+:Ind_PlayStationNowPlatform a owl:NamedIndividual, :Cl_VideoGamePlatform ;
+    rdfs:label "PlayStation Now"@en ;
+    rdfs:comment "The document describes dedicated custom server-blade hardware in cloud-computing centers for this platform. This is a document-reported platform example, not a claim about current service availability."@en ;
+    :sourceLocator "Video Game Document.txt, Cloud gaming, line 73"@en .
+
+:Ind_PlayStationNowPlatform a [ a owl:Restriction ; owl:onProperty :hasComponent ; owl:someValuesFrom :Cl_RemoteHardware ] .

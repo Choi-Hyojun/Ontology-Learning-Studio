@@ -1,3 +1,5 @@
+import examples from "./methodology-examples.json" with { type: "json" };
+
 export const MAX_TEXT_BYTES = 2 * 1024 * 1024;
 
 export function validateTextFile(name: string, size: number) {
@@ -15,29 +17,12 @@ export function decodeDocument(bytes: ArrayBuffer) {
   return text;
 }
 
-const MOCK_BASE_TTL = `# LOCAL SIMULATION: fixed example, not inferred from the uploaded document.
-@prefix : <http://example.org/insurance#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-:ExampleOntology a owl:Ontology ; rdfs:label "Simulation example"@en .
-:Policy a owl:Class .
-:PolicyHolder a owl:Class .
-:BeneficiaryRole a owl:Class .
-:GracePeriod a owl:Class .
-:ownsPolicy a owl:ObjectProperty ; rdfs:domain :PolicyHolder ; rdfs:range :Policy .
-`;
-
-// Complete snapshots, not concatenated narrative responses or copied prior-output text.
+// Exact source snapshots only. Missing intermediate outputs and QA/repair
+// results must not masquerade as a newly generated ontology.
 export function simulatedOntology(method: string, stageId: string): string | null {
-  if ((method === "neon" && stageId === "08") || (method === "tao" && stageId === "04")) return MOCK_BASE_TTL;
-  if (method === "tao" && stageId === "08") return MOCK_BASE_TTL + `
-:hasBeneficiary a owl:ObjectProperty ; rdfs:domain :Policy ; rdfs:range :BeneficiaryRole .
-:duration a owl:DatatypeProperty ; rdfs:domain :GracePeriod ; rdfs:range xsd:duration .
-:ExampleGracePeriod a :GracePeriod ; :duration "P31D"^^xsd:duration .
-`;
-  return null;
+  if (method !== "neon" && method !== "tao") return null;
+  const snapshots: Record<string, string> = examples[method].ontologies;
+  return snapshots[stageId] ?? null;
 }
 
 export type OntologyRecord = { ontology: string | null; completedAt: string };

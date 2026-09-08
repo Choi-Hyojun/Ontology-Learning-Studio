@@ -37,11 +37,11 @@ test("every actual prompt parameter and previous output has help, without metric
   assert.match(fieldHelp("custom_context"), /\{custom_context\}/);
 });
 
-test("help distinguishes manual TAO inputs, automatic context and LLM-only checks", () => {
-  assert.match(fieldHelp("requirements_doc"), /자동으로 채워지지는 않습니다/);
-  assert.match(fieldHelp("implementation_plan"), /수동 입력/);
-  assert.match(fieldHelp("ontology_snapshot"), /수동 입력/);
-  assert.match(fieldHelp("feedback"), /자동 수집되지는 않습니다/);
+test("help distinguishes source-backed TAO inputs, automatic context and LLM-only checks", () => {
+  assert.match(fieldHelp("requirements_doc"), /자동 연결/);
+  assert.match(fieldHelp("implementation_plan"), /ver2/);
+  assert.match(fieldHelp("ontology_snapshot"), /자동 연결/);
+  assert.match(fieldHelp("feedback"), /미제공 안내는 피드백에서 제외/);
   assert.match(fieldHelp("previous_step_content"), /직전 단계/);
   assert.match(fieldHelp("previous_step_content"), /직접 편집 모드/);
   assert.match(STAGE_HELP.tao[5].note, /RDFLib 검사기를 실행하지 않습니다/);
@@ -50,7 +50,10 @@ test("help distinguishes manual TAO inputs, automatic context and LLM-only check
 
 test("display descriptions cannot change TAO default prompt instructions", () => {
   const page = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
-  assert.match(page, /\$\{taoBlueprint\[index\]\[2\]\}/);
+  const taoPrompts = JSON.parse(readFileSync(new URL("../app/tao-prompts.json", import.meta.url), "utf8"));
+  assert.equal(taoPrompts.stages.length, 8);
+  assert.deepEqual(taoPrompts.stages.map(stage => stage.fields), TAO_FIELDS);
+  assert.match(taoPrompts.stages[2].template, /Preserve qualification and uncertainty/);
   assert.doesNotMatch(page, /\$\{stage\.description\}/);
   assert.match(page, /description: STAGE_HELP\[method\]\[index\]\.description/);
 });

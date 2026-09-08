@@ -1,0 +1,70 @@
+{
+  "description": "Original supplied source files; prompts are data, never executed by this import script.",
+  "files": [
+    {
+      "path": "examples/neon/prompt-set.md",
+      "bytes": 214290,
+      "sha256": "cd584ab600fcd38cae508cd4ac2f938a94fb332fc264442109ae4a993524a439"
+    },
+    {
+      "path": "examples/neon/video_game_ontology_final_merged.ttl",
+      "bytes": 53843,
+      "sha256": "b9556ae96c0b3959bfad59f3e195f51f7ef251502a9e3f59316da7e761e7c50c"
+    },
+    {
+      "path": "examples/tao/stage1/cq_instruction.md",
+      "bytes": 7641,
+      "sha256": "8d7a885b12ba1f424ed2ea154fe20ceab420421cff9500b97af8df94ac2bf13f"
+    },
+    {
+      "path": "examples/tao/stage1/videogame_cq_document_50.json",
+      "bytes": 16169,
+      "sha256": "9070913e15a8e198bbf5955ff0320a39a0c86e893594381d1ce66ca02ade899e"
+    },
+    {
+      "path": "examples/tao/stage2/semantic_requirements_document.txt",
+      "bytes": 2890,
+      "sha256": "1e0f65872e4bcc9aa0483b56be3b14d4d17b2066c73aedf7d21a28be2b5f60c8"
+    },
+    {
+      "path": "examples/tao/stage2/videogame_srd_document_50.json",
+      "bytes": 43879,
+      "sha256": "dc14a3c68c9c6afe62d20005d5505ce3df00c15853c1afd91907575cc2382546"
+    },
+    {
+      "path": "examples/tao/stage3/tip_instruction_ver2.txt",
+      "bytes": 7625,
+      "sha256": "38809b4654492d6bbf3b05c17bf4f59a22ad829b1c21609ec038bea1e2508196"
+    },
+    {
+      "path": "examples/tao/stage3/videogame_tip_document_50_ver2.md",
+      "bytes": 53180,
+      "sha256": "d6c883878738e304a8c0c119bfd8165479b7bbd227914d585d4abc37e265d693"
+    },
+    {
+      "path": "examples/tao/stage4/ontology_instruction.txt",
+      "bytes": 4925,
+      "sha256": "dfe97d79477f4a54414516b73a8b2aaf33c2e2ab88805deb7e45bdffc8a7205a"
+    },
+    {
+      "path": "examples/tao/stage4/videogame_ontology_document_50_ver2.ttl",
+      "bytes": 92152,
+      "sha256": "457a68fcf42737366b471d47e5eed3002c140643341c1d5a8a05e4a4bc76ac32"
+    },
+    {
+      "path": "examples/tao/stage4/videogame_ontology_document_50_ver2.owl",
+      "bytes": 189199,
+      "sha256": "abb9132e6f1a9f4e91ef1263b3ae84773aeab313ddde2ec1ced27d7b32a2ac07"
+    },
+    {
+      "path": "examples/tao/stage5/quality_check_instruction.txt",
+      "bytes": 2775,
+      "sha256": "4e44628e64b2c3c4fad262f4e54c1bf1c226742b164cccf244eb355b2c497582"
+    },
+    {
+      "path": "examples/tao/stage5/videigame_ontology_numbered_document_50_ver2.txt",
+      "bytes": 105101,
+      "sha256": "ad5b27a45d035b35fbb51955e332d9cec1b06a2a1c0659461e8d4ec66c89cc31"
+    }
+  ]
+}

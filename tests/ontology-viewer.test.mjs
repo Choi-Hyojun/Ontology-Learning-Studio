@@ -22,16 +22,16 @@ test("vendored browser RDF bundle parses Turtle without remote scripts", () => {
   vm.createContext(context);
   vm.runInContext(readFileSync(new URL("vendor/rdflib.min.js", viewerRoot), "utf8"), context);
   vm.runInContext(loaderSource, context);
-  const graph = context.OntologyFolderLoader.buildGraphData(context.OntologyFolderLoader.parseOntology(simulatedOntology("tao", "08"), "current.ttl"));
-  assert.equal(graph.abox.nodes.length, 1);
+  const graph = context.OntologyFolderLoader.buildGraphData(context.OntologyFolderLoader.parseOntology(simulatedOntology("tao", "04"), "current.ttl"));
+  assert.ok(graph.abox.nodes.length > 20);
 });
 
 test("OntoVis parses the exact exported NeOn and TAO snapshots, including new instances", () => {
-  for (const [method, stage] of [["neon", "08"], ["tao", "04"], ["tao", "08"]]) {
+  for (const [method, stage] of [["neon", "08"], ["neon", "20"], ["tao", "04"]]) {
     const graph = loader.buildGraphData(loader.parseOntology(simulatedOntology(method, stage), "current.ttl"));
-    assert.ok(graph.tbox.nodes.some((node) => node.id.endsWith(":Policy")));
+    assert.ok(graph.tbox.nodes.some((node) => node.id.endsWith(method === "tao" ? ":Cl_VideoGame" : ":VideoGame")));
     assert.ok(graph.tbox.links.length > 0);
-    assert.equal(graph.abox.nodes.length, stage === "08" && method === "tao" ? 1 : 0);
+    if (stage !== "08") assert.ok(graph.abox.nodes.length > 20);
   }
 });
 
@@ -56,10 +56,11 @@ test("viewer bridge updates snapshots, rejects foreign messages and reports pars
   assert.equal(graphs.length, 0);
   const update = (payload) => listeners.message({ origin: context.location.origin, source: parent, data: payload });
   update(data);
-  update({ ...data, ttl: simulatedOntology("tao", "08") });
+  update({ ...data, ttl: simulatedOntology("neon", "20") });
   assert.equal(graphs.length, 2);
-  assert.equal(graphs[0].abox.nodes.length, 0);
-  assert.equal(graphs[1].abox.nodes.length, 1);
+  assert.ok(graphs[0].tbox.nodes.some(node => node.id.endsWith(":Cl_VideoGame")));
+  assert.ok(graphs[1].tbox.nodes.some(node => node.id.endsWith(":VideoGame")));
+  assert.ok(graphs[0].abox.nodes.length > 20 && graphs[1].abox.nodes.length > 20);
   assert.equal(replies.at(-1).message.type, "ontovis:loaded");
   assert.equal(context.selectedOntologyName.textContent, "TAO");
   listeners.resize();

@@ -112,10 +112,15 @@ export function parseSessionLog(text: string, defaults: SessionDefaults): Restor
     const saved = object(values[key], "valuesByMethod." + key);
     for (const [field, value] of Object.entries(saved)) { fieldKey(field); string(value, field); }
     if (log.version !== 1) {
-      for (const field of Object.keys(defaults.valuesByMethod[key])) check(typeof saved[field] === "string", `valuesByMethod.${key}.${field}`);
+      for (const field of Object.keys(defaults.valuesByMethod[key])) {
+        // Older Studio logs did not expose the NeOn Step 20 CQ input.
+        if (key === "neon" && field === "competency_questions" && saved[field] === undefined) continue;
+        check(typeof saved[field] === "string", `valuesByMethod.${key}.${field}`);
+      }
     }
     // Missing fields from older logs are filled from defaults, never the current workspace.
     valuesByMethod[key] = { ...defaults.valuesByMethod[key], ...saved } as PromptValues;
+    if (key === "neon" && saved.competency_questions === undefined) valuesByMethod[key].competency_questions = "";
     if (key === "neon") delete valuesByMethod[key].ontology_metrics;
   }
 

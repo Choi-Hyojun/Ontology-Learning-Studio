@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import neonPrompts from "./neon-prompts.json";
+import taoPrompts from "./tao-prompts.json";
+import { exampleResponse, exampleStatus, pipelineContext, resolveExampleContext } from "./example-model";
 import { assemblePrompt, simulateCompletion, type PromptMessages, type PromptValues } from "./prompt-model";
 import { DocumentField, type Attachment } from "./document-field";
 import { ParameterHelp } from "./parameter-help";
-import { FIELD_LABELS, STAGE_HELP, TAO_FIELDS, fieldHelp } from "./stage-help";
+import { FIELD_LABELS, STAGE_HELP, fieldHelp } from "./stage-help";
 import { currentOntology, downloadText, exportLog, simulatedOntology } from "./project-files";
 import { OntologyViewer } from "./ontology-viewer";
 import { SessionImportDialog } from "./session-import-dialog";
@@ -17,7 +19,7 @@ import { completionProvider, requestGeneration, restoredIssues, safeIssue, type 
 import { invalidateStageResults, removeNeonMetrics, type LogEntry, type MethodKey, type RestoredSession, type RunRecord, type SessionDefaults } from "./session-log";
 
 type RunState = "idle" | "running" | "paused" | "done";
-type Stage = { id: string; short: string; title: string; description: string; inputs: string[]; output: string };
+type Stage = { id: string; short: string; title: string; description: string; inputs: string[] };
 
 const neonBlueprint = [
   ["명세", "Ontology Specification", "목적, 범위, 사용자와 요구사항을 정의합니다."],
@@ -43,11 +45,11 @@ const neonBlueprint = [
 ] as const;
 
 const taoBlueprint = [
-  ["문서", "Document & CQ Intake", "계약 문서와 Competency Questions를 페이지별로 준비합니다."],
+  ["문서·CQ", "Document & CQ Generation", "비디오게임 문서에서 CQ·기대 답변 50개를 작성합니다."],
   ["전문가", "Domain Expert · SRD", "도메인 전문가가 Semantic Requirements Document를 만듭니다."],
   ["관리자", "Manager · TIP", "SRD를 구현 가능한 Technical Implementation Plan으로 바꿉니다."],
   ["코더", "Coder · Tool Loop", "코더가 ontology 파일을 읽고 직접 편집합니다."],
-  ["QA", "Ontology QA Review", "계약, TIP, TTL의 충실도와 구조를 검토합니다."],
+  ["QA", "Ontology QA Review", "도메인 문서, TIP, TTL의 충실도와 구조를 검토합니다."],
   ["문법", "RDF Syntax Gate", "RDFLib 기반 Turtle 문법 검사를 수행합니다."],
   ["추론", "OWL Consistency Gate", "OWL 논리 일관성을 검사합니다."],
   ["수정", "QA-Coder · Repair Loop", "QA·문법·논리 피드백을 받아 필요한 줄만 수정합니다."],
@@ -58,10 +60,7 @@ function createStages(blueprint: readonly (readonly [string, string, string])[],
     id: String(index + 1).padStart(2, "0"), short, title, description: STAGE_HELP[method][index].description,
     inputs: method === "neon"
       ? [index ? "이전 단계 산출물" : "도메인 설명", "방법론별 지시문", index > 6 ? "현재 Turtle ontology" : "키워드 · Few-shot"]
-      : [index ? "공유 실행 상태" : "PDF · CQ", index > 2 ? "현재 TTL snapshot" : "역할별 system prompt", index > 3 ? "검증 · 피드백" : "도메인 문맥"],
-    output: index === 7 && method === "neon"
-      ? '@prefix : <http://example.org/ontology#> .\n\n:Ontology a owl:Ontology ;\n  rdfs:label "Generated ontology"@en .'
-      : `${title} 단계의 LLM 응답과 실행 로그가 이곳에 실시간으로 표시됩니다.`,
+      : [index ? "공유 실행 상태" : "문서 · CQ 50", index > 2 ? "현재 TTL snapshot" : "역할별 system prompt", index > 3 ? "검증 · 피드백" : "도메인 문맥"],
   }));
 }
 
@@ -75,50 +74,14 @@ const META = {
 const SESSION_DEFAULTS: SessionDefaults = {
   valuesByMethod: {
     neon: { ...neonPrompts.defaults },
-    tao: { persona: "You are an expert ontology engineer.", domain_name: "Life insurance policy",
-      keywords: "policy, beneficiary, premium", page_text: "Example policy: premiums are due monthly.",
-      cqs_for_page: "When is the premium due?", requirements_doc: "", implementation_plan: "",
-      ontology_snapshot: "", feedback: "" },
+    tao: { ...taoPrompts.defaults },
   },
   promptDefinitions: Object.fromEntries([
     ...neonPrompts.stages.map((source, index) => ["neon-" + NEON_STAGES[index].id, { template: source.template, fields: source.fields }]),
-    ...TAO_STAGES.map((stage, index) => ["tao-" + stage.id, { fields: TAO_FIELDS[index],
-      template: `You are a {persona}.\nStage: ${stage.title}\n${TAO_FIELDS[index].map((key) => key + ": {" + key + "}").join("\n\n")}\n\n${taoBlueprint[index][2]}` }]),
+    ...taoPrompts.stages.map((source, index) => ["tao-" + TAO_STAGES[index].id, { template: source.template, fields: source.fields }]),
   ]),
 };
 
-function simulateResponse(method: MethodKey, stage: Stage, domain: string, keywords: string, previousOutput: string) {
-  const carried = previousOutput
-    ? previousOutput.replace(/\s+/g, " ").slice(0, 180)
-    : "이전 단계 없음 — 사용자 입력에서 시작";
-
-  const neonResults: Record<string, string> = {
-    "01": `### Ontology Specification\n- Domain: ${domain}\n- Purpose: 도메인 지식을 재사용 가능한 OWL ontology로 구조화\n- Scope: ${keywords}\n- Intended users: domain experts, knowledge engineers\n- Functional requirement: 핵심 Competency Question에 SPARQL로 응답`,
-    "02": "### Reuse decision\n- owl:Thing 기반의 공통 계층 유지\n- Agent/Role, Event, TimeInterval 패턴 재사용\n- 도메인 고유 개념만 새 namespace에 생성",
-    "03": `### Competency Questions\n1. ${domain}의 핵심 참여자는 누구인가?\n2. 어떤 사건과 상태 변화가 발생하는가?\n3. ${keywords.split(",").slice(0, 3).join(", ")} 사이의 관계는 무엇인가?`,
-    "04": "### Extracted elements\nEntities: Policy, PolicyHolder, Beneficiary, Premium, GracePeriod\nRelations: ownsPolicy, designatesBeneficiary, requiresPremium\nAxioms: Policy ⊑ ∃hasOwner.PolicyHolder",
-    "05": "(PolicyHolder — ownsPolicy — Policy)\n(Policy — designatesBeneficiary — Beneficiary)\n(Policy — requiresPremium — Premium)\n(Policy — hasGracePeriod — GracePeriod)",
-    "06": "(PremiumPayment — appliesTo — Policy)\n(PremiumPayment — paidBy — PolicyHolder)\n(GracePeriod — follows — MissedPayment)",
-    "07": "(PolicyLapse — affects — Policy)\n(Reinstatement — restores — LapsedPolicy)\n(BeneficiaryRole — borneBy — Person)",
-    "08": '@prefix : <http://example.org/insurance#> .\n@prefix owl: <http://www.w3.org/2002/07/owl#> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n\n:Policy a owl:Class ; rdfs:label "Policy"@en .\n:ownsPolicy a owl:ObjectProperty ; rdfs:domain :PolicyHolder ; rdfs:range :Policy .',
-  };
-
-  const taoResults: Record<string, string> = {
-    "01": `PAGE_CONTEXT_READY\nDocument domain: ${domain}\nCQ keywords: ${keywords}\nOntology snapshot: 0 simulated triples`,
-    "02": '{\n  "key_concepts": ["Policy", "PolicyHolder", "Beneficiary"],\n  "relationships": ["ownsPolicy", "designatesBeneficiary"],\n  "business_rules": ["Premium must be paid before the grace period ends"]\n}',
-    "03": "## Technical Implementation Plan\n1. Reuse Agent/Role pattern for beneficiary.\n2. Create Policy and PremiumPayment event classes.\n3. Add explicit domain/range and CQ-aligned individuals.",
-    "04": "SIMULATED TOOL CALL append_to_file\n모의 Turtle 스냅샷을 생성했습니다.",
-    "05": "CHANGES_REQUIRED\n- L42: hasBeneficiary의 range를 BeneficiaryRole로 조정하세요.\n- L58: GracePeriod duration 값을 명시하세요.",
-    "06": "SIMULATED RDF_SYNTAX_PASSED\n문법 검사 통과 예시입니다. 실제 검사기를 실행하지 않았습니다.",
-    "07": "OWL_CONSISTENCY_PASSED\nNo inconsistent classes detected in the simulated reasoner run.",
-    "08": "REPAIR_APPLIED\n- Updated hasBeneficiary range at L42\n- Added xsd:duration value at L58\nRoute: QA-Coder → QA Review",
-  };
-
-  const ontology = simulatedOntology(method, stage.id);
-  const specific = method === "neon" ? (ontology ? "모의 Turtle 스냅샷을 생성했습니다." : neonResults[stage.id]) : taoResults[stage.id];
-  const fallback = `${stage.title}\nSTATUS: SIMULATED_SUCCESS\n새 ontology 요소가 생성되어 누적 산출물에 반영되었습니다.`;
-  return `[LOCAL SIMULATION — API CALL DISABLED]\n\n${specific ?? fallback}${ontology ? "\n\n###start_turtle###\n" + ontology + "###end_turtle###" : ""}\n\n--- 전달받은 이전 출력 ---\n${carried}`;
-}
 
 export default function Home() {
   const [method, setMethod] = useState<MethodKey>("neon");
@@ -152,8 +115,6 @@ export default function Home() {
   const [methodologyOpen, setMethodologyOpen] = useState(false);
   const closeVisualization = useCallback(() => setVisualizationOpen(false), []);
   const values = valuesByMethod[method];
-  const domain = values.domain_name;
-  const keywords = values.keywords;
   const stages = method === "neon" ? NEON_STAGES : TAO_STAGES;
   const stage = stages[stageIndex];
   const previous = stages[stageIndex - 1];
@@ -165,17 +126,20 @@ export default function Home() {
   const currentOutput = outputs[outputKey] ?? (runState === "running" ? (engine === "api" ? "API 응답을 기다리고 있습니다…" : "시뮬레이터가 응답을 생성하고 있습니다…") : "실행 버튼을 눌러 현재 단계의 응답을 생성하세요.");
   const previousOntology = currentOntology(Object.fromEntries(Object.entries(records).filter(([key]) => key.startsWith(method + "-") && Number(key.split("-")[1]) < Number(stage.id))), method);
 
-  const source = method === "neon" ? neonPrompts.stages[stageIndex] : undefined;
+  const source = method === "neon" ? neonPrompts.stages[stageIndex] : taoPrompts.stages[stageIndex];
   const definition = promptDefinitions[outputKey];
+  const effectiveValues = useMemo(() => resolveExampleContext(method, stage.id, values, outputs, previousOntology),
+    [method, stage.id, values, outputs, previousOntology]);
   const fields = [...new Set(["persona", ...definition.fields])].filter((field) => method !== "neon" || field !== "ontology_metrics");
   const template = (method === "neon" ? removeNeonMetrics(definition.template) : definition.template)
     + (engine === "api" && method === "tao" && ["04", "08"].includes(stage.id)
       ? "\n\nThis is a text-only API workflow. Do not call tools or claim to edit files. Return the complete updated ontology as valid Turtle ONLY between ###start_turtle### and ###end_turtle### markers." : "");
   const assembled = useMemo(() => {
-    const result = assemblePrompt(template, values, previousOutput);
-    if (engine === "api" && previousOntology) result.user += "\n\nCURRENT FULL ONTOLOGY SNAPSHOT:\n" + previousOntology;
+    const context = pipelineContext(method, stage.id, outputs, previousOntology, previousOutput);
+    const result = assemblePrompt(template, effectiveValues, context);
+    if (method === "tao" && previousOntology && !definition.fields.includes("ontology_snapshot")) result.user += "\n\nCURRENT FULL ONTOLOGY SNAPSHOT:\n" + previousOntology;
     return result;
-  }, [template, values, previousOutput, engine, previousOntology]);
+  }, [template, effectiveValues, previousOutput, previousOntology, method, stage.id, outputs, definition.fields]);
   const manual = overrides[outputKey];
   const messages = manual ?? assembled;
   const promptPreview = "SYSTEM\n" + messages.system + "\n\nUSER\n" + messages.user;
@@ -225,7 +189,7 @@ export default function Home() {
             const wait = window.setTimeout(resolve, 1100);
             controller.signal.addEventListener("abort", () => { window.clearTimeout(wait); reject(new DOMException("Cancelled", "AbortError")); }, { once: true });
           });
-          response = simulateCompletion(messages, simulateResponse(method, stage, domain, keywords, previousOutput));
+          response = simulateCompletion(messages, exampleResponse(method, stage.id));
           generatedOntology = simulatedOntology(method, stage.id);
         }
         if (controller.signal.aborted || executionVersion.current !== version) return;
@@ -249,7 +213,7 @@ export default function Home() {
       if (startedAt && !finished) setHistory((items) => [...items, { at: new Date().toISOString(), event: "stage_cancelled",
         method, stageId: stage.id, data: { startedAt, engine, reason: "실행 중지 또는 단계 이동; 이미 전송된 API 요청은 과금될 수 있음" } }]);
     };
-  }, [engine, provider, previousOntology, autoAdvance, domain, keywords, messages, method, outputKey, previousOutput, runState, stage, stageIndex, stages.length, values, manual, reportIssue]);
+  }, [engine, provider, previousOntology, autoAdvance, messages, method, outputKey, previousOutput, runState, stage, stageIndex, stages.length, values, manual, reportIssue]);
 
   const chooseMethod = (value: MethodKey) => {
     setVisualizationOpen(false);
@@ -426,7 +390,11 @@ export default function Home() {
                 {editorOpen ? "전체 프롬프트 접기" : "전체 프롬프트 확인·수정"}
               </button>
             </div>
-            <p className="context-help">{loadedLogName ? `${loadedLogName}에서 복원한 프롬프트 템플릿 · 편집 후 이어서 실행할 수 있습니다.` : source ? `원본 ${source.stepName} · neon_gpt_ontology_generation.py:${source.line}` : "TAO Studio 단계별 텍스트 프롬프트 · 원본 에이전트·도구 실행은 포함하지 않습니다."} 인자 옆 ?에 마우스를 올리거나 포커스·클릭하면 도움말을 볼 수 있습니다.</p>
+            <p className="context-help">{loadedLogName ? `${loadedLogName}에서 복원한 프롬프트 템플릿 · 편집 후 이어서 실행할 수 있습니다.` : `비디오게임 첨부 예시 · ${source.source}`} 인자 옆 ?에 마우스를 올리거나 포커스·클릭하면 도움말을 볼 수 있습니다.</p>
+            {engine === "simulation" && <p className="context-help">{exampleStatus(method, stage.id)}</p>}
+            {!manual && <p className="context-help">{method === "tao"
+              ? "실행된 CQ·SRD·TIP와 현재 TTL이 해당 입력란에 자동 연결됩니다. 값을 수정하면 기존 실행 결과를 초기화하고 편집값을 사용합니다."
+              : "03단계는 명세+재사용, 06–08단계는 누적 개념 triple, 09단계 이후는 마지막 유효한 전체 TTL을 사용합니다. 아래 직전 출력과 전체 전송 문맥은 다를 수 있습니다."}</p>}
             {manual && <p className="manual-notice">직접 편집 모드입니다. 아래 변수는 자동 조립에 사용된 참고값이며, 실행에는 직접 수정한 전체 메시지가 사용됩니다. 변수 연결을 재개하려면 ‘변수로 다시 조립’을 누르세요.</p>}
             <div className="prompt-cards editable-context">
               {previous && <div className="prompt-card context-field previous-output-card">
@@ -442,7 +410,7 @@ export default function Home() {
                 <small id="previous-output-help">
                   {manual
                     ? "이전 단계의 최신 산출물입니다. 직접 편집 모드에서는 자동 반영되지 않으므로 전체 프롬프트를 확인하세요."
-                    : "생성된 출력이 현재 프롬프트에 자동으로 포함됩니다. 본문은 읽기 전용이며 복사할 수 있습니다."}
+                    : "직전 단계의 원문입니다. 단계에 따라 누적 개념 모델·최신 TTL 또는 역할별 산출물이 연결됩니다. 실제 전송 문맥은 전체 프롬프트에서 확인하세요."}
                 </small>
                 <small>{previousOutput.length.toLocaleString()}자</small>
               </div>}
@@ -452,7 +420,7 @@ export default function Home() {
                     onChange={(value) => editValue(key, value)} onImport={(attachment) => importDocument(key, attachment)} />
                 : <div className="prompt-card context-field" key={key}>
                 <div className="parameter-label"><label htmlFor={"context-" + key}><strong>{FIELD_LABELS[key] ?? key}</strong></label><ParameterHelp key={outputKey} label={FIELD_LABELS[key] ?? key} description={fieldHelp(key)} /></div><code>{key}</code>
-                <textarea id={"context-" + key} value={values[key] ?? ""} rows={key === "domain_name" ? 2 : 5}
+                <textarea id={"context-" + key} value={(manual ? values : effectiveValues)[key] ?? ""} rows={key === "domain_name" ? 2 : 5}
                   disabled={!!manual || runState === "running"} onChange={(e) => editValue(key, e.target.value)} />
               </div>)}
             </div>
@@ -466,7 +434,7 @@ export default function Home() {
               <label htmlFor="user-message">User 메시지 · send_and_capture에 전달되는 전체 본문</label>
               <textarea id="user-message" value={messages.user} rows={18} disabled={runState === "running"} onChange={(e) => editMessage("user", e.target.value)} />
             </section>}
-            <p className="context-help">{engine === "api" ? "현재 메시지를 서버에서 선택한 API로 전송합니다. TAO는 텍스트 기반 단계 실행이며, 원본 도구 루프·코드 실행·OWL 추론기를 실행하지 않습니다. NeOn 11–20단계의 새 Turtle triple은 이전 스냅샷에 병합합니다." : "시뮬레이터는 아래 메시지를 그대로 받습니다. 응답은 고정 예시로, 수정한 지시문의 의미를 해석하지 않습니다."}</p>
+            <p className="context-help">{engine === "api" ? "현재 메시지를 서버에서 선택한 API로 전송합니다. TAO는 텍스트 기반 단계 실행이며, 원본 도구 루프·코드 실행·OWL 추론기를 실행하지 않습니다. NeOn 11–20단계의 새 Turtle triple은 이전 스냅샷에 병합합니다." : "첨부된 비디오게임 결과를 고정 예시로 재생합니다. 입력을 수정해도 예시 결과는 바뀌지 않습니다. 미제공 중간 결과·검증 판정은 생성하지 않습니다."}</p>
           </div>
           <div className="output-section"><div className="output-tabs" role="tablist">
             <button role="tab" aria-selected={activeTab === "output"} onClick={() => setActiveTab("output")}>{record && completionProvider(record.response) === "simulation" ? "모의 출력" : "LLM 출력"}</button>
