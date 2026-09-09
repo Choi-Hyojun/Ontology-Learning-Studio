@@ -1,10 +1,13 @@
 "use client";
 
 import { ContextTextarea } from "./context-textarea";
+import { ParameterHelp } from "./parameter-help";
+import { FewShotPromptPreview, type FewShotPreviewSource } from "./few-shot-prompt-preview";
 
 type Props = {
   stageId: string; prompt: string; result: string; running: boolean; disabled: boolean;
   simulation: boolean; prerequisite: string; manual: boolean;
+  preview: FewShotPreviewSource;
   onPromptChange: (value: string) => void; onResultChange: (value: string) => void;
   onGenerate: () => void; onCancel: () => void;
 };
@@ -13,10 +16,14 @@ export function FewShotPanel(props: Props) {
   const { stageId, prompt, result, running, disabled, simulation, prerequisite, manual } = props;
   return <>
     <section className="prompt-card context-field few-shot-card" aria-labelledby="few-shot-prompt-label">
-      <label id="few-shot-prompt-label" htmlFor="few-shot-prompt"><strong>Few-shot 생성 프롬프트</strong></label>
+      <div className="parameter-label">
+        <label id="few-shot-prompt-label" htmlFor="few-shot-prompt"><strong>Few-shot 생성 프롬프트</strong></label>
+        <ParameterHelp label="Few-shot 생성 프롬프트" description="이 입력란은 예시 생성 지시문이며, 전송되는 전체 프롬프트의 일부입니다. 실제 API 호출에는 시스템 지침, 현재 단계 프롬프트와 출력 형식, 도메인·키워드, 문서 문단, 이전 CQ·요소 목록·단계 문맥이 함께 조립됩니다. 아래 보기 버튼에서 현재 입력 기준 전체 내용과 변수 치환 전 양식을 확인할 수 있습니다. 보기만으로 API를 호출하지 않습니다. 생성된 예시는 형식과 모델링을 가르치는 합성 예시이며 문서 근거가 아닙니다." />
+      </div>
       <code>{`few_shot_prompt_${stageId}`}</code>
       <ContextTextarea id="few-shot-prompt" label="Few-shot 생성 프롬프트" value={prompt} rows={13}
         disabled={disabled || running || manual} onChange={props.onPromptChange} />
+      <FewShotPromptPreview {...props.preview} instruction={prompt} />
       <div className="few-shot-actions">
         {running ? <button type="button" className="few-shot-generate" onClick={props.onCancel}>생성 중지</button>
           : <button type="button" className="few-shot-generate" disabled={disabled || manual || !!prerequisite}

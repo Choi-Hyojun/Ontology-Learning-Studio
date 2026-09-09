@@ -24,13 +24,73 @@ function findAll(node, predicate) {
   if (!node || typeof node !== "object") return [];
   return [...(predicate(node) ? [node] : []), ...[node.props?.children].flat(Infinity).flatMap(child => findAll(child, predicate))];
 }
-const { ContextTextarea } = load("context-textarea.tsx");
-const { FewShotPanel } = load("few-shot-panel.tsx", { "./context-textarea": { ContextTextarea } });
+const { ContextTextarea, ExpandedTextDialog } = load("context-textarea.tsx");
+const { ParameterHelp } = load("parameter-help.tsx");
+const { FewShotPromptPreview } = load("few-shot-prompt-preview.tsx", { "./context-textarea": { ExpandedTextDialog } });
+const { FewShotPanel } = load("few-shot-panel.tsx", {
+  "./context-textarea": { ContextTextarea }, "./parameter-help": { ParameterHelp },
+  "./few-shot-prompt-preview": { FewShotPromptPreview },
+});
 const panelProps = {
   stageId: "03", prompt: "Generate CQ examples from {domain_description}", result: "",
   running: false, disabled: false, simulation: false, prerequisite: "", manual: false,
+  preview: { getMessages: () => ({ system: "Synthetic examples", user: "Current stage" }), targetTemplate: "Stage {domain_name}" },
   onPromptChange() {}, onResultChange() {}, onGenerate() {}, onCancel() {},
 };
+
+function previewHarness() {
+  let view = null;
+  const { FewShotPromptPreview: Preview } = load("few-shot-prompt-preview.tsx", {
+    react: { useState: () => [view, value => { view = value; }] },
+    "./context-textarea": { ExpandedTextDialog },
+  });
+  return props => Preview(props);
+}
+
+test("few-shot preview opens exact full messages read-only without truncation and tracks current inputs", () => {
+  const render = previewHarness();
+  let calls = 0;
+  const messages = { system: "Teaching only", user: '문단 {literal}\n{"cqs":[]}\n'.repeat(4000) };
+  const props = { instruction: "Instruction", targetTemplate: "Target", getMessages: () => { calls++; return messages; } };
+  let tree = render(props);
+  assert.equal(calls, 0);
+  assert.equal(findAll(tree, node => node.type === ExpandedTextDialog).length, 0);
+  findAll(tree, node => node.type === "button")[0].props.onClick();
+  tree = render(props);
+  let dialog = findAll(tree, node => node.type === ExpandedTextDialog)[0];
+  assert.equal(dialog.props.value, `=== SYSTEM ===\n${messages.system}\n\n=== USER ===\n${messages.user}`);
+  assert.equal(dialog.props.readOnly, true);
+  assert.equal(dialog.props.onApply, undefined);
+  messages.user = "Updated document";
+  dialog = findAll(render(props), node => node.type === ExpandedTextDialog)[0];
+  assert.match(dialog.props.value, /Updated document/);
+  dialog.props.onClose();
+  assert.equal(findAll(render(props), node => node.type === ExpandedTextDialog).length, 0);
+});
+
+test("few-shot template preview preserves placeholders and includes instruction and target output format", () => {
+  const render = previewHarness();
+  const props = { instruction: "Custom {domain_name}", targetTemplate: 'Output JSON {"cqs":[]} using {few_shot_03}',
+    getMessages: () => { throw new Error("Template view must not assemble messages"); } };
+  findAll(render(props), node => node.type === "button")[1].props.onClick();
+  const dialog = findAll(render(props), node => node.type === ExpandedTextDialog)[0];
+  const source = JSON.parse(read("yonsei-prompts.json"));
+  for (const text of [source.few_shot.system, source.few_shot.context_template, props.instruction, props.targetTemplate]) {
+    assert.ok(dialog.props.value.includes(text));
+  }
+  assert.equal(dialog.props.readOnly, true);
+});
+
+test("few-shot preview reports assembly failures locally and remains closable", () => {
+  const render = previewHarness();
+  const props = { instruction: "", targetTemplate: "", getMessages: () => { throw new Error("Missing context"); } };
+  findAll(render(props), node => node.type === "button")[0].props.onClick();
+  const dialog = findAll(render(props), node => node.type === ExpandedTextDialog)[0];
+  assert.match(dialog.props.value, /프롬프트를 조립할 수 없습니다/);
+  assert.match(dialog.props.value, /Missing context/);
+  dialog.props.onClose();
+  assert.equal(findAll(render(props), node => node.type === ExpandedTextDialog).length, 0);
+});
 
 test("Yonsei few-shot panel separates generation prompt and editable result from the stage output", () => {
   const html = renderToStaticMarkup(createElement(FewShotPanel, {
@@ -44,7 +104,10 @@ test("Yonsei few-shot panel separates generation prompt and editable result from
   assert.match(html, /현재 단계 실행과 별도의 API 호출/);
   assert.match(html, /예시는 문서 근거가 아닙니다/);
   assert.equal((html.match(/<textarea/g) ?? []).length, 2);
-  assert.equal((html.match(/aria-haspopup="dialog"/g) ?? []).length, 2);
+  assert.equal((html.match(/aria-haspopup="dialog"/g) ?? []).length, 4);
+  assert.match(html, /Few-shot 생성 프롬프트 도움말/);
+  assert.match(html, /전체 프롬프트 보기/);
+  assert.match(html, /프롬프트 양식 보기/);
   assert.match(html, /&lt;script&gt;/);
   assert.doesNotMatch(html, /<script>/);
 });
@@ -72,7 +135,7 @@ test("busy, missing prerequisites and manual mode gate generation without hiding
     assert.equal(editors.length, 2);
     for (const editor of editors) assert.equal(editor.props.disabled, !!(patch.disabled || patch.manual));
     const html = renderToStaticMarkup(tree);
-    assert.equal((html.match(/aria-haspopup="dialog"/g) ?? []).length, 2);
+    assert.equal((html.match(/aria-haspopup="dialog"/g) ?? []).length, 4);
     if (patch.manual) assert.match(html, /변수로 다시 조립/);
     if (patch.prerequisite) assert.ok(html.includes(patch.prerequisite));
   }
@@ -263,6 +326,22 @@ test("Yonsei page runs few-shot and stage as separate API requests, links genera
   assert.equal(log.history.filter(item => item.event === "few_shot_completed").length, 1);
   assert.equal(log.history.filter(item => item.event === "stage_completed").length, 1);
   assert.match(log.currentRecords["yonsei-01"].request.user, /GENERATED EXAMPLE FOR THIS STEP/);
+});
+
+test("page preview uses the same current messages as generation without calls or session mutations", async () => {
+  const h = pageHarness(); h.selectYonsei(); h.useApi();
+  h.panel().props.onPromptChange("Edited generation instruction {domain_description}"); h.render();
+  const before = h.save();
+  const messages = h.panel().props.preview.getMessages();
+  assert.match(messages.user, /Edited generation instruction/);
+  assert.match(messages.user, /Document paragraphs/);
+  assert.ok(h.panel().props.preview.targetTemplate.includes("{few_shot_01}"));
+  assert.equal(h.requests.length, 0);
+  const after = h.save();
+  for (const key of ["history", "apiCalls", "currentOutputs", "valuesByMethod"]) assert.deepEqual(after[key], before[key]);
+  const generating = h.panel().props.onGenerate(); h.render();
+  assert.deepEqual(h.requests[0].input.messages, messages);
+  h.respond(0, "EXAMPLE"); await generating; h.render();
 });
 
 test("Yonsei page cancellation ignores late few-shot responses and releases the controls", async () => {

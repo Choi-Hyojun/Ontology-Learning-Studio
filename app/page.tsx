@@ -584,6 +584,7 @@ export default function Home() {
               </div>)}
             </div>
             {hasFewShot && <FewShotPanel key={outputKey} stageId={stage.id} prompt={values[generatorKey] ?? ""} result={values[fewShotKey] ?? ""}
+              preview={{ getMessages: () => fewShotMessages(stage.id, values, outputs, previousOntology, definition.template), targetTemplate: definition.template }}
               running={fewShotRunning} disabled={runState === "running"} simulation={engine === "simulation"} prerequisite={prerequisite} manual={!!manual}
               onPromptChange={(value) => editFewShot(generatorKey, value)} onResultChange={(value) => editFewShot(fewShotKey, value)}
               onGenerate={generateFewShot} onCancel={cancelFewShot} />}
