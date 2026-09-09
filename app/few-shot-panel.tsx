@@ -30,7 +30,7 @@ export function FewShotPanel(props: Props) {
       <label id="few-shot-result-label" htmlFor="few-shot-result"><strong>Few-shot 생성 결과</strong></label>
       <code>{`few_shot_${stageId}`}</code>
       <ContextTextarea id="few-shot-result" label="Few-shot 생성 결과" value={result} rows={13}
-        disabled={disabled || running || manual} placeholder="먼저 Few-shot을 생성하세요. 결과를 검토·수정한 뒤 현재 단계를 실행합니다."
+        disabled={disabled || running || manual} placeholder="자동 실행에서는 필요하면 Few-shot을 먼저 생성합니다. 수동 단계 실행에서는 예시를 비워 두어도 됩니다."
         onChange={props.onResultChange} />
       <p className="few-shot-hint">예시 생성 결과는 아래 LLM 출력과 별개이며, 현재 단계의 프롬프트에 자동 삽입됩니다. 예시는 문서 근거가 아닙니다.</p>
     </section>

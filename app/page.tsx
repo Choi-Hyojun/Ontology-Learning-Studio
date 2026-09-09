@@ -193,10 +193,47 @@ export default function Home() {
     const controller = new AbortController();
     let finished = false;
     let startedAt = "";
+    let fewShotStartedAt = "";
+    let fewShotFinished = false;
     const timer = window.setTimeout(async () => {
-      if (method === "yonsei" && (prerequisite || (hasFewShot && !values[fewShotKey]?.trim() && !manual))) {
+      if (method === "yonsei" && prerequisite) {
         setRunState("paused");
-        setNotice(prerequisite || "이 단계의 Few-shot을 먼저 생성·검토한 뒤 현재 단계를 실행하세요.");
+        setNotice(prerequisite);
+        return;
+      }
+      if (autoAdvance && hasFewShot && !values[fewShotKey]?.trim() && !manual) {
+        try {
+          if (!values[generatorKey]?.trim()) throw new GenerationError({ code: "EMPTY_FEW_SHOT_PROMPT", message: "Few-shot 생성 프롬프트를 입력한 뒤 자동 실행을 재개하세요." });
+          const request = fewShotMessages(stage.id, values, outputs, previousOntology, definition.template);
+          fewShotStartedAt = new Date().toISOString();
+          fewShotController.current = controller;
+          setFewShotRunning(true);
+          setHistory((items) => [...items, { at: fewShotStartedAt, event: "few_shot_started", method, stageId: stage.id,
+            data: { request, engine, provider: engine === "api" ? provider : "simulation", automatic: true } }]);
+          let response: Completion;
+          if (engine === "api") {
+            setApiCalls((count) => count + 1);
+            const result = await requestGeneration({ provider, method, stageId: stage.id, purpose: "few-shot", messages: request, previousOntology: "" }, controller.signal);
+            response = result.response;
+          } else response = simulateCompletion(request, simulateFewShot(stage.id));
+          if (controller.signal.aborted || executionVersion.current !== version) return;
+          const content = response.choices[0].message.content;
+          if (!content.trim()) throw new GenerationError({ code: "EMPTY_FEW_SHOT", message: "Few-shot 생성 결과가 비어 있습니다. 자동 실행을 중지했습니다." });
+          const completedAt = new Date().toISOString();
+          fewShotFinished = true;
+          setValuesByMethod((current) => ({ ...current, yonsei: { ...current.yonsei, [fewShotKey]: content } }));
+          setTokenCount((count) => count + response.usage.prompt_tokens + response.usage.completion_tokens);
+          setHistory((items) => [...items, { at: completedAt, event: "few_shot_completed", method, stageId: stage.id,
+            data: { request, response, startedAt: fewShotStartedAt, completedAt, field: fewShotKey, automatic: true } }]);
+          // Commit the generated input first. The next effect uses the freshly
+          // assembled stage messages, never the pre-generation empty example.
+        } catch (error) {
+          if (controller.signal.aborted || executionVersion.current !== version) return;
+          fewShotFinished = true;
+          reportIssue(safeIssue(error, { method, stageId: stage.id, ...(engine === "api" ? { provider } : {}) }));
+        } finally {
+          if (fewShotController.current === controller) { fewShotController.current = null; setFewShotRunning(false); }
+        }
         return;
       }
       startedAt = new Date().toISOString();
@@ -246,11 +283,6 @@ export default function Home() {
         setTokenCount((value) => value + response.usage.prompt_tokens + response.usage.completion_tokens);
         if (autoAdvance && stageIndex < stages.length - 1) {
           setStageIndex((value) => value + 1);
-          const nextId = stages[stageIndex + 1].id;
-          if (method === "yonsei" && Number(nextId) <= 8 && !values["few_shot_" + nextId]?.trim() && !overrides["yonsei-" + nextId]) {
-            setRunState("paused");
-            setNotice("이 단계의 Few-shot을 먼저 생성·검토한 뒤 현재 단계를 실행하세요.");
-          }
         }
         else setRunState(stageIndex === stages.length - 1 ? "done" : "paused");
       } catch (error) {
@@ -261,13 +293,16 @@ export default function Home() {
     }, 0);
     return () => {
       window.clearTimeout(timer); controller.abort();
+      if (fewShotController.current === controller) { fewShotController.current = null; setFewShotRunning(false); }
+      if (fewShotStartedAt && !fewShotFinished) setHistory((items) => [...items, { at: new Date().toISOString(), event: "few_shot_cancelled",
+        method, stageId: stage.id, data: { startedAt: fewShotStartedAt, engine, automatic: true } }]);
       if (startedAt && !finished) setHistory((items) => [...items, { at: new Date().toISOString(), event: "stage_cancelled",
         method, stageId: stage.id, data: { startedAt, engine, reason: "실행 중지 또는 단계 이동; 이미 전송된 API 요청은 과금될 수 있음" } }]);
     };
-  }, [engine, provider, previousOntology, autoAdvance, messages, method, outputKey, previousOutput, runState, stage, stageIndex, stages, values, manual, reportIssue, outputs, prerequisite, hasFewShot, fewShotKey, effectiveValues, overrides]);
+  }, [engine, provider, previousOntology, autoAdvance, messages, method, outputKey, previousOutput, runState, stage, stageIndex, stages, values, manual, reportIssue, outputs, prerequisite, hasFewShot, fewShotKey, effectiveValues, generatorKey, definition.template]);
 
   const chooseMethod = (value: MethodKey) => {
-    if (fewShotController.current) return;
+    if (fewShotController.current) cancelFewShot();
     setVisualizationOpen(false);
     setHistory((items) => [...items, { at: new Date().toISOString(), event: "method_selected", method: value }]);
     setMethod(value); setStageIndex(0); setRunState("idle"); setNotice("");
@@ -318,22 +353,27 @@ export default function Home() {
     setOverrides((current) => { const updated = { ...current }; delete updated[outputKey]; return updated; });
   };
   const move = (direction: -1 | 1) => {
-    if (fewShotController.current) return;
+    if (fewShotController.current) cancelFewShot();
     const target = Math.max(0, Math.min(stages.length - 1, stageIndex + direction));
     setStageIndex(target);
     setRunState("paused");
   };
   const toggleRun = () => {
-    if (fewShotController.current) return;
-    if (runState === "running") { setRunState("paused"); return; }
-    if (prerequisite || (hasFewShot && !values[fewShotKey]?.trim() && !manual)) {
-      setNotice(prerequisite || "이 단계의 Few-shot을 먼저 생성·검토한 뒤 현재 단계를 실행하세요."); return;
+    if (runState === "running") {
+      if (fewShotController.current) cancelFewShot();
+      else setRunState("paused");
+      return;
     }
-    if (engine === "api" && !window.confirm(`${provider === "openai" ? "GPT" : "Claude"} API로 ${autoAdvance ? "현재 단계부터 남은 단계를 연속" : "현재 단계를"} 실행합니다. 프롬프트와 입력 문서가 외부로 전송되고 비용이 발생할 수 있습니다. 실행할까요?`)) return;
+    if (fewShotController.current) return;
+    if (prerequisite) {
+      setNotice(prerequisite); return;
+    }
+    if (engine === "api" && !window.confirm(`${provider === "openai" ? "GPT" : "Claude"} API로 ${autoAdvance ? "현재 단계부터 남은 단계를 연속" : "현재 단계를"} 실행합니다.${autoAdvance && method === "yonsei" ? " 비어 있는 Few-shot 생성도 포함하며, 예시 생성과 단계 실행은 각각 별도 API 호출입니다." : ""} 프롬프트와 입력 문서가 외부로 전송되고 비용이 발생할 수 있습니다. 실행할까요?`)) return;
     // Re-running a stage invalidates its descendants without erasing its input.
     setOutputs((current) => invalidateStageResults(current, method, stageIndex));
     setRecords((current) => invalidateStageResults(current, method, stageIndex));
     if (method === "yonsei") setValuesByMethod((current) => ({ ...current, yonsei: clearFewShots(current.yonsei, stageIndex + 1) }));
+    setNotice("");
     setRunState("running");
   };
   const editFewShot = (key: string, value: string) => {
@@ -383,8 +423,11 @@ export default function Home() {
     }
   };
   const cancelFewShot = () => {
+    if (!fewShotController.current) return;
     fewShotController.current?.abort(); fewShotController.current = null; setFewShotRunning(false);
-    setHistory((items) => [...items, { at: new Date().toISOString(), event: "few_shot_cancelled", method, stageId: stage.id }]);
+    executionVersion.current += 1;
+    if (runState === "running") setRunState("paused");
+    else setHistory((items) => [...items, { at: new Date().toISOString(), event: "few_shot_cancelled", method, stageId: stage.id }]);
     setNotice("Few-shot 생성을 중지했습니다. 이미 처리된 API 요청은 과금될 수 있습니다.");
   };
   const saveLogs = () => {
@@ -479,7 +522,7 @@ export default function Home() {
         <div className="method-actions">
         <button type="button" className="methodology-open" aria-haspopup="dialog" onClick={() => setMethodologyOpen(true)}>방법론 알아보기</button>
         <div className="method-switch" role="radiogroup" aria-label="생성 방법론 선택">
-          {(Object.keys(META) as MethodKey[]).map((key) => <button key={key} role="radio" disabled={fewShotRunning} aria-checked={method === key} className={method === key ? "selected" : ""} onClick={() => chooseMethod(key)}><span>{META[key].label}</span><small>{META[key].eyebrow}</small></button>)}
+          {(Object.keys(META) as MethodKey[]).map((key) => <button key={key} role="radio" aria-checked={method === key} className={method === key ? "selected" : ""} onClick={() => chooseMethod(key)}><span>{META[key].label}</span><small>{META[key].eyebrow}</small></button>)}
         </div>
         </div>
       </section>
@@ -496,7 +539,7 @@ export default function Home() {
           <div className="stage-header">
             <div className="stage-heading"><div className="stage-label"><span>STEP {stage.id}</span></div><h2>{stage.title}</h2><p>{stage.description}</p></div>
             <div className="stage-run-actions">
-              <button className={`run-button ${runState}`} disabled={fewShotRunning} onClick={toggleRun}><span>{runState === "running" ? "Ⅱ" : "▶"}</span>{runState === "running" ? "일시정지" : autoAdvance ? "연속 실행" : "현재 단계 실행"}</button>
+              <button className={`run-button ${runState}`} disabled={fewShotRunning && runState !== "running"} onClick={toggleRun}><span>{runState === "running" ? "Ⅱ" : "▶"}</span>{runState === "running" ? "일시정지" : autoAdvance ? "연속 실행" : "현재 단계 실행"}</button>
               <label className="auto-advance-control"><input type="checkbox" checked={autoAdvance} disabled={busy}
                 onChange={(e) => setAutoAdvance(e.target.checked)} /><span>실행 후 다음 단계 자동 실행</span></label>
             </div>
@@ -567,7 +610,7 @@ export default function Home() {
             <button role="tab" aria-selected={activeTab === "sent"} onClick={() => setActiveTab("sent")}>실행한 요청</button>
             <button role="tab" aria-selected={activeTab === "api"} onClick={() => setActiveTab("api")}>응답 JSON</button>
             <span className="live-indicator"><i />{record ? completionProvider(record.response) : engine === "api" ? provider : "Local only"}</span></div><pre className="output-box">{activeTab === "output" ? currentOutput : activeTab === "prompt" ? promptPreview : activeTab === "sent" ? sentRequest : apiEnvelope}</pre></div>
-          <div className="stage-controls"><button onClick={() => move(-1)} disabled={!previous || fewShotRunning}>← 이전</button><span>산출물 검토 후 다음 단계로 전달</span><button className="primary" onClick={() => move(1)} disabled={!next || fewShotRunning}>다음 단계 →</button></div>
+          <div className="stage-controls"><button onClick={() => move(-1)} disabled={!previous}>← 이전</button><span>산출물 검토 후 다음 단계로 전달</span><button className="primary" onClick={() => move(1)} disabled={!next}>다음 단계 →</button></div>
         </section>
 
         <aside className="side-panel next-panel" aria-label="이후 단계 패널">
@@ -578,7 +621,7 @@ export default function Home() {
         </aside>
       </section>
 
-      <nav className="pipeline" aria-label={`${META[method].label} 단계`}><div className="progress-track"><span style={{ width: `${progress}%` }} /></div><div className="stage-strip">{stages.map((item, index) => <button key={item.id} disabled={fewShotRunning} aria-current={index === stageIndex ? "step" : undefined} className={`${index === stageIndex ? "active" : ""} ${outputs[method + "-" + item.id] ? "visited" : ""}`} onClick={() => { setStageIndex(index); setRunState("paused"); }}><span>{item.id}</span><small>{item.short}</small></button>)}</div></nav>
+      <nav className="pipeline" aria-label={`${META[method].label} 단계`}><div className="progress-track"><span style={{ width: `${progress}%` }} /></div><div className="stage-strip">{stages.map((item, index) => <button key={item.id} aria-current={index === stageIndex ? "step" : undefined} className={`${index === stageIndex ? "active" : ""} ${outputs[method + "-" + item.id] ? "visited" : ""}`} onClick={() => { if (fewShotController.current) cancelFewShot(); setStageIndex(index); setRunState("paused"); }}><span>{item.id}</span><small>{item.short}</small></button>)}</div></nav>
     </main>
   );
 }
