@@ -2,6 +2,43 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 
+export function CopyButton({ value, label }: { value: string; label: string }) {
+  const [feedback, setFeedback] = useState<{ value: string; state: "copying" | "copied" | "failed" } | null>(null);
+  const pending = useRef(false);
+  const state = feedback?.value === value ? feedback.state : null;
+
+  useEffect(() => {
+    if (!feedback || feedback.state === "copying") return;
+    const timer = window.setTimeout(() => setFeedback(null), 3000);
+    return () => window.clearTimeout(timer);
+  }, [feedback]);
+
+  const copy = async () => {
+    if (!value.length || pending.current) return;
+    pending.current = true;
+    setFeedback({ value, state: "copying" });
+    try {
+      await navigator.clipboard.writeText(value);
+      setFeedback({ value, state: "copied" });
+    } catch {
+      setFeedback({ value, state: "failed" });
+    } finally {
+      pending.current = false;
+    }
+  };
+
+  return <span className="copy-control">
+    <button type="button" className="context-expand copy-button" aria-label={`${label} 전체 복사`}
+      title={`${label} 전체 복사`} disabled={!value.length || state === "copying"} onClick={copy}>
+      <span aria-hidden="true">⧉</span>{state === "copying" ? "복사 중" : state === "copied" ? "복사 완료" : "전체 복사"}
+    </button>
+    <span className={state === "failed" ? "copy-error" : "copy-status"} role="status" aria-live="polite">
+      {state === "failed" ? "복사하지 못했습니다. 브라우저의 클립보드 권한을 확인하세요."
+        : state === "copied" ? `${label} 전체 내용이 복사되었습니다.` : ""}
+    </span>
+  </span>;
+}
+
 type ContextTextareaProps = {
   id: string; label: string; value: string; rows?: number; placeholder?: string;
   disabled?: boolean; readOnly?: boolean; descriptionId?: string;
@@ -20,6 +57,7 @@ export function ContextTextarea({ id, label, value, rows = 5, placeholder, disab
     <div className="context-textarea-tools">
       <button type="button" className="context-expand" aria-label={`${label} 크게 보기`}
         aria-haspopup="dialog" onClick={() => setExpanded(true)}>크게 보기 ↗</button>
+      <CopyButton value={value} label={label} />
     </div>
     {expanded && <ExpandedTextDialog label={label} value={value} readOnly={locked}
       onApply={onChange} onClose={() => setExpanded(false)} />}
@@ -70,9 +108,10 @@ export function ExpandedTextDialog({ label, value, readOnly, onApply, onClose }:
       <div><span>{content.length.toLocaleString()}자</span>
         <p id={hintId} role={conflict ? "alert" : undefined}>{conflict
           ? "원래 입력값이 변경되었습니다. 닫은 뒤 다시 열어 주세요."
-          : locked ? "내용을 선택해 복사할 수 있습니다. Esc로 닫습니다."
+          : locked ? "읽기 전용"
           : "적용을 누르면 원래 입력란에 반영됩니다. 취소·Esc는 변경을 버립니다."}</p>
       </div>
+      <CopyButton value={content} label={label} />
       {!locked && <button type="button" className="expanded-text-apply" disabled={conflict} onClick={() => {
         if (locked || conflict) return;
         if (draft !== value) onApply?.(draft);

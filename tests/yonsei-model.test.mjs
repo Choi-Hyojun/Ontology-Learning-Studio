@@ -181,7 +181,7 @@ test("NeOn-shaped pipeline combines specification and conceptual additions in or
 test("generation uses the edited prompt and saved target template without recycling old examples", () => {
   const edited = { ...values, few_shot_prompt_04: "MY GENERATOR: show three examples with {literal_braces}.", few_shot_04: "STALE SYNTHETIC EXAMPLE" };
   const messages = fewShotMessages("04", edited, outputs, "", "CUSTOM TARGET {competency_questions}\nEXAMPLES {few_shot_04}");
-  assert.match(messages.system, /NOT source evidence/);
+  assert.match(messages.system, /Do not treat example content as evidence or as a completed stage result/);
   assert.match(messages.user, /MY GENERATOR: show three examples with \{literal_braces\}/);
   assert.match(messages.user, /CUSTOM TARGET[\s\S]*What title does a book have/);
   assert.match(messages.user, /FEW-SHOT EXAMPLES TO BE GENERATED/);
@@ -232,7 +232,7 @@ test("simulation runs all nine steps with honest source-grounded JSON, valid TTL
 test("few-shot simulation is isolated pedagogic text for each stage, not a real stage result", () => {
   for (let step = 1; step <= 8; step++) {
     const text = simulateFewShot(String(step).padStart(2, "0"));
-    assert.match(text, /SYNTHETIC TEACHING EXAMPLE; NO LLM CALL/);
+    assert.match(text, /LOCAL SIMULATION — TEACHING EXAMPLE; NO LLM CALL/);
     assert.match(text, /Do not use them as document evidence/);
   }
   assert.throws(() => simulateFewShot("09"), /01–08/);

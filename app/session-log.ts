@@ -4,7 +4,8 @@ import type { Attachment } from "./document-field";
 
 export type MethodKey = "neon" | "tao" | "yonsei";
 export type RunRecord = { request: PromptMessages; response: Completion;
-  startedAt: string; completedAt: string; ontology: string | null };
+  startedAt: string; completedAt: string; ontology: string | null;
+  outputEdit?: { content: string; at: string } };
 export type LogEntry = { at: string; event: string; method: MethodKey; stageId?: string; data?: unknown };
 export type PromptDefinition = { template: string; fields: string[] };
 export type SessionDefaults = {
@@ -214,7 +215,15 @@ export function parseSessionLog(text: string, defaults: SessionDefaults): Restor
       string(message.role, key + ".role"); string(message.content, key + ".content");
     }
     const output = object(object(response.choices[0], key).message, key).content;
-    check(currentOutputs[key] === output, key + ": 응답과 현재 출력 불일치");
+    let effectiveOutput = string(output, key + ".output");
+    if (item.outputEdit !== undefined) {
+      check(log.version === 4, key + ": 출력 편집 로그 버전");
+      const edit = object(item.outputEdit, key + ".outputEdit");
+      effectiveOutput = string(edit.content, key + ".outputEdit.content");
+      check(effectiveOutput.trim(), key + ": 빈 편집 출력");
+      timestamp(edit.at, key + ".outputEdit.at");
+    }
+    check(currentOutputs[key] === effectiveOutput, key + ": 응답과 현재 출력 불일치");
     const usage = object(response.usage, key + ".usage");
     calculatedTokens += natural(usage.prompt_tokens, key + ".prompt_tokens") + natural(usage.completion_tokens, key + ".completion_tokens");
     if (response.execution !== undefined) {

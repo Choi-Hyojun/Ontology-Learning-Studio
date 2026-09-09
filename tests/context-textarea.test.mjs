@@ -121,8 +121,45 @@ test("read-only popups follow current output and changed sources cannot be overw
 test("opening a disabled field keeps popup access read-only", () => {
   const h = harness("ContextTextarea", { id: "locked", label: "페르소나", value: "expert", disabled: true, onChange() {} });
   button(h.render(), "크게 보기 ↗").props.onClick();
-  const dialog = find(h.render(), node => typeof node.type === "function");
+  const dialog = find(h.render(), node => node.type?.name === "ExpandedTextDialog");
   assert.equal(dialog.props.readOnly, true);
+});
+
+test("copy preserves long text and uses the latest supplied value", async () => {
+  const writes = [];
+  const value = '한글\n{"literal":"{persona}"}\r\n'.repeat(4000);
+  const props = { label: "현재 프롬프트", value };
+  const h = harness("CopyButton", props, { navigator: { clipboard: { async writeText(text) { writes.push(text); } } } });
+  await find(h.render(), node => node.type === "button").props.onClick();
+  assert.deepEqual(writes, [value]);
+  assert.match(find(h.render(), node => node.props?.role === "status").props.children, /복사되었습니다/);
+  const tree = h.render({ ...props, value: "최신 수정 내용" });
+  assert.equal(find(tree, node => node.props?.role === "status").props.children, "");
+  await find(tree, node => node.type === "button").props.onClick();
+  assert.deepEqual(writes, [value, "최신 수정 내용"]);
+});
+
+test("clipboard failures are reported locally and copying can be retried", async () => {
+  for (const navigator of [{}, { clipboard: { async writeText() { throw new Error("Permission denied"); } } }]) {
+    const h = harness("CopyButton", { label: "프롬프트", value: "full text" }, { navigator });
+    await find(h.render(), node => node.type === "button").props.onClick();
+    assert.match(find(h.render(), node => node.props?.role === "status").props.children, /복사하지 못했습니다/);
+    const writes = [];
+    navigator.clipboard = { async writeText(text) { writes.push(text); } };
+    await find(h.render(), node => node.type === "button").props.onClick();
+    assert.deepEqual(writes, ["full text"]);
+  }
+});
+
+test("copying an expanded draft neither applies nor closes the editor", () => {
+  let writes = 0, closes = 0;
+  const h = harness("ExpandedTextDialog", { label: "Few-shot", value: "original", readOnly: false,
+    onApply: () => writes++, onClose: () => closes++ });
+  find(h.render(), node => node.type === "textarea").props.onChange({ target: { value: "unapplied draft" } });
+  const copy = find(h.render(), node => node.type?.name === "CopyButton");
+  assert.equal(copy.props.value, "unapplied draft");
+  assert.equal(writes, 0);
+  assert.equal(closes, 0);
 });
 
 test("modal lifecycle locks background scrolling and restores the original keyboard focus", () => {

@@ -6,7 +6,8 @@ import taoPrompts from "./tao-prompts.json";
 import { exampleResponse, pipelineContext, resolveExampleContext } from "./example-model";
 import { assemblePrompt, simulateCompletion, type PromptMessages, type PromptValues } from "./prompt-model";
 import { DocumentField, type Attachment } from "./document-field";
-import { ContextTextarea } from "./context-textarea";
+import { ContextTextarea, CopyButton } from "./context-textarea";
+import { editStageOutput } from "./output-edit";
 import { FewShotPanel } from "./few-shot-panel";
 import { clearFewShots } from "./few-shot-state";
 import { YONSEI_STAGES, yonseiDefaults, yonseiDefinitions, resolveYonseiContext, yonseiPipelineContext,
@@ -116,6 +117,8 @@ export default function Home() {
   const logInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<"output" | "prompt" | "api" | "sent">("output");
   const [outputs, setOutputs] = useState<Record<string, string>>({});
+  const [previousDraft, setPreviousDraft] = useState<{ key: string; original: string; value: string } | null>(null);
+  const [previousEditError, setPreviousEditError] = useState("");
   const [tokenCount, setTokenCount] = useState(0);
   const [records, setRecords] = useState<Record<string, RunRecord>>({});
   const [overrides, setOverrides] = useState<Record<string, PromptMessages>>({});
@@ -140,6 +143,8 @@ export default function Home() {
   const fewShotKey = "few_shot_" + stage.id;
   const generatorKey = "few_shot_prompt_" + stage.id;
   const previousOutput = previous ? outputs[`${method}-${previous.id}`] ?? "" : "";
+  const previousRecord = previous ? records[`${method}-${previous.id}`] : undefined;
+  const editingPrevious = previousDraft?.key === outputKey ? previousDraft : null;
   const currentOutput = outputs[outputKey] ?? (runState === "running" ? (engine === "api" ? "API 응답을 기다리고 있습니다…" : "시뮬레이터가 응답을 생성하고 있습니다…") : "실행 버튼을 눌러 현재 단계의 응답을 생성하세요.");
   const previousOntology = currentOntology(Object.fromEntries(Object.entries(records).filter(([key]) => key.startsWith(method + "-") && Number(key.split("-")[1]) < Number(stage.id))), method);
 
@@ -165,6 +170,8 @@ export default function Home() {
   const record = records[outputKey];
   const apiEnvelope = record ? JSON.stringify(record.response, null, 2) : "아직 응답이 없습니다. 현재 단계 실행 후 확인하세요.";
   const sentRequest = record ? JSON.stringify(record.request, null, 2) : "아직 실행한 요청이 없습니다.";
+  const outputContent = activeTab === "output" ? currentOutput : activeTab === "prompt" ? promptPreview : activeTab === "sent" ? sentRequest : apiEnvelope;
+  const outputLabel = activeTab === "output" ? "LLM 출력" : activeTab === "prompt" ? "현재 프롬프트" : activeTab === "sent" ? "실행한 요청" : "응답 JSON";
   const ontology = currentOntology(records, method);
   const ontologyHint = ontology ? "현재 선택한 방법론의 최신 Turtle 스냅샷을 저장합니다."
     : method === "neon" ? "NeOn-GPT 08 직렬화 단계를 실행하면 저장할 Turtle이 생성됩니다."
@@ -302,6 +309,7 @@ export default function Home() {
   }, [engine, provider, previousOntology, autoAdvance, messages, method, outputKey, previousOutput, runState, stage, stageIndex, stages, values, manual, reportIssue, outputs, prerequisite, hasFewShot, fewShotKey, effectiveValues, generatorKey, definition.template]);
 
   const chooseMethod = (value: MethodKey) => {
+    setPreviousDraft(null); setPreviousEditError("");
     if (fewShotController.current) cancelFewShot();
     setVisualizationOpen(false);
     setHistory((items) => [...items, { at: new Date().toISOString(), event: "method_selected", method: value }]);
@@ -312,6 +320,7 @@ export default function Home() {
     if ((Object.keys(records).length || Object.entries(valuesByMethod.yonsei).some(([key, value]) => /^few_shot_0[1-8]$/.test(key) && value.trim()))
       && !window.confirm("실행 엔진을 변경하면 모든 방법론의 현재 출력·온톨로지와 Yonsei Few-shot 결과가 초기화됩니다. 문서·편집 프롬프트·과거 이력은 유지됩니다. 계속할까요?")) return;
     setEngine(nextEngine); setProvider(nextProvider); setAutoAdvance(false);
+    setPreviousDraft(null); setPreviousEditError("");
     setRunState("paused"); setVisualizationOpen(false); setOutputs({}); setRecords({}); setTokenCount(0);
     setValuesByMethod((current) => ({ ...current, yonsei: clearFewShots(current.yonsei, 0) }));
     setHistory((items) => [...items, { at: new Date().toISOString(), event: "engine_changed", method, data: { engine: nextEngine, provider: nextProvider, reason: "모의/실제 산출물 혼용 방지; 현재 결과 초기화" } }]);
@@ -347,18 +356,42 @@ export default function Home() {
     if (method === "yonsei") setValuesByMethod((current) => ({ ...current, yonsei: clearFewShots(current.yonsei, stageIndex + 1) }));
     setOverrides((current) => ({ ...current, [outputKey]: { ...messages, [key]: value } }));
   };
+  const applyPreviousOutput = () => {
+    if (busy || !previous || !editingPrevious) return;
+    if (editingPrevious.original !== previousOutput) {
+      setPreviousEditError("원래 출력이 변경되었습니다. 취소한 뒤 다시 잠금을 해제하세요."); return;
+    }
+    if (editingPrevious.value === previousOutput) {
+      setPreviousDraft(null); setPreviousEditError(""); return;
+    }
+    try {
+      const updated = editStageOutput(method, previous.id, editingPrevious.value, values, outputs, records);
+      const key = `${method}-${previous.id}`;
+      invalidateResults(stageIndex, false);
+      setOutputs((current) => ({ ...current, [key]: editingPrevious.value }));
+      setRecords((current) => ({ ...current, [key]: updated }));
+      if (method === "yonsei") setValuesByMethod((current) => ({ ...current, yonsei: clearFewShots(current.yonsei, stageIndex) }));
+      setHistory((items) => [...items, { at: updated.outputEdit!.at, event: "stage_output_edited", method, stageId: previous.id,
+        data: { previousOutput, outputEdit: updated.outputEdit, ontology: updated.ontology } }]);
+      setPreviousDraft(null); setPreviousEditError("");
+    } catch (error) {
+      setPreviousEditError(error instanceof Error ? error.message : "출력을 적용하지 못했습니다.");
+    }
+  };
   const restoreAssembly = () => {
     invalidateResults(stageIndex);
     if (method === "yonsei") setValuesByMethod((current) => ({ ...current, yonsei: clearFewShots(current.yonsei, stageIndex + 1) }));
     setOverrides((current) => { const updated = { ...current }; delete updated[outputKey]; return updated; });
   };
   const move = (direction: -1 | 1) => {
+    setPreviousDraft(null); setPreviousEditError("");
     if (fewShotController.current) cancelFewShot();
     const target = Math.max(0, Math.min(stages.length - 1, stageIndex + direction));
     setStageIndex(target);
     setRunState("paused");
   };
   const toggleRun = () => {
+    if (editingPrevious) return;
     if (runState === "running") {
       if (fewShotController.current) cancelFewShot();
       else setRunState("paused");
@@ -384,7 +417,7 @@ export default function Home() {
     } }));
   };
   const generateFewShot = async () => {
-    if (busy || fewShotController.current || !hasFewShot || manual) return;
+    if (busy || editingPrevious || fewShotController.current || !hasFewShot || manual) return;
     if (prerequisite) { setNotice(prerequisite); return; }
     if (!values[generatorKey]?.trim()) { setNotice("Few-shot 생성 프롬프트를 입력하세요."); return; }
     if (engine === "api" && !window.confirm(`${provider === "openai" ? "GPT" : "Claude"} API로 Few-shot 예시를 생성합니다. 프롬프트와 입력 문서가 외부로 전송되고 비용이 발생할 수 있습니다. 현재 단계 실행은 별도 호출입니다. 생성할까요?`)) return;
@@ -456,6 +489,7 @@ export default function Home() {
   const restoreSession = (session: RestoredSession, name: string) => {
     // Import is only available while stopped; no old simulation can write into this session.
     if (busy) return;
+    setPreviousDraft(null); setPreviousEditError("");
     setVisualizationOpen(false);
     setRunState("paused");
     setMethod(session.current.method);
@@ -539,7 +573,7 @@ export default function Home() {
           <div className="stage-header">
             <div className="stage-heading"><div className="stage-label"><span>STEP {stage.id}</span></div><h2>{stage.title}</h2><p>{stage.description}</p></div>
             <div className="stage-run-actions">
-              <button className={`run-button ${runState}`} disabled={fewShotRunning && runState !== "running"} onClick={toggleRun}><span>{runState === "running" ? "Ⅱ" : "▶"}</span>{runState === "running" ? "일시정지" : autoAdvance ? "연속 실행" : "현재 단계 실행"}</button>
+              <button className={`run-button ${runState}`} disabled={!!editingPrevious || (fewShotRunning && runState !== "running")} onClick={toggleRun}><span>{runState === "running" ? "Ⅱ" : "▶"}</span>{runState === "running" ? "일시정지" : autoAdvance ? "연속 실행" : "현재 단계 실행"}</button>
               <label className="auto-advance-control"><input type="checkbox" checked={autoAdvance} disabled={busy}
                 onChange={(e) => setAutoAdvance(e.target.checked)} /><span>실행 후 다음 단계 자동 실행</span></label>
             </div>
@@ -558,19 +592,31 @@ export default function Home() {
               {previous && <div className="prompt-card context-field previous-output-card">
                 <div className="context-card-heading">
                   <div className="parameter-label"><label htmlFor="context-previous-output"><strong>이전 단계 출력</strong></label><ParameterHelp key={outputKey} label="이전 단계 출력" description={fieldHelp("previous_step_content", method)} /></div>
-                  <span className="context-source-badge">{manual ? "참고용" : previousOutput ? "자동 연결" : "출력 대기"}</span>
+                  <span className="context-source-badge">{editingPrevious ? "편집 중" : manual ? "참고용" : previousRecord?.outputEdit ? "수정됨" : previousOutput ? "자동 연결" : "출력 대기"}</span>
                 </div>
                 <code>previous_step_content</code>
                 <small>{`STEP ${previous.id} · ${previous.title}`}</small>
-                <ContextTextarea key={outputKey} id="context-previous-output" label="이전 단계 출력" value={previousOutput} readOnly rows={7}
+                <div className="previous-output-tools">
+                  {editingPrevious ? <>
+                    <button type="button" className="context-expand" disabled={busy} onClick={applyPreviousOutput}>적용하고 잠금</button>
+                    <button type="button" className="context-expand" onClick={() => { setPreviousDraft(null); setPreviousEditError(""); }}>취소하고 잠금</button>
+                  </> : <button type="button" className="context-expand" aria-label="이전 단계 출력 잠금 해제" title="이전 단계 출력 잠금 해제"
+                    disabled={busy || !previousRecord} onClick={() => {
+                      if (busy || !previousRecord) return;
+                      setPreviousDraft({ key: outputKey, original: previousOutput, value: previousOutput }); setPreviousEditError("");
+                    }}>잠금 해제</button>}
+                </div>
+                <ContextTextarea key={outputKey} id="context-previous-output" label="이전 단계 출력" value={editingPrevious?.value ?? previousOutput} readOnly={!editingPrevious} disabled={busy} rows={7}
+                  onChange={(value) => { if (!busy && editingPrevious) { setPreviousDraft({ ...editingPrevious, value }); setPreviousEditError(""); } }}
                   descriptionId="previous-output-help"
                   placeholder="이전 단계를 실행하면 출력이 이곳에 표시됩니다." />
+                {editingPrevious && previousEditError && <small className="previous-output-error" role="alert">{previousEditError}</small>}
                 <small id="previous-output-help">
                   {manual
                     ? "이전 단계의 최신 산출물입니다. 직접 편집 모드에서는 자동 반영되지 않으므로 전체 프롬프트를 확인하세요."
                     : "직전 단계의 원문입니다. 단계에 따라 누적 개념 모델·최신 TTL 또는 역할별 산출물이 연결됩니다. 실제 전송 문맥은 전체 프롬프트에서 확인하세요."}
                 </small>
-                <small>{previousOutput.length.toLocaleString()}자</small>
+                <small>{(editingPrevious?.value ?? previousOutput).length.toLocaleString()}자</small>
               </div>}
               {fields.map((key) => ((method === "neon" || method === "yonsei") && key === "domain_description") || (method === "tao" && key === "page_text")
                 ? <DocumentField key={outputKey + "-" + key + "-" + !!manual + "-" + busy} fieldKey={key} label={FIELD_LABELS[key]} help={fieldHelp(key, method)} value={values[key] ?? ""}
@@ -585,7 +631,7 @@ export default function Home() {
             </div>
             {hasFewShot && <FewShotPanel key={outputKey} stageId={stage.id} prompt={values[generatorKey] ?? ""} result={values[fewShotKey] ?? ""}
               preview={{ getMessages: () => fewShotMessages(stage.id, values, outputs, previousOntology, definition.template), targetTemplate: definition.template }}
-              running={fewShotRunning} disabled={runState === "running"} simulation={engine === "simulation"} prerequisite={prerequisite} manual={!!manual}
+              running={fewShotRunning} disabled={runState === "running" || !!editingPrevious} simulation={engine === "simulation"} prerequisite={prerequisite} manual={!!manual}
               onPromptChange={(value) => editFewShot(generatorKey, value)} onResultChange={(value) => editFewShot(fewShotKey, value)}
               onGenerate={generateFewShot} onCancel={cancelFewShot} />}
             </div>
@@ -610,7 +656,10 @@ export default function Home() {
             <button role="tab" aria-selected={activeTab === "prompt"} onClick={() => setActiveTab("prompt")}>현재 프롬프트</button>
             <button role="tab" aria-selected={activeTab === "sent"} onClick={() => setActiveTab("sent")}>실행한 요청</button>
             <button role="tab" aria-selected={activeTab === "api"} onClick={() => setActiveTab("api")}>응답 JSON</button>
-            <span className="live-indicator"><i />{record ? completionProvider(record.response) : engine === "api" ? provider : "Local only"}</span></div><pre className="output-box">{activeTab === "output" ? currentOutput : activeTab === "prompt" ? promptPreview : activeTab === "sent" ? sentRequest : apiEnvelope}</pre></div>
+            <span className="live-indicator"><i />{record ? completionProvider(record.response) : engine === "api" ? provider : "Local only"}</span></div>
+            <div className="output-copy-tools"><CopyButton key={outputKey + activeTab} value={outputContent} label={outputLabel} /></div>
+            {activeTab === "output" && record?.outputEdit && <div className="output-edit-status">사용자 수정본</div>}
+            <pre className="output-box">{outputContent}</pre></div>
           <div className="stage-controls"><button onClick={() => move(-1)} disabled={!previous}>← 이전</button><span>산출물 검토 후 다음 단계로 전달</span><button className="primary" onClick={() => move(1)} disabled={!next}>다음 단계 →</button></div>
         </section>
 
@@ -622,7 +671,7 @@ export default function Home() {
         </aside>
       </section>
 
-      <nav className="pipeline" aria-label={`${META[method].label} 단계`}><div className="progress-track"><span style={{ width: `${progress}%` }} /></div><div className="stage-strip">{stages.map((item, index) => <button key={item.id} aria-current={index === stageIndex ? "step" : undefined} className={`${index === stageIndex ? "active" : ""} ${outputs[method + "-" + item.id] ? "visited" : ""}`} onClick={() => { if (fewShotController.current) cancelFewShot(); setStageIndex(index); setRunState("paused"); }}><span>{item.id}</span><small>{item.short}</small></button>)}</div></nav>
+      <nav className="pipeline" aria-label={`${META[method].label} 단계`}><div className="progress-track"><span style={{ width: `${progress}%` }} /></div><div className="stage-strip">{stages.map((item, index) => <button key={item.id} aria-current={index === stageIndex ? "step" : undefined} className={`${index === stageIndex ? "active" : ""} ${outputs[method + "-" + item.id] ? "visited" : ""}`} onClick={() => { if (fewShotController.current) cancelFewShot(); setPreviousDraft(null); setPreviousEditError(""); setStageIndex(index); setRunState("paused"); }}><span>{item.id}</span><small>{item.short}</small></button>)}</div></nav>
     </main>
   );
 }

@@ -60,6 +60,23 @@ test("save/load restores both methods, documents, saved templates, overrides and
   assert.equal(restored.currentOutputs["neon-03"], undefined);
 });
 
+test("v4 roundtrip preserves edited outputs separately from original responses", () => {
+  const log = fixture();
+  log.version = 4;
+  log.current.engine = "simulation"; log.current.provider = "openai";
+  const key = "neon-02", original = log.currentRecords[key].response.choices[0].message.content;
+  log.currentRecords[key].outputEdit = { content: "Edited specification", at };
+  log.currentOutputs[key] = "Edited specification";
+  const restored = parseSessionLog(exportLog(log), defaults);
+  assert.equal(restored.currentOutputs[key], "Edited specification");
+  assert.equal(restored.currentRecords[key].response.choices[0].message.content, original);
+  assert.deepEqual(restored.currentRecords[key].outputEdit, { content: "Edited specification", at });
+  log.currentOutputs[key] = "Different text";
+  assert.throws(() => parseSessionLog(exportLog(log), defaults), /불일치/);
+  log.currentOutputs[key] = ""; log.currentRecords[key].outputEdit.content = "";
+  assert.throws(() => parseSessionLog(exportLog(log), defaults), /빈 편집 출력/);
+});
+
 test("older v2/v3 logs without the new NeOn CQ field preserve their original domain", () => {
   for (const version of [2, 3]) {
     const log = fixture();

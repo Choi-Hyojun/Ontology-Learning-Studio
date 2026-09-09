@@ -9,6 +9,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { clearFewShots } from "../app/few-shot-state.ts";
 import { assemblePrompt, simulateCompletion } from "../app/prompt-model.ts";
 import { invalidateStageResults, removeNeonMetrics } from "../app/session-log.ts";
+import { editStageOutput } from "../app/output-edit.ts";
 
 const read = name => readFileSync(new URL("../app/" + name, import.meta.url), "utf8");
 function load(name, overrides = {}, globals = {}) {
@@ -271,8 +272,9 @@ function pageHarness(options = {}) {
       requestGeneration: (input, signal) => new Promise((resolve, reject) => requests.push({ input, signal, resolve, reject })),
     },
     "./session-log": { invalidateStageResults, removeNeonMetrics },
+    "./output-edit": { editStageOutput },
   }, {
-    AbortController, DOMException, console,
+    AbortController, DOMException, Error, console,
     window: { confirm: text => { confirmations.push(text); return options.confirm !== false; }, addEventListener() {}, removeEventListener() {},
       setTimeout: callback => { const id = ++timerId; timers.set(id, callback); return id; }, clearTimeout: id => timers.delete(id) },
   });
@@ -304,6 +306,55 @@ function pageHarness(options = {}) {
     save() { one(node => node.type === "button" && node.props?.title?.startsWith("입력 문서, 설정")).props.onClick(); return JSON.parse(downloads.at(-1).content); },
   };
 }
+
+test("previous output starts locked; drafts cancel cleanly and applied edits feed the next request", async () => {
+  const h = pageHarness(); h.selectYonsei(); h.useApi();
+  h.run(); const first = h.startTimers(); h.respond(0, "ORIGINAL SPECIFICATION"); await first; h.render();
+  h.navigate("02");
+  const field = () => h.one(node => node.props?.id === "context-previous-output");
+  const click = text => { h.one(node => node.type === "button" && node.props.children === text).props.onClick(); h.render(); };
+  assert.equal(field().props.readOnly, true);
+  click("잠금 해제");
+  assert.equal(field().props.readOnly, false);
+  field().props.onChange("DISCARDED DRAFT"); h.render();
+  h.run(); await h.startTimers();
+  assert.equal(h.requests.length, 1, "An unapplied draft blocks stage execution");
+  assert.equal(h.save().currentOutputs["yonsei-01"], "ORIGINAL SPECIFICATION");
+  click("취소하고 잠금");
+  assert.equal(field().props.value, "ORIGINAL SPECIFICATION");
+  assert.equal(field().props.readOnly, true);
+  h.panel().props.onResultChange("STALE FEW-SHOT"); h.render();
+  click("잠금 해제"); field().props.onChange("EDITED SPECIFICATION"); h.render();
+  click("적용하고 잠금");
+  assert.equal(field().props.readOnly, true);
+  assert.equal(field().props.value, "EDITED SPECIFICATION");
+  assert.equal(h.panel().props.result, "");
+  const log = h.save();
+  assert.equal(log.currentRecords["yonsei-01"].response.choices[0].message.content, "ORIGINAL SPECIFICATION");
+  assert.equal(log.currentRecords["yonsei-01"].outputEdit.content, "EDITED SPECIFICATION");
+  assert.equal(log.history.filter(entry => entry.event === "stage_output_edited").length, 1);
+  h.run(); const second = h.startTimers();
+  assert.match(h.requests[1].input.messages.user, /EDITED SPECIFICATION/);
+  assert.doesNotMatch(h.requests[1].input.messages.user, /ORIGINAL SPECIFICATION/);
+  h.respond(1, "SECOND OUTPUT"); await second; h.render();
+  click("잠금 해제"); field().props.onChange("REVISED SPECIFICATION"); h.render(); click("적용하고 잠금");
+  assert.equal(h.save().currentRecords["yonsei-02"], undefined);
+  assert.equal(h.save().currentOutputs["yonsei-02"], undefined);
+  click("잠금 해제"); h.navigate("03"); h.navigate("02");
+  assert.equal(field().props.readOnly, true);
+});
+
+test("invalid previous-output edits leave results intact and stay editable", async () => {
+  const h = pageHarness(); h.selectYonsei(); h.useApi();
+  h.run(); const executing = h.startTimers(); h.respond(0, "VALID OUTPUT"); await executing; h.render(); h.navigate("02");
+  h.one(node => node.props?.["aria-label"] === "이전 단계 출력 잠금 해제").props.onClick(); h.render();
+  h.one(node => node.props?.id === "context-previous-output").props.onChange("  "); h.render();
+  h.one(node => node.type === "button" && node.props.children === "적용하고 잠금").props.onClick(); h.render();
+  assert.match(h.one(node => node.props?.role === "alert").props.children, /비워/);
+  assert.equal(h.one(node => node.props?.id === "context-previous-output").props.readOnly, false);
+  assert.equal(h.save().currentOutputs["yonsei-01"], "VALID OUTPUT");
+  assert.equal(h.save().currentRecords["yonsei-01"].outputEdit, undefined);
+});
 
 test("Yonsei page runs few-shot and stage as separate API requests, links generated text and exports both", async () => {
   const h = pageHarness(); h.selectYonsei(); h.useApi();

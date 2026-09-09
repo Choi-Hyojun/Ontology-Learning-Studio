@@ -1,26 +1,15 @@
-import * as rdf from "rdflib";
+import { ontologyFromResponse, ServiceError, YONSEI_TYPES } from "../app/ontology-response.ts";
+export { ontologyFromResponse } from "../app/ontology-response.ts";
 import type { ApiCompletion, GenerationRequest, Provider } from "../app/execution-model";
 
 export type ApiEnvironment = { OPENAI_API_KEY?: string; OPENAI_MODEL?: string; ANTHROPIC_API_KEY?: string; ANTHROPIC_MODEL?: string };
 const MAX_BODY = 6 * 1024 * 1024;
-class ServiceError extends Error {
-  code: string; status: number; requestId?: string;
-  constructor(code: string, message: string, status = 400, requestId?: string) {
-    super(message); this.code = code; this.status = status; this.requestId = requestId;
-  }
-}
 function fail(code: string, message: string, status = 400): never { throw new ServiceError(code, message, status); }
 const isObject = (value: unknown): value is Record<string, unknown> => !!value && typeof value === "object" && !Array.isArray(value);
 const safeId = (value: string | null) => value && /^[a-zA-Z0-9_.:-]{1,160}$/.test(value) ? value : undefined;
 const json = (body: unknown, status = 200) => Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
 const nonempty = (value: unknown): value is string => typeof value === "string" && !!value.trim();
 const absoluteIri = (value: unknown): value is string => nonempty(value) && /^[a-z][a-z0-9+.-]*:[^\s<>"{}|\\^`]+$/i.test(value);
-const YONSEI_CQ_ANNOTATION = "https://example.org/yonsei/relatedCQ";
-const YONSEI_TYPES = {
-  class: "http://www.w3.org/2002/07/owl#Class",
-  object_property: "http://www.w3.org/2002/07/owl#ObjectProperty",
-  data_property: "http://www.w3.org/2002/07/owl#DatatypeProperty",
-};
 
 function validateTraceInput(trace: unknown): void {
   if (!isObject(trace) || !Array.isArray(trace.cqIds) || !trace.cqIds.length || trace.cqIds.some(id => !nonempty(id))
@@ -54,25 +43,6 @@ export function validateGeneration(value: unknown): GenerationRequest {
   return value as unknown as GenerationRequest;
 }
 
-function validateOntologyTrace(graph: ReturnType<typeof rdf.graph>, trace: NonNullable<GenerationRequest["yonseiTrace"]>): void {
-  const type = rdf.sym("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-  const annotation = rdf.sym(YONSEI_CQ_ANNOTATION);
-  const knownCqs = new Set(trace.cqIds);
-  const reject = () => fail("INVALID_CQ_TRACE", "생성된 Turtle이 CQ 추적 정보를 보존하지 않았습니다. 기존 요소의 IRI·종류와 relatedCQ 주석을 유지하고, 알려진 CQ ID만 연결하도록 프롬프트를 확인하세요.", 422);
-  if (trace.elements.length && !graph.holds(annotation, type, rdf.sym("http://www.w3.org/2002/07/owl#AnnotationProperty"))) reject();
-  for (const statement of graph.statementsMatching(null, annotation, null)) {
-    if (statement.object.termType !== "Literal" || !knownCqs.has(statement.object.value)) reject();
-  }
-  for (const element of trace.elements) {
-    const subject = rdf.sym(element.id);
-    if (!graph.holds(subject, type, rdf.sym(YONSEI_TYPES[element.kind]))) reject();
-    // A changed kind cannot be hidden by retaining the original declaration too.
-    if (Object.entries(YONSEI_TYPES).some(([kind, iri]) => kind !== element.kind && graph.holds(subject, type, rdf.sym(iri)))) reject();
-    const links = new Set(graph.statementsMatching(subject, annotation, null).map(statement => statement.object.value));
-    if (element.cq_ids.some(id => !links.has(id))) reject();
-  }
-}
-
 export function normalizeResponse(value: unknown, provider: Provider, model: string, requestId?: string): ApiCompletion {
   if (!isObject(value)) fail("INVALID_PROVIDER_RESPONSE", "API가 올바른 응답을 반환하지 않았습니다.", 502);
   let text = "", reason = "";
@@ -95,34 +65,6 @@ export function normalizeResponse(value: unknown, provider: Provider, model: str
   if (typeof input !== "number" || !Number.isSafeInteger(input) || input < 0 || typeof output !== "number" || !Number.isSafeInteger(output) || output < 0) fail("INVALID_USAGE", "API 사용량 응답 형식이 올바르지 않습니다.", 502);
   return { object: "chat.completion", model, choices: [{ index: 0, message: { role: "assistant", content: text }, finish_reason: reason }],
     usage: { prompt_tokens: input, completion_tokens: output }, execution: { provider, ...(requestId ? { requestId } : {}) } };
-}
-
-export function ontologyFromResponse(text: string, input: GenerationRequest): string | null {
-  // Generated examples and conceptual JSON are context, never ontology snapshots.
-  // In particular, a Turtle example nested in that text must not replace real output.
-  if (input.purpose === "few-shot" || (input.method === "yonsei" && Number(input.stageId) < 8)) return null;
-  const match = text.match(/###start_turtle###([\s\S]*?)###end_turtle###/i) ?? text.match(/```(?:turtle|ttl)\s*\n([\s\S]*?)```/i);
-  const expected = input.method === "neon" || input.method === "yonsei" ? Number(input.stageId) >= 8 : ["04", "08"].includes(input.stageId);
-  let turtle = match?.[1]?.trim();
-  if (!turtle && /^\s*(?:@prefix|PREFIX|@base|BASE)\s/.test(text)) turtle = text.trim();
-  if (!turtle) {
-    if (expected) fail("TURTLE_MISSING", "온톨로지 단계 응답에 Turtle이 없습니다. 전체 프롬프트에서 Turtle 출력 지시를 확인하세요.", 422);
-    return null;
-  }
-  try {
-    const graph = rdf.graph();
-    // Original NeOn stages 11–20 emit new triples. Preserve prior triples and prefixes.
-    const merge = input.method === "neon" && Number(input.stageId) >= 11;
-    rdf.parse((merge && input.previousOntology ? input.previousOntology + "\n" : "") + turtle, graph, "http://example.org/generated/", "text/turtle");
-    if (!graph.statements.length) throw new Error("empty graph");
-    if (input.yonseiTrace) validateOntologyTrace(graph, input.yonseiTrace);
-    const serialized = rdf.serialize(null, graph, "http://example.org/generated/", "text/turtle");
-    if (!serialized) throw new Error("serialization failed");
-    return serialized;
-  } catch (error) {
-    if (error instanceof ServiceError) throw error;
-    fail("INVALID_TURTLE", "생성된 Turtle의 문법 검증에 실패했습니다. 해당 단계는 완료 처리하지 않았습니다. 프롬프트를 수정한 뒤 다시 실행하세요.", 422);
-  }
 }
 
 // Pure dependency-injected handler: tests supply fake env and fetch; no API keys needed.
