@@ -9,7 +9,12 @@ export type ApiCompletion = {
   usage: { prompt_tokens: number; completion_tokens: number };
   execution: { provider: Provider; requestId?: string };
 };
-export type Completion = ReturnType<typeof simulateCompletion> | ApiCompletion;
+export type ManualCompletion = {
+  object: "manual.input"; model: "user-input/no-api"; manualInput: true;
+  choices: { index: number; message: { role: "user"; content: string }; finish_reason: "manual" }[];
+  usage: { prompt_tokens: 0; completion_tokens: 0 };
+};
+export type Completion = ReturnType<typeof simulateCompletion> | ApiCompletion | ManualCompletion;
 export type ExecutionIssue = {
   at: string; code: string; message: string; provider?: Provider; method?: string; stageId?: string;
   status?: number; requestId?: string;
@@ -23,7 +28,8 @@ export type GenerationRequest = {
     elements: { id: string; kind: "class" | "object_property" | "data_property"; cq_ids: string[] }[];
   };
 };
-export function completionProvider(response: Completion): Provider | "simulation" {
+export function completionProvider(response: Completion): Provider | "simulation" | "manual" {
+  if ("manualInput" in response) return "manual";
   return "execution" in response ? response.execution.provider : "simulation";
 }
 export function safeIssue(error: unknown, context: Partial<ExecutionIssue> = {}): ExecutionIssue {

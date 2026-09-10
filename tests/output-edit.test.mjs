@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { editStageOutput } from "../app/output-edit.ts";
+import { completionProvider } from "../app/execution-model.ts";
 import { simulateCompletion } from "../app/prompt-model.ts";
 import { currentOntology } from "../app/project-files.ts";
 import { yonseiDefaults, yonseiSimulation } from "../app/yonsei-model.ts";
@@ -57,7 +58,27 @@ test("Yonsei edited CQ evidence and Turtle links retain the existing validation 
   assert.throws(() => editStageOutput("yonsei", "08", ttl.replaceAll('"CQ1"', '"UNKNOWN"'), values, outputs, records), /CQ/);
 });
 
-test("missing and empty outputs cannot be committed", () => {
-  assert.throws(() => editStageOutput("neon", "01", "text", {}, {}, {}), /먼저/);
+test("unexecuted stages accept honest zero-cost manual input while empty outputs are rejected", () => {
+  for (const method of ["neon", "tao", "yonsei"]) {
+    const result = editStageOutput(method, "01", "Direct input\n{literal}", yonseiDefaults(), {}, {}, "exploratory");
+    assert.equal(result.outputEdit.content, "Direct input\n{literal}");
+    assert.equal(result.response.object, "manual.input");
+    assert.equal(completionProvider(result.response), "manual");
+    assert.deepEqual(result.response.usage, { prompt_tokens: 0, completion_tokens: 0 });
+    assert.deepEqual(result.request, { system: "", user: "" });
+    assert.equal(result.response.simulation, undefined);
+    assert.equal(result.response.execution, undefined);
+  }
+  assert.throws(() => editStageOutput("neon", "01", " \n", {}, {}, {}), /비워/);
   assert.throws(() => editStageOutput("neon", "01", " \n", {}, {}, { "neon-01": record("Original") }), /비워/);
+});
+
+test("manual later-stage input is saved without fabricated prerequisite outputs and retains validation warnings", () => {
+  const result = editStageOutput("yonsei", "03", '{"cqs":', {}, {}, {}, "exploratory");
+  assert.equal(result.outputEdit.content, '{"cqs":');
+  assert.ok(result.warnings.some(warning => warning.includes("JSON")));
+  const ttl = '@prefix : <https://example.org/> .\n:Game a <http://www.w3.org/2002/07/owl#Class> .';
+  const ontology = editStageOutput("yonsei", "08", ttl, {}, {}, {}, "exploratory");
+  assert.match(ontology.ontology, /Game/);
+  assert.equal(completionProvider(ontology.response), "manual");
 });

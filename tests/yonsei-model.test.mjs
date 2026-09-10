@@ -50,6 +50,32 @@ test("Yonsei has nine separate JSON-managed stages and eight generation prompts"
   assert.match(source.provenance.status, /not a published methodology/);
 });
 
+test("Yonsei owns a domain-expert persona without prescribing video-game classes", () => {
+  const defaults = yonseiDefaults();
+  const neon = JSON.parse(readFileSync(new URL("../app/neon-prompts.json", import.meta.url), "utf8"));
+  assert.equal(defaults.persona, source.defaults.persona);
+  assert.ok(!source.source_defaults.includes("persona"));
+  assert.notEqual(defaults.persona, neon.defaults.persona);
+  assert.match(defaults.persona, /video game domain specialist and ontology engineer/);
+  for (const expertise of ["gameplay", "genres", "platforms", "publishing", "NeOn", "OWL", "SPARQL", "Turtle", "reuse", "refinement"])
+    assert.ok(defaults.persona.includes(expertise), expertise);
+  assert.match(defaults.persona, /source evidence, competency questions and model elements/);
+  assert.doesNotMatch(defaults.persona, /VideoGame|GameRelease|GameplaySession|ontology size|strong axioms/);
+  assert.equal(source.provenance.persona_reference.url, "https://www.semantic-web-journal.net/system/files/swj4014.pdf");
+  for (const field of source.source_defaults) assert.equal(defaults[field], neon.defaults[field]);
+  for (const stage of source.stages) {
+    const context = resolveYonseiContext(stage.id, defaults, {}, "");
+    const request = assemblePrompt(stage.template, context, "");
+    assert.ok(request.system.startsWith(defaults.persona + "\n"), stage.id);
+    if (stage.id === "01") {
+      assert.ok(request.user.startsWith("You are a video game domain specialist"));
+      assert.ok(fewShotMessages(stage.id, defaults, {}, "").user.includes(defaults.persona));
+    }
+  }
+  const edited = { ...defaults, persona: "User-edited specialist" };
+  assert.ok(assemblePrompt(source.stages[0].template, edited, "").system.startsWith(edited.persona));
+});
+
 test("every main prompt resolves numeric few-shot fields and current derived inputs", () => {
   const definitions = yonseiDefinitions();
   for (let step = 1; step <= 9; step++) {
@@ -62,22 +88,26 @@ test("every main prompt resolves numeric few-shot fields and current derived inp
   }
 });
 
-test("balanced modeling revision leaves unrelated stages and serialization unchanged", () => {
-  const backup = JSON.parse(readFileSync(new URL("../app/yonsei-prompts.pre-hierarchy-2026-09-10.json", import.meta.url), "utf8"));
-  for (const id of ["01", "02", "03", "04", "08", "09"])
-    assert.deepEqual(source.stages.find(stage => stage.id === id), backup.stages.find(stage => stage.id === id));
-  const { stages: _originalStages, ...originalSettings } = backup;
-  const { stages: _currentStages, ...currentSettings } = source;
-  assert.deepEqual(currentSettings, originalSettings);
-  assert.doesNotMatch(backup.stages.find(stage => stage.id === "05").template, /HIERARCHY CONSTRUCTION/);
-  for (const id of ["06", "07"]) {
-    const current = source.stages.find(stage => stage.id === id);
-    const original = backup.stages.find(stage => stage.id === id);
-    for (const key of ["fields", "few_shot_prompt", "simulation_example"])
-      assert.deepEqual(current[key], original[key]);
-    const connectionCheck = "When adding a concept, also check its connections to the existing model and include missing source-supported links, whether ordinary relationships or direct subclass relationships, without forcing a parent. ";
-    assert.equal(current.template.replace(connectionCheck, ""), original.template);
+test("current Yonsei JSON supplies every stage definition without a historical snapshot", () => {
+  const definitions = yonseiDefinitions();
+  const defaults = yonseiDefaults();
+  assert.deepEqual(source.stages.map(stage => stage.id), ["01", "02", "03", "04", "05", "06", "07", "08", "09"]);
+  assert.deepEqual(Object.keys(definitions), source.stages.map(stage => "yonsei-" + stage.id));
+  assert.deepEqual(YONSEI_STAGES, source.stages.map(({ short, title, description }) => ({ short, title, description })));
+  for (const [key, value] of Object.entries(source.defaults)) assert.equal(defaults[key], value, key);
+  for (const stage of source.stages) {
+    const definition = definitions["yonsei-" + stage.id];
+    assert.deepEqual(definition, { template: stage.template, fields: stage.fields });
+    assert.ok(definition.template.trim(), stage.id);
+    assert.notStrictEqual(definition.fields, stage.fields);
+    if (stage.id !== "09") {
+      assert.equal(defaults["few_shot_prompt_" + stage.id], stage.few_shot_prompt);
+      assert.ok(simulateFewShot(stage.id).includes(stage.simulation_example), stage.id);
+    }
   }
+  // GUI callers may edit their field list without mutating the JSON source.
+  definitions["yonsei-01"].fields.push("temporary_gui_field");
+  assert.deepEqual(yonseiDefinitions()["yonsei-01"].fields, source.stages[0].fields);
 });
 
 test("conceptual modeling balances grounded subclass links with ordinary relations and properties", () => {

@@ -7,6 +7,8 @@ import { exampleResponse, pipelineContext, resolveExampleContext } from "./examp
 import { assemblePrompt, promptTemplateMessages, simulateCompletion, type PromptMessages, type PromptValues } from "./prompt-model";
 import { DocumentField, type Attachment } from "./document-field";
 import { ContextTextarea, CopyButton } from "./context-textarea";
+import { PromptEditorDialog } from "./prompt-editor-dialog";
+import { promptDisplay, splitPromptDisplay } from "./prompt-display";
 import { editStageOutput } from "./output-edit";
 import { FewShotPanel } from "./few-shot-panel";
 import { clearFewShots } from "./few-shot-state";
@@ -125,6 +127,7 @@ export default function Home() {
   const [records, setRecords] = useState<Record<string, RunRecord>>({});
   const [overrides, setOverrides] = useState<Record<string, PromptMessages>>({});
   const [editorOpen, setEditorOpen] = useState(false);
+  const [messageEditError, setMessageEditError] = useState<{ key: string; message: string } | null>(null);
   const [templateViewKey, setTemplateViewKey] = useState<string | null>(null);
   const [autoAdvance, setAutoAdvance] = useState(false);
   const [attachments, setAttachments] = useState<Record<string, Attachment>>({});
@@ -175,10 +178,13 @@ export default function Home() {
   }, [template, effectiveValues, previousOutput, previousOntology, method, stage.id, outputs, definition.fields]);
   const manual = overrides[outputKey];
   const messages = manual ?? assembled;
+  const displayedMessages = promptDisplay(messages);
   const promptPreview = "SYSTEM\n" + messages.system + "\n\nUSER\n" + messages.user;
   const record = records[outputKey];
+  const manuallyEntered = !!record && completionProvider(record.response) === "manual";
   const apiEnvelope = record ? JSON.stringify(record.response, null, 2) : "아직 응답이 없습니다. 현재 단계 실행 후 확인하세요.";
-  const sentRequest = record ? JSON.stringify(record.request, null, 2) : "아직 실행한 요청이 없습니다.";
+  const sentRequest = manuallyEntered ? "사용자가 직접 입력한 산출물입니다. 실행한 API 요청은 없습니다."
+    : record ? JSON.stringify(record.request, null, 2) : "아직 실행한 요청이 없습니다.";
   const outputContent = activeTab === "output" ? currentOutput : activeTab === "prompt" ? promptPreview : activeTab === "sent" ? sentRequest : apiEnvelope;
   const outputLabel = activeTab === "output" ? "LLM 출력" : activeTab === "prompt" ? "현재 프롬프트" : activeTab === "sent" ? "실행한 요청" : "응답 JSON";
   const ontology = currentOntology(records, method);
@@ -370,10 +376,20 @@ export default function Home() {
       data: { field: key, ...attachment } }]);
     setNotice(attachment.name + " 내용을 " + FIELD_LABELS[key] + "에 반영했습니다.");
   };
-  const editMessage = (key: keyof PromptMessages, value: string) => {
+  const editMessage = (value: string) => {
+    if (busy) return;
+    let updated: PromptMessages;
+    try {
+      updated = splitPromptDisplay(value, displayedMessages.separator);
+    } catch (error) {
+      setMessageEditError({ key: outputKey, message: error instanceof Error ? error.message : String(error) });
+      return;
+    }
+    setMessageEditError(null);
+    if (updated.system === messages.system && updated.user === messages.user) return;
     invalidateResults(stageIndex);
     if (method === "yonsei") setValuesByMethod((current) => ({ ...current, yonsei: clearFewShots(current.yonsei, stageIndex + 1) }));
-    setOverrides((current) => ({ ...current, [outputKey]: { ...messages, [key]: value } }));
+    setOverrides((current) => ({ ...current, [outputKey]: updated }));
   };
   const applyPreviousOutput = () => {
     if (busy || !previous || !editingPrevious) return;
@@ -390,7 +406,7 @@ export default function Home() {
       setOutputs((current) => ({ ...current, [key]: editingPrevious.value }));
       setRecords((current) => ({ ...current, [key]: updated }));
       if (method === "yonsei") setValuesByMethod((current) => ({ ...current, yonsei: clearFewShots(current.yonsei, stageIndex) }));
-      setHistory((items) => [...items, { at: updated.outputEdit!.at, event: "stage_output_edited", method, stageId: previous.id,
+      setHistory((items) => [...items, { at: updated.outputEdit!.at, event: previousRecord ? "stage_output_edited" : "stage_output_entered", method, stageId: previous.id,
         data: { previousOutput, outputEdit: updated.outputEdit, ontology: updated.ontology, validationMode, warnings: updated.warnings } }]);
       setPreviousDraft(null); setPreviousEditError("");
       if (updated.warnings?.length) reportIssue(safeIssue(new GenerationError({ code: "OUTPUT_VALIDATION_WARNING",
@@ -605,8 +621,8 @@ export default function Home() {
           </div>
           <div className="prompt-section">
             <div className="subheading"><span>Prompt context</span>
-              <button type="button" className="prompt-toggle" disabled={fewShotRunning} aria-expanded={editorOpen} aria-controls="full-prompt-editor" onClick={() => { setRunState("paused"); setTemplateViewKey(null); setEditorOpen(!editorOpen); }}>
-                {editorOpen ? "전체 프롬프트 접기" : "전체 프롬프트 확인·수정"}
+              <button type="button" className="prompt-toggle" disabled={fewShotRunning} aria-haspopup="dialog" aria-expanded={editorOpen} aria-controls="full-prompt-editor" onClick={() => { setRunState("paused"); setTemplateViewKey(null); setEditorOpen(true); }}>
+                전체 프롬프트 확인·수정
               </button>
             </div>
             {loadedLogName && <p className="context-help">{loadedLogName}에서 복원한 프롬프트 템플릿입니다. 편집 후 이어서 실행할 수 있습니다.</p>}
@@ -618,18 +634,18 @@ export default function Home() {
               {previous && <div className="prompt-card context-field previous-output-card">
                 <div className="context-card-heading">
                   <div className="parameter-label"><label htmlFor="context-previous-output"><strong>이전 단계 출력</strong></label><ParameterHelp key={outputKey} label="이전 단계 출력" description={fieldHelp("previous_step_content", method)} /></div>
-                  <span className="context-source-badge">{editingPrevious ? "편집 중" : manual ? "참고용" : previousRecord?.outputEdit ? "수정됨" : previousOutput ? "자동 연결" : "출력 대기"}</span>
+                  <span className="context-source-badge">{editingPrevious ? "편집 중" : manual ? "참고용" : previousRecord && completionProvider(previousRecord.response) === "manual" ? "직접 입력" : previousRecord?.outputEdit ? "수정됨" : previousOutput ? "자동 연결" : "직접 입력 가능"}</span>
                 </div>
                 <code>previous_step_content</code>
                 <small>{`STEP ${previous.id} · ${previous.title}`}</small>
-                <ContextTextarea key={outputKey} id="context-previous-output" label="이전 단계 출력" value={editingPrevious?.value ?? previousOutput} readOnly={false} disabled={busy || !previousRecord} rows={7}
+                <ContextTextarea key={outputKey} id="context-previous-output" label="이전 단계 출력" value={editingPrevious?.value ?? previousOutput} readOnly={false} disabled={busy} rows={7}
                   onChange={(value) => {
-                    if (busy || !previousRecord) return;
+                    if (busy) return;
                     setPreviousDraft(value === previousOutput ? null : { key: outputKey, original: editingPrevious?.original ?? previousOutput, value });
                     setPreviousEditError("");
                   }}
                   descriptionId="previous-output-help"
-                  placeholder="이전 단계를 실행하면 출력이 이곳에 표시됩니다." />
+                  placeholder="이전 단계 결과를 직접 입력하거나 붙여넣으세요. 이전 단계를 실행하지 않아도 변경 적용할 수 있습니다." />
                 {editingPrevious && <div className="previous-output-tools">
                   <button type="button" className="context-expand" disabled={busy} onClick={applyPreviousOutput}>변경 적용</button>
                   <button type="button" className="context-expand" onClick={() => { setPreviousDraft(null); setPreviousEditError(""); }}>변경 취소</button>
@@ -661,7 +677,7 @@ export default function Home() {
               onPromptChange={(value) => editFewShot(generatorKey, value)} onResultChange={(value) => editFewShot(fewShotKey, value)}
               onGenerate={generateFewShot} onCancel={cancelFewShot} />}
             </div>
-            {editorOpen && <section id="full-prompt-editor" className="full-prompt-editor" aria-label="전체 프롬프트 편집">
+            {editorOpen && <PromptEditorDialog key={outputKey} stageLabel={`STEP ${stage.id} · ${stage.title}`} onClose={() => setEditorOpen(false)}>
               <div className="subheading"><span>{templateViewKey === outputKey ? "프롬프트 양식 · 읽기 전용" : manual ? "직접 편집" : "변수에서 자동 조립"}</span>
                 <button type="button" className="prompt-toggle" aria-pressed={templateViewKey === outputKey}
                   onClick={() => setTemplateViewKey(templateViewKey === outputKey ? null : outputKey)}>
@@ -673,26 +689,23 @@ export default function Home() {
               </div>
               {templateViewKey === outputKey ? <>
                 <p className="context-help">변수 치환 전 자동 조립 양식입니다. 보기를 전환해도 편집한 전체 메시지는 유지됩니다. 직접 편집 모드에서는 이 양식이 아닌 수정한 전체 메시지가 전송됩니다.</p>
-                <label htmlFor="system-template">System 메시지 양식</label>
-                <ContextTextarea key={outputKey + "-system-template"} id="system-template" label="System 메시지 양식" value={messageTemplate.system} rows={8} readOnly />
-                <label htmlFor="user-template">User 메시지 양식 · 출력 형식 포함</label>
-                <ContextTextarea key={outputKey + "-user-template"} id="user-template" label="User 메시지 양식" value={messageTemplate.user} rows={18} readOnly />
+                <label htmlFor="combined-template">전체 프롬프트 양식 · 출력 형식 포함</label>
+                <ContextTextarea key={outputKey + "-combined-template"} id="combined-template" label="전체 프롬프트 양식" value={promptDisplay(messageTemplate).text} rows={26} readOnly />
               </> : <>
               <p className="context-help">변수가 치환되고 이전 출력이 포함된 전체 메시지입니다. 직접 수정하면 현재 단계에 즉시 적용되며, 이후 변수·이전 출력 변경을 자동 반영하지 않습니다.</p>
-              <label htmlFor="system-message">System 메시지 · persona와 출력 형식</label>
-              <ContextTextarea key={outputKey + "-system"} id="system-message" label="System 메시지" value={messages.system} rows={8}
-                disabled={busy} onChange={(value) => editMessage("system", value)} />
-              <label htmlFor="user-message">User 메시지 · send_and_capture에 전달되는 전체 본문</label>
-              <ContextTextarea key={outputKey + "-user"} id="user-message" label="User 메시지" value={messages.user} rows={18}
-                disabled={busy} onChange={(value) => editMessage("user", value)} />
+              <p className="context-help">하나의 입력칸으로 표시합니다. ‘사용자 요청’ 구분선 위는 System, 아래는 User 메시지로 나누어 전송하며 구분선 자체는 보내지 않습니다. 편집 시 구분선과 앞뒤 빈 줄을 유지해 주세요.</p>
+              {messageEditError?.key === outputKey && <p className="validation-warning" role="alert">{messageEditError.message}</p>}
+              <label htmlFor="combined-message">전체 프롬프트</label>
+              <ContextTextarea key={outputKey + "-combined-message"} id="combined-message" label="전체 프롬프트" value={displayedMessages.text} rows={26}
+                disabled={busy} onChange={editMessage} />
               </>}
-            </section>}
+            </PromptEditorDialog>}
             {engine === "api" && <p className="context-help">현재 메시지를 서버에서 선택한 API로 전송합니다. {method === "yonsei"
               ? "Few-shot 생성과 단계 실행은 각각 별도 호출입니다. Refine은 모든 문단별 CQ·클래스·프로퍼티 문맥과 최신 TTL을 한 번에 전달합니다. OWL 추론기를 실행하지 않습니다."
               : "TAO는 텍스트 기반 단계 실행이며, 원본 도구 루프·코드 실행·OWL 추론기를 실행하지 않습니다. NeOn 11–20단계의 새 Turtle triple은 이전 스냅샷에 병합합니다."}</p>}
           </div>
           <div className="output-section"><div className="output-tabs" role="tablist">
-            <button role="tab" aria-selected={activeTab === "output"} onClick={() => setActiveTab("output")}>{record && completionProvider(record.response) === "simulation" ? "모의 출력" : "LLM 출력"}</button>
+            <button role="tab" aria-selected={activeTab === "output"} onClick={() => setActiveTab("output")}>{manuallyEntered ? "직접 입력" : record && completionProvider(record.response) === "simulation" ? "모의 출력" : "LLM 출력"}</button>
             <button role="tab" aria-selected={activeTab === "prompt"} onClick={() => setActiveTab("prompt")}>현재 프롬프트</button>
             <button role="tab" aria-selected={activeTab === "sent"} onClick={() => setActiveTab("sent")}>실행한 요청</button>
             <button role="tab" aria-selected={activeTab === "api"} onClick={() => setActiveTab("api")}>응답 JSON</button>

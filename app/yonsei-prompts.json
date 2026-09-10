@@ -3,10 +3,17 @@
     "method": "Yonsei",
     "status": "Studio prototype requested by the user; not a published methodology or a reproduction of experimental results.",
     "adapted_from": "app/neon-prompts.json, steps 01–08",
-    "changes": "LLM-generated pedagogic few-shot examples in steps 01–08; CQ-to-document and element-to-CQ JSON provenance; paragraph-linked Refine in step 09."
+    "changes": "LLM-generated pedagogic few-shot examples in steps 01–08; CQ-to-document and element-to-CQ JSON provenance; paragraph-linked Refine in step 09.",
+    "persona_reference": {
+      "title": "From GPT to Mistral: Cross-Domain Ontology Learning with NeOn-GPT",
+      "url": "https://www.semantic-web-journal.net/system/files/swj4014.pdf",
+      "sections": "3.1.1 Role-play prompting; Appendix A.1 Domain-specific Persona Generation Prompt Template",
+      "adaptation": "Original Studio wording adapted to the supplied video-game document and Yonsei's evidence-linked workflow. Defines domain expertise and ontology-engineering responsibilities, not a predetermined class inventory. Not a persona quoted from or evaluated in the paper."
+    }
   },
-  "source_defaults": ["persona", "domain_name", "domain_description", "keywords", "reuse_example_desc"],
+  "source_defaults": ["domain_name", "domain_description", "keywords", "reuse_example_desc"],
   "defaults": {
+    "persona": "video game domain specialist and ontology engineer with expertise in gameplay and game design, genres, gaming platforms and interaction technologies, game development, publishing and distribution, and the history and culture of video games. You apply the NeOn methodology and Semantic Web technologies (RDF, RDFS, OWL, SPARQL and Turtle) to turn domain knowledge into reusable, coherent, modular ontologies. Your responsibilities span requirements analysis, competency-question design, vocabulary and modeling-pattern reuse, conceptual modeling, formalization and refinement. Interpret terminology in the context of the supplied document, preserve the links between source evidence, competency questions and model elements, and base modeling decisions on their meaning and the accepted requirements.",
     "document_paragraphs": "[]",
     "competency_questions": "{\"cqs\":[]}",
     "element_catalog": "{\"elements\":[]}",

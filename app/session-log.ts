@@ -230,7 +230,16 @@ export function parseSessionLog(text: string, defaults: SessionDefaults): Restor
     check(currentOutputs[key] === effectiveOutput, key + ": 응답과 현재 출력 불일치");
     const usage = object(response.usage, key + ".usage");
     calculatedTokens += natural(usage.prompt_tokens, key + ".prompt_tokens") + natural(usage.completion_tokens, key + ".completion_tokens");
-    if (response.execution !== undefined) {
+    if (response.manualInput !== undefined) {
+      check(log.version === 4 && response.manualInput === true && response.object === "manual.input"
+        && response.model === "user-input/no-api" && response.execution === undefined && response.simulation === undefined,
+        key + ": 직접 입력 기록 형식");
+      check(usage.prompt_tokens === 0 && usage.completion_tokens === 0 && request.system === "" && request.user === "",
+        key + ": 직접 입력에는 API 요청이나 토큰 사용량이 없어야 합니다");
+      const choice = object(response.choices[0], key + ".choice");
+      check(response.choices.length === 1 && choice.finish_reason === "manual"
+        && object(choice.message, key + ".message").role === "user", key + ": 직접 입력 메시지 형식");
+    } else if (response.execution !== undefined) {
       check(supportsApi && response.simulation === undefined, key + ".execution version");
       const execution = object(response.execution, key + ".execution");
       check(execution.provider === "openai" || execution.provider === "anthropic", key + ".provider");

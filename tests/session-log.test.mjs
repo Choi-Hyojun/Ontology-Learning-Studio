@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { editStageOutput } from "../app/output-edit.ts";
+import { completionProvider } from "../app/execution-model.ts";
 import test from "node:test";
 import { readFileSync } from "node:fs";
 import { assemblePrompt, simulateCompletion } from "../app/prompt-model.ts";
@@ -39,6 +41,27 @@ function fixture() {
     templates: { neon: neon.stages, tao },
   };
 }
+
+test("manual input survives session roundtrip without being labeled API or simulation", () => {
+  const log = fixture();
+  log.version = 4;
+  log.current.engine = "simulation"; log.current.provider = "openai";
+  log.currentRecords["neon-01"] = editStageOutput("neon", "01", "Direct input", {}, {}, {}, "exploratory");
+  log.currentOutputs["neon-01"] = "Direct input";
+  const restored = parseSessionLog(exportLog(log), defaults);
+  assert.equal(restored.currentOutputs["neon-01"], "Direct input");
+  assert.equal(completionProvider(restored.currentRecords["neon-01"].response), "manual");
+  assert.equal(restored.currentRecords["neon-01"].response.usage.prompt_tokens, 0);
+  assert.equal(restored.apiCalls, 0);
+  for (const mutate of [
+    record => { record.response.usage.completion_tokens = 1; },
+    record => { record.response.execution = { provider: "openai" }; },
+    record => { record.request.user = "Pretend request"; },
+  ]) {
+    const invalid = structuredClone(log); mutate(invalid.currentRecords["neon-01"]);
+    assert.throws(() => parseSessionLog(exportLog(invalid), defaults), /직접 입력/);
+  }
+});
 
 test("save/load restores both methods, documents, saved templates, overrides and prior output without running", () => {
   const log = fixture();

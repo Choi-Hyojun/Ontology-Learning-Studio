@@ -200,9 +200,9 @@ test("all prompt surfaces share the popup and reset it when changing stages", ()
   const page = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
   const document = readFileSync(new URL("../app/document-field.tsx", import.meta.url), "utf8");
   const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
-  assert.equal((page.match(/<ContextTextarea/g) || []).length, 6);
-  assert.match(page, /key=\{outputKey \+ "-system-template"\}/);
-  assert.match(page, /key=\{outputKey \+ "-user-template"\}/);
+  assert.equal((page.match(/<ContextTextarea/g) || []).length, 4);
+  assert.match(page, /key=\{outputKey \+ "-combined-template"\}/);
+  assert.match(page, /key=\{outputKey \+ "-combined-message"\}/);
   assert.match(document, /<ContextTextarea/);
   assert.doesNotMatch(page + document, /<textarea/);
   assert.match(page, /key=\{outputKey\} id="context-previous-output"/);

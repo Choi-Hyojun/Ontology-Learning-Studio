@@ -7,14 +7,20 @@ import type { MethodKey, RunRecord } from "./session-log";
 
 export function editStageOutput(method: MethodKey, stageId: string, content: string,
   values: PromptValues, outputs: Record<string, string>, records: Record<string, RunRecord>, mode: ValidationMode = "strict"): RunRecord {
-  const record = records[method + "-" + stageId];
-  if (!record) throw new Error("먼저 이전 단계를 실행하세요.");
   if (!content.trim()) throw new Error("출력 내용을 비워 둘 수 없습니다.");
+  const at = new Date().toISOString();
+  const record: RunRecord = records[method + "-" + stageId] ?? {
+    request: { system: "", user: "" },
+    response: { object: "manual.input", model: "user-input/no-api", manualInput: true,
+      choices: [{ index: 0, message: { role: "user", content }, finish_reason: "manual" }],
+      usage: { prompt_tokens: 0, completion_tokens: 0 } },
+    startedAt: at, completedAt: at, ontology: null,
+  };
   const warnings = method === "yonsei" ? assessYonseiOutput(stageId, content, values, outputs, mode) : [];
   const previousOntology = ontologyContext(records, outputs, method, stageId, mode);
   if (method === "yonsei") {
     const prerequisite = yonseiPrerequisite(stageId, values, outputs, previousOntology, mode);
-    if (prerequisite) throw new Error(prerequisite);
+    if (prerequisite && mode !== "exploratory") throw new Error(prerequisite);
   }
   let yonseiTrace: GenerationRequest["yonseiTrace"];
   if (method === "yonsei" && Number(stageId) >= 8 && !yonseiPrerequisite(stageId, values, outputs, previousOntology)) {
