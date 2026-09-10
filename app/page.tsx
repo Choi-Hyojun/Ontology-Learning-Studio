@@ -99,7 +99,8 @@ export default function Home() {
   const [stageIndex, setStageIndex] = useState(0);
   const [runState, setRunState] = useState<RunState>("idle");
   const [engine, setEngine] = useState<Engine>("simulation");
-  const [validationMode, setValidationMode] = useState<ValidationMode>("exploratory");
+  // Keep raw outputs usable; validation problems are surfaced in the error dialog.
+  const validationMode: ValidationMode = "exploratory";
   const [provider, setProvider] = useState<Provider>("openai");
   const [apiCalls, setApiCalls] = useState(0);
   const [issues, setIssues] = useState<ExecutionIssue[]>([]);
@@ -295,6 +296,12 @@ export default function Home() {
         setRecords((current) => ({ ...current, [outputKey]: saved }));
         setHistory((items) => [...items, { at: completedAt, event: "stage_completed", method, stageId: stage.id, data: saved }]);
         setTokenCount((value) => value + response.usage.prompt_tokens + response.usage.completion_tokens);
+        if (warnings.length) {
+          reportIssue(safeIssue(new GenerationError({ code: "OUTPUT_VALIDATION_WARNING",
+            message: warnings.join("\n") + "\n출력 원문은 보존했습니다. 내용을 수정하거나 다음 단계로 직접 이동해 계속할 수 있습니다." }),
+            { method, stageId: stage.id }));
+          return;
+        }
         if (autoAdvance && stageIndex < stages.length - 1) {
           setStageIndex((value) => value + 1);
         }
@@ -366,7 +373,7 @@ export default function Home() {
   const applyPreviousOutput = () => {
     if (busy || !previous || !editingPrevious) return;
     if (editingPrevious.original !== previousOutput) {
-      setPreviousEditError("원래 출력이 변경되었습니다. 취소한 뒤 다시 잠금을 해제하세요."); return;
+      setPreviousEditError("원래 출력이 변경되었습니다. 변경 취소 후 다시 편집하세요."); return;
     }
     if (editingPrevious.value === previousOutput) {
       setPreviousDraft(null); setPreviousEditError(""); return;
@@ -381,8 +388,13 @@ export default function Home() {
       setHistory((items) => [...items, { at: updated.outputEdit!.at, event: "stage_output_edited", method, stageId: previous.id,
         data: { previousOutput, outputEdit: updated.outputEdit, ontology: updated.ontology, validationMode, warnings: updated.warnings } }]);
       setPreviousDraft(null); setPreviousEditError("");
+      if (updated.warnings?.length) reportIssue(safeIssue(new GenerationError({ code: "OUTPUT_VALIDATION_WARNING",
+        message: updated.warnings.join("\n") + "\n수정한 원문은 반영했습니다. 내용을 다시 수정하거나 현재 단계를 실행할 수 있습니다." }),
+        { method, stageId: previous.id }));
     } catch (error) {
-      setPreviousEditError(error instanceof Error ? error.message : "출력을 적용하지 못했습니다.");
+      const message = error instanceof Error ? error.message : "출력을 적용하지 못했습니다.";
+      setPreviousEditError(message);
+      reportIssue(safeIssue(new GenerationError({ code: "OUTPUT_EDIT_ERROR", message }), { method, stageId: previous.id }));
     }
   };
   const restoreAssembly = () => {
@@ -503,7 +515,7 @@ export default function Home() {
     setStageIndex(Number(session.current.stageId) - 1);
     setAutoAdvance(session.current.autoAdvance);
     setEngine(session.current.engine ?? "simulation");
-    setValidationMode(session.current.validationMode ?? "strict");
+    // Older logs can contain a strict-mode preference; it no longer controls this UI.
     setProvider(session.current.provider ?? "openai");
     setApiCalls(session.apiCalls ?? 0);
     setIssues(restoredIssues(session.history)); setErrorOpen(false);
@@ -559,16 +571,6 @@ export default function Home() {
           <label>제공업체 <select value={provider} disabled={engine !== "api" || busy} onChange={(event) => changeEngine("api", event.target.value as Provider)}>
             <option value="openai">GPT · OpenAI</option><option value="anthropic">Claude · Anthropic</option>
           </select></label>
-          <div className="validation-modes" role="radiogroup" aria-label="산출물 검증 모드">
-            {(["exploratory", "strict"] as const).map(mode => <label key={mode}>
-              <input type="radio" name="validation-mode" value={mode} checked={validationMode === mode} disabled={busy}
-                onChange={() => {
-                  setValidationMode(mode); setPreviousEditError("");
-                  setHistory(items => [...items, { at: new Date().toISOString(), event: "validation_mode_changed", method,
-                    data: { validationMode: mode } }]);
-                }} />{mode === "exploratory" ? "탐색 모드" : "엄격 검증"}
-            </label>)}
-          </div>
           <p id="engine-mode-help"><ExecutionStats engine={engine} provider={provider} apiCalls={apiCalls} tokenCount={tokenCount} /></p>
         </div>
         <div className="method-actions">
@@ -615,20 +617,19 @@ export default function Home() {
                 </div>
                 <code>previous_step_content</code>
                 <small>{`STEP ${previous.id} · ${previous.title}`}</small>
-                <div className="previous-output-tools">
-                  {editingPrevious ? <>
-                    <button type="button" className="context-expand" disabled={busy} onClick={applyPreviousOutput}>적용하고 잠금</button>
-                    <button type="button" className="context-expand" onClick={() => { setPreviousDraft(null); setPreviousEditError(""); }}>취소하고 잠금</button>
-                  </> : <button type="button" className="context-expand" aria-label="이전 단계 출력 잠금 해제" title="이전 단계 출력 잠금 해제"
-                    disabled={busy || !previousRecord} onClick={() => {
-                      if (busy || !previousRecord) return;
-                      setPreviousDraft({ key: outputKey, original: previousOutput, value: previousOutput }); setPreviousEditError("");
-                    }}>잠금 해제</button>}
-                </div>
-                <ContextTextarea key={outputKey} id="context-previous-output" label="이전 단계 출력" value={editingPrevious?.value ?? previousOutput} readOnly={!editingPrevious} disabled={busy} rows={7}
-                  onChange={(value) => { if (!busy && editingPrevious) { setPreviousDraft({ ...editingPrevious, value }); setPreviousEditError(""); } }}
+                <ContextTextarea key={outputKey} id="context-previous-output" label="이전 단계 출력" value={editingPrevious?.value ?? previousOutput} readOnly={false} disabled={busy || !previousRecord} rows={7}
+                  onChange={(value) => {
+                    if (busy || !previousRecord) return;
+                    setPreviousDraft(value === previousOutput ? null : { key: outputKey, original: editingPrevious?.original ?? previousOutput, value });
+                    setPreviousEditError("");
+                  }}
                   descriptionId="previous-output-help"
                   placeholder="이전 단계를 실행하면 출력이 이곳에 표시됩니다." />
+                {editingPrevious && <div className="previous-output-tools">
+                  <button type="button" className="context-expand" disabled={busy} onClick={applyPreviousOutput}>변경 적용</button>
+                  <button type="button" className="context-expand" onClick={() => { setPreviousDraft(null); setPreviousEditError(""); }}>변경 취소</button>
+                </div>}
+                {editingPrevious && <small>변경 적용 후 다음 실행에 반영됩니다. 현재 단계와 이후 결과 및 Yonsei Few-shot은 초기화됩니다.</small>}
                 {editingPrevious && previousEditError && <small className="previous-output-error" role="alert">{previousEditError}</small>}
                 {previousRecord?.warnings?.map((warning, index) => <p className="validation-warning" role="status" key={index}>검증 경고: {warning}</p>)}
                 <small id="previous-output-help">

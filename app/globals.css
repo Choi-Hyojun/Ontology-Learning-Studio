@@ -298,8 +298,6 @@ button { color:inherit; }
 .import-actions button:disabled { opacity:.45; cursor:not-allowed; }
 .import-actions button:focus-visible { outline:2px solid var(--green); outline-offset:2px; }
 .engine-controls { display:flex; flex-wrap:wrap; align-items:center; gap:8px 18px; min-width:0; flex:1; font-size:13px; }
-.validation-modes { display:flex; flex-wrap:wrap; gap:8px 14px; }
-.validation-modes input { margin:0 6px 0 0; accent-color:var(--ink); }
 .validation-warning { margin:8px 0; padding:8px 12px; border-left:3px solid var(--muted); color:var(--ink); background:var(--surface); font-size:12px; line-height:1.6; overflow-wrap:anywhere; }
 .engine-controls label { display:flex; min-width:0; max-width:100%; align-items:center; white-space:nowrap; }
 .engine-controls p { flex-basis:100%; color:var(--muted); margin:0; font-size:11px; line-height:1.5; }

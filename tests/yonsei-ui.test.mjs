@@ -310,26 +310,25 @@ function pageHarness(options = {}) {
   };
 }
 
-test("previous output starts locked; drafts cancel cleanly and applied edits feed the next request", async () => {
+test("previous output is always editable; drafts cancel cleanly and applied edits feed the next request", async () => {
   const h = pageHarness(); h.selectYonsei(); h.useApi();
   h.run(); const first = h.startTimers(); h.respond(0, "ORIGINAL SPECIFICATION"); await first; h.render();
   h.navigate("02");
   const field = () => h.one(node => node.props?.id === "context-previous-output");
   const click = text => { h.one(node => node.type === "button" && node.props.children === text).props.onClick(); h.render(); };
-  assert.equal(field().props.readOnly, true);
-  click("잠금 해제");
   assert.equal(field().props.readOnly, false);
+  assert.doesNotMatch(read("page.tsx"), /잠금 해제|적용하고 잠금|취소하고 잠금|name="validation-mode"/);
   field().props.onChange("DISCARDED DRAFT"); h.render();
   h.run(); await h.startTimers();
   assert.equal(h.requests.length, 1, "An unapplied draft blocks stage execution");
   assert.equal(h.save().currentOutputs["yonsei-01"], "ORIGINAL SPECIFICATION");
-  click("취소하고 잠금");
+  click("변경 취소");
   assert.equal(field().props.value, "ORIGINAL SPECIFICATION");
-  assert.equal(field().props.readOnly, true);
+  assert.equal(field().props.readOnly, false);
   h.panel().props.onResultChange("STALE FEW-SHOT"); h.render();
-  click("잠금 해제"); field().props.onChange("EDITED SPECIFICATION"); h.render();
-  click("적용하고 잠금");
-  assert.equal(field().props.readOnly, true);
+  field().props.onChange("EDITED SPECIFICATION"); h.render();
+  click("변경 적용");
+  assert.equal(field().props.readOnly, false);
   assert.equal(field().props.value, "EDITED SPECIFICATION");
   assert.equal(h.panel().props.result, "");
   const log = h.save();
@@ -340,41 +339,41 @@ test("previous output starts locked; drafts cancel cleanly and applied edits fee
   assert.match(h.requests[1].input.messages.user, /EDITED SPECIFICATION/);
   assert.doesNotMatch(h.requests[1].input.messages.user, /ORIGINAL SPECIFICATION/);
   h.respond(1, "SECOND OUTPUT"); await second; h.render();
-  click("잠금 해제"); field().props.onChange("REVISED SPECIFICATION"); h.render(); click("적용하고 잠금");
+  field().props.onChange("REVISED SPECIFICATION"); h.render(); click("변경 적용");
   assert.equal(h.save().currentRecords["yonsei-02"], undefined);
   assert.equal(h.save().currentOutputs["yonsei-02"], undefined);
-  click("잠금 해제"); h.navigate("03"); h.navigate("02");
-  assert.equal(field().props.readOnly, true);
+  field().props.onChange("UNAPPLIED DRAFT"); h.render(); h.navigate("03"); h.navigate("02");
+  assert.equal(field().props.readOnly, false);
+  assert.equal(field().props.value, "REVISED SPECIFICATION");
 });
 
-test("validation mode switches without clearing outputs, persists, and gates raw CQ edits and execution", async () => {
+test("JSON errors open a popup, preserve raw generated and edited output, and allow subsequent execution", async () => {
   const h = pageHarness({ yonsei: { assessYonseiOutput, yonseiPrerequisite, resolveYonseiContext, yonseiPipelineContext } });
   h.selectYonsei(); h.useApi();
-  const mode = value => h.one(node => node.type === "input" && node.props.name === "validation-mode" && node.props.value === value);
-  const selectMode = value => { mode(value).props.onChange(); h.render(); };
-  assert.equal(mode("exploratory").props.checked, true);
+  const dialog = () => h.one(node => node.type?.name === "ErrorLogDialog");
   for (const id of ["01", "02", "03"]) {
     h.navigate(id); h.run(); const pending = h.startTimers();
-    assert.equal(mode("strict").props.disabled, true);
     const index = h.requests.length - 1;
     assert.equal(h.requests[index].input.validationMode, "exploratory");
     h.respond(index, "RAW OUTPUT " + id); await pending; h.render();
   }
   assert.ok(h.save().currentRecords["yonsei-03"].warnings.length);
-  h.navigate("04"); selectMode("strict");
-  h.run(); await h.startTimers(); h.render();
+  assert.match(dialog().props.issues.at(-1).message, /JSON/);
+  assert.equal(h.save().current.runState, "paused");
+  dialog().props.onClose(); h.render();
+  h.navigate("04");
   assert.equal(h.requests.length, 3);
   assert.equal(h.save().currentOutputs["yonsei-03"], "RAW OUTPUT 03");
-  h.one(node => node.props?.["aria-label"] === "이전 단계 출력 잠금 해제").props.onClick(); h.render();
-  h.one(node => node.props?.id === "context-previous-output").props.onChange("CQ1: Which games?"); h.render();
-  const apply = () => { h.one(node => node.type === "button" && node.props.children === "적용하고 잠금").props.onClick(); h.render(); };
+  h.one(node => node.props?.id === "context-previous-output").props.onChange('{"cqs": ['); h.render();
+  const apply = () => { h.one(node => node.type === "button" && node.props.children === "변경 적용").props.onClick(); h.render(); };
   apply();
   assert.equal(h.one(node => node.props?.id === "context-previous-output").props.readOnly, false);
-  selectMode("exploratory"); apply();
-  assert.equal(h.one(node => node.props?.id === "context-previous-output").props.readOnly, true);
+  assert.match(dialog().props.issues.at(-1).message, /JSON/);
+  assert.equal(h.save().currentOutputs["yonsei-03"], '{"cqs": [');
+  dialog().props.onClose(); h.render();
   assert.equal(h.save().current.validationMode, "exploratory");
   h.run(); const pending = h.startTimers();
-  assert.match(h.requests[3].input.messages.user, /CQ1: Which games\?/);
+  assert.ok(h.requests[3].input.messages.user.includes('{"cqs": ['));
   h.respond(3, "Class: Game"); await pending; h.render();
   const saved = h.save();
   assert.equal(saved.currentOutputs["yonsei-04"], "Class: Game");
@@ -382,12 +381,31 @@ test("validation mode switches without clearing outputs, persists, and gates raw
   assert.equal(saved.currentRecords["yonsei-04"].ontology, null);
 });
 
+test("automatic execution pauses on JSON errors without dropping output or automatically retrying", async () => {
+  const h = pageHarness({ yonsei: { assessYonseiOutput, yonseiPrerequisite, resolveYonseiContext, yonseiPipelineContext } });
+  h.selectYonsei(); h.useApi();
+  for (const id of ["01", "02"]) {
+    h.navigate(id); h.run(); const pending = h.startTimers();
+    h.respond(h.requests.length - 1, "Specification " + id); await pending; h.render();
+  }
+  h.navigate("03"); h.panel().props.onResultChange("Reviewed example"); h.render();
+  h.autoAdvance(); h.run(); const pending = h.startTimers();
+  h.respond(2, '{"cqs":'); await pending; h.render();
+  const log = h.save();
+  assert.equal(log.currentOutputs["yonsei-03"], '{"cqs":');
+  assert.equal(log.current.runState, "paused");
+  assert.equal(log.current.stageId, "03");
+  assert.match(h.one(node => node.type?.name === "ErrorLogDialog").props.issues.at(-1).message, /JSON/);
+  await h.startTimers(); h.render();
+  assert.equal(h.requests.length, 3);
+});
+
 test("invalid previous-output edits leave results intact and stay editable", async () => {
   const h = pageHarness(); h.selectYonsei(); h.useApi();
   h.run(); const executing = h.startTimers(); h.respond(0, "VALID OUTPUT"); await executing; h.render(); h.navigate("02");
-  h.one(node => node.props?.["aria-label"] === "이전 단계 출력 잠금 해제").props.onClick(); h.render();
   h.one(node => node.props?.id === "context-previous-output").props.onChange("  "); h.render();
-  h.one(node => node.type === "button" && node.props.children === "적용하고 잠금").props.onClick(); h.render();
+  h.one(node => node.type === "button" && node.props.children === "변경 적용").props.onClick(); h.render();
+  assert.match(h.one(node => node.type?.name === "ErrorLogDialog").props.issues.at(-1).message, /비워/);
   assert.match(h.one(node => node.props?.role === "alert").props.children, /비워/);
   assert.equal(h.one(node => node.props?.id === "context-previous-output").props.readOnly, false);
   assert.equal(h.save().currentOutputs["yonsei-01"], "VALID OUTPUT");
