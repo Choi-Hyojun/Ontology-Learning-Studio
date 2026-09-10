@@ -42,11 +42,12 @@ export function CopyButton({ value, label }: { value: string; label: string }) {
 type ContextTextareaProps = {
   id: string; label: string; value: string; rows?: number; placeholder?: string;
   disabled?: boolean; readOnly?: boolean; descriptionId?: string;
+  showTools?: boolean;
   onChange?: (value: string) => void;
 };
 
 export function ContextTextarea({ id, label, value, rows = 5, placeholder, disabled = false,
-  readOnly = false, descriptionId, onChange }: ContextTextareaProps) {
+  readOnly = false, descriptionId, onChange, showTools = true }: ContextTextareaProps) {
   const [expanded, setExpanded] = useState(false);
   const locked = disabled || readOnly || !onChange;
 
@@ -54,12 +55,12 @@ export function ContextTextarea({ id, label, value, rows = 5, placeholder, disab
     <textarea id={id} aria-label={label} aria-describedby={descriptionId} value={value}
       rows={rows} placeholder={placeholder} disabled={disabled} readOnly={readOnly || !onChange}
       onChange={(event) => onChange?.(event.target.value)} />
-    <div className="context-textarea-tools">
+    {showTools && <div className="context-textarea-tools">
       <button type="button" className="context-expand" aria-label={`${label} 크게 보기`}
         aria-haspopup="dialog" onClick={() => setExpanded(true)}>크게 보기 ↗</button>
       <CopyButton value={value} label={label} />
-    </div>
-    {expanded && <ExpandedTextDialog label={label} value={value} readOnly={locked}
+    </div>}
+    {showTools && expanded && <ExpandedTextDialog label={label} value={value} readOnly={locked}
       onApply={onChange} onClose={() => setExpanded(false)} />}
   </div>;
 }

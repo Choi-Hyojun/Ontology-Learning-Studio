@@ -7,13 +7,14 @@ import ts from "typescript";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { clearFewShots } from "../app/few-shot-state.ts";
+import { withoutFewShotInputs } from "../app/few-shot-template.ts";
 import { assemblePrompt, promptTemplateMessages, simulateCompletion } from "../app/prompt-model.ts";
 import { promptDisplay, splitPromptDisplay } from "../app/prompt-display.ts";
 import { invalidateStageResults, removeNeonMetrics } from "../app/session-log.ts";
 import { editStageOutput } from "../app/output-edit.ts";
 import { ontologyContext } from "../app/project-files.ts";
 import { completionProvider } from "../app/execution-model.ts";
-import { assessYonseiOutput, yonseiPrerequisite, resolveYonseiContext, yonseiPipelineContext } from "../app/yonsei-model.ts";
+import { assessYonseiOutput, fewShotInstruction, fewShotMessages, yonseiDefaults, yonseiDefinitions, yonseiPrerequisite, resolveYonseiContext, yonseiPipelineContext } from "../app/yonsei-model.ts";
 
 const read = name => readFileSync(new URL("../app/" + name, import.meta.url), "utf8");
 function load(name, overrides = {}, globals = {}) {
@@ -29,10 +30,10 @@ function findAll(node, predicate) {
   if (!node || typeof node !== "object") return [];
   return [...(predicate(node) ? [node] : []), ...[node.props?.children].flat(Infinity).flatMap(child => findAll(child, predicate))];
 }
-const { ContextTextarea } = load("context-textarea.tsx");
+const { ContextTextarea, CopyButton } = load("context-textarea.tsx");
 const { PromptEditorDialog } = load("prompt-editor-dialog.tsx");
 const { ParameterHelp } = load("parameter-help.tsx");
-const previewModules = { "./context-textarea": { ContextTextarea }, "./prompt-editor-dialog": { PromptEditorDialog }, "./prompt-display": { promptDisplay, splitPromptDisplay } };
+const previewModules = { "./context-textarea": { ContextTextarea, CopyButton }, "./prompt-editor-dialog": { PromptEditorDialog }, "./prompt-display": { promptDisplay, splitPromptDisplay }, "./few-shot-template.ts": { withoutFewShotInputs } };
 const { FewShotPromptPreview } = load("few-shot-prompt-preview.tsx", previewModules);
 const { FewShotPanel } = load("few-shot-panel.tsx", {
   "./context-textarea": { ContextTextarea }, "./parameter-help": { ParameterHelp },
@@ -40,6 +41,7 @@ const { FewShotPanel } = load("few-shot-panel.tsx", {
 });
 const panelProps = {
   stageId: "03", prompt: "Generate CQ examples from {domain_description}", result: "",
+  getInstruction: () => "Generate CQ examples from [ACTUAL INPUT OMITTED]",
   running: false, disabled: false, simulation: false, prerequisite: "", manual: false,
   preview: { getMessages: () => ({ system: "Synthetic examples", user: "Current stage" }), targetTemplate: "Stage {domain_name}" },
   onPromptChange() {}, onResultChange() {}, onGenerate() {}, onCancel() {},
@@ -58,6 +60,17 @@ const previewDialog = tree => findAll(tree, node => node.type === PromptEditorDi
 const previewFields = dialog => findAll(dialog, node => node.type === ContextTextarea);
 const previewToggle = dialog => findAll(dialog, node => node.type === "button")[0];
 
+function assertPromptToolbar(dialog, field) {
+  const toolbar = findAll(dialog, node => node.props?.className === "prompt-editor-actions")[0];
+  assert.ok(toolbar);
+  const children = [toolbar.props.children].flat(Infinity).filter(Boolean);
+  assert.equal(children[0].type, CopyButton);
+  assert.equal(children[0].props.value, field.props.value);
+  assert.equal(children[1].props.className, "prompt-toggle");
+  assert.equal(findAll(dialog, node => node.type === CopyButton).length, 1);
+  assert.equal(field.props.showTools, false);
+}
+
 test("few-shot preview shows both complete API messages in one shared-layout field", () => {
   const render = previewHarness();
   let calls = 0;
@@ -73,6 +86,7 @@ test("few-shot preview shows both complete API messages in one shared-layout fie
   assert.equal(previewFields(dialog).length, 1);
   assert.equal(combined.props.value, promptDisplay(messages).text);
   assert.equal(combined.props.rows, 26);
+  assertPromptToolbar(dialog, combined);
   for (const field of [combined]) {
     assert.equal(field.props.readOnly, true);
     assert.equal(field.props.onChange, undefined);
@@ -88,10 +102,13 @@ test("few-shot preview shows both complete API messages in one shared-layout fie
   assert.equal((html.match(/<textarea/g) ?? []).length, 1);
   assert.match(html, /System\/User 메시지/);
   assert.match(html, /전체 복사/);
+  assert.doesNotMatch(html, /크게 보기|context-textarea-tools|aria-haspopup/);
+  assert.ok(html.indexOf('class="context-expand copy-button"') < html.indexOf('class="prompt-toggle"'));
   assert.doesNotMatch(html, /편집 내용은 즉시 반영/);
   messages.user = "Updated document";
   dialog = previewDialog(render(props));
   assert.equal(previewFields(dialog)[0].props.value, promptDisplay(messages).text);
+  assertPromptToolbar(dialog, previewFields(dialog)[0]);
   dialog.props.onClose();
   assert.equal(previewDialog(render(props)), undefined);
 });
@@ -111,9 +128,12 @@ test("few-shot template preview preserves placeholders and includes instruction 
   const source = JSON.parse(read("yonsei-prompts.json"));
   assert.equal(previewFields(dialog).length, 1);
   const combinedTemplate = previewFields(dialog)[0].props.value;
+  assertPromptToolbar(dialog, previewFields(dialog)[0]);
+  assert.doesNotMatch(renderToStaticMarkup(dialog), /크게 보기|context-textarea-tools/);
   assert.ok(combinedTemplate.startsWith(promptDisplay({ system: source.few_shot.system, user: source.few_shot.context_template }).text));
   assert.ok(combinedTemplate.includes(props.instruction));
-  assert.ok(combinedTemplate.endsWith(props.targetTemplate));
+  assert.ok(combinedTemplate.endsWith('Output JSON {"cqs":[]} using'));
+  assert.doesNotMatch(combinedTemplate, /\{few_shot_03\}/);
   for (const field of previewFields(dialog)) assert.equal(field.props.readOnly, true);
   assert.equal(dialog.props.readOnly, true);
   assert.equal(previewToggle(dialog).props["aria-pressed"], true);
@@ -136,6 +156,7 @@ test("few-shot preview reports assembly failures locally and remains closable", 
   assert.match(alert.props.children, /프롬프트를 조립할 수 없습니다/);
   assert.match(alert.props.children, /Missing context/);
   assert.equal(previewFields(dialog).length, 0);
+  assert.equal(findAll(dialog, node => node.type === CopyButton)[0].props.value, "");
   dialog.props.onClose();
   assert.equal(previewDialog(render(props)), undefined);
 });
@@ -164,7 +185,7 @@ test("simulation generator is explicitly mock-only while API generator has separ
   for (const simulation of [false, true]) {
     let calls = 0;
     const tree = FewShotPanel({ ...panelProps, simulation, onGenerate: () => calls++ });
-    const [button] = findAll(tree, node => node.type === "button");
+    const [button] = findAll(tree, node => node.props?.className === "few-shot-generate");
     assert.equal(button.props.children, simulation ? "Few-shot 모의 생성" : "LLM으로 Few-shot 생성");
     assert.equal(button.props.disabled, false);
     button.props.onClick();
@@ -177,7 +198,7 @@ test("simulation generator is explicitly mock-only while API generator has separ
 test("busy, missing prerequisites and manual mode gate generation without hiding popup inspection", () => {
   for (const patch of [{ disabled: true }, { prerequisite: "STEP 02를 실행하세요." }, { manual: true }]) {
     const tree = FewShotPanel({ ...panelProps, ...patch });
-    const [button] = findAll(tree, node => node.type === "button");
+    const [button] = findAll(tree, node => node.props?.className === "few-shot-generate");
     assert.equal(button.props.disabled, true);
     const editors = findAll(tree, node => node.type === ContextTextarea);
     assert.equal(editors.length, 2);
@@ -192,7 +213,7 @@ test("busy, missing prerequisites and manual mode gate generation without hiding
 test("running few-shot generator exposes cancellation and locks both editors", () => {
   let cancelled = 0;
   const tree = FewShotPanel({ ...panelProps, running: true, disabled: true, onCancel: () => cancelled++ });
-  const [button] = findAll(tree, node => node.type === "button");
+  const [button] = findAll(tree, node => node.props?.className === "few-shot-generate");
   assert.equal(button.props.children, "생성 중지");
   assert.notEqual(button.props.disabled, true);
   button.props.onClick();
@@ -201,16 +222,42 @@ test("running few-shot generator exposes cancellation and locks both editors", (
   assert.match(renderToStaticMarkup(tree), /응답을 기다리고 있습니다/);
 });
 
-test("few-shot prompt and result changes have distinct callbacks and preserve supplied text", () => {
+test("few-shot result stays editable without mutating the displayed generation instruction", () => {
   const writes = [];
-  const tree = FewShotPanel({ ...panelProps,
+  const props = { ...panelProps,
     onPromptChange: value => writes.push(["prompt", value]), onResultChange: value => writes.push(["result", value]),
-  });
+  };
+  const tree = FewShotPanel(props);
   const [prompt, result] = findAll(tree, node => node.type === ContextTextarea);
-  const longText = "문단\n{domain_description}\n".repeat(2000);
-  prompt.props.onChange(longText);
+  assert.equal(prompt.props.value, props.getInstruction());
+  assert.equal(prompt.props.readOnly, true);
   result.props.onChange('{"examples":["preserve this"]}');
-  assert.deepEqual(writes, [["prompt", longText], ["result", '{"examples":["preserve this"]}']]);
+  assert.deepEqual(writes, [["result", '{"examples":["preserve this"]}']]);
+});
+
+test("inline instructions follow domain settings without a variable-template editing button", () => {
+  let values = { ...yonseiDefaults(), domain_name: "Books", few_shot_prompt_02: "Examples for {domain_name}; count {cq_count}; step {stage_id}" };
+  const props = () => ({ ...panelProps, stageId: "02", prompt: values.few_shot_prompt_02,
+    getInstruction: () => fewShotInstruction("02", values),
+    onPromptChange: value => { values = { ...values, few_shot_prompt_02: value }; },
+  });
+  const field = tree => findAll(tree, node => node.props?.id === "few-shot-prompt")[0];
+  let tree = FewShotPanel(props());
+  assert.equal(field(tree).props.value, "Examples for Books; count 50; step 02");
+  assert.equal(field(tree).props.readOnly, true);
+  assert.equal(field(tree).props.onChange, undefined);
+  assert.doesNotMatch(renderToStaticMarkup(tree), /변수 양식 편집|적용된 프롬프트 보기/);
+  assert.equal(findAll(tree, node => node.type === FewShotPromptPreview).length, 1);
+  values = { ...values, domain_name: "Games" }; tree = FewShotPanel(props());
+  assert.equal(field(tree).props.value, "Examples for Games; count 50; step 02");
+  assert.equal(values.few_shot_prompt_02, "Examples for {domain_name}; count {cq_count}; step {stage_id}");
+  assert.ok(fewShotMessages("02", values, {}, "").user.endsWith(field(tree).props.value));
+});
+
+test("instruction preview errors are visible and do not silently show an unresolved template", () => {
+  const tree = FewShotPanel({ ...panelProps, getInstruction: () => { throw new Error("Invalid stage"); } });
+  assert.match(renderToStaticMarkup(tree), /생성 지시문을 조립할 수 없습니다.*Invalid stage/);
+  assert.equal(findAll(tree, node => node.props?.id === "few-shot-prompt")[0].props.value, "");
 });
 
 test("few-shot invalidation clears only generated results strictly after the preserved stage boundary", () => {
@@ -276,6 +323,7 @@ function pageHarness(options = {}) {
     "./prompt-editor-dialog": "PromptEditorDialog",
   };
   const doubles = Object.fromEntries(Object.entries(componentNames).map(([file, name]) => [file, { [name]: Object.defineProperty(() => null, "name", { value: name }) }]));
+  doubles["./context-textarea"].CopyButton = CopyButton;
   const stageIds = Array.from({ length: 9 }, (_, index) => String(index + 1).padStart(2, "0"));
   const defaults = {
     persona: "Engineer", domain_description: "Document paragraphs", domain_name: "Test domain",
@@ -289,6 +337,7 @@ function pageHarness(options = {}) {
     fields: ["persona", "domain_description", ...(id !== "09" ? [`few_shot_${id}`] : [])],
   }]));
   const yonsei = {
+    fewShotInstruction,
     YONSEI_STAGES: stageIds.map(id => ({ short: id, title: id === "09" ? "Refine" : "Yonsei step " + id, description: "Test stage " + id })),
     yonseiDefaults: () => structuredClone(defaults), yonseiDefinitions: () => structuredClone(definitions),
     resolveYonseiContext: (_id, values) => values,
@@ -449,7 +498,9 @@ test("JSON errors open a popup, preserve raw generated and edited output, and al
   dialog().props.onClose(); h.render();
   assert.equal(h.save().current.validationMode, "exploratory");
   h.run(); const pending = h.startTimers();
-  assert.ok(h.requests[3].input.messages.user.includes('{"cqs": ['));
+  assert.ok(!h.requests[3].input.messages.user.includes('{"cqs": ['));
+  assert.match(h.requests[3].input.messages.user, /CQ IDs\/questions could not be read/);
+  assert.equal(h.save().currentOutputs["yonsei-03"], '{"cqs": [');
   h.respond(3, "Class: Game"); await pending; h.render();
   const saved = h.save();
   assert.equal(saved.currentOutputs["yonsei-04"], "Class: Game");
@@ -525,6 +576,91 @@ test("page preview uses the same current messages as generation without calls or
   const generating = h.panel().props.onGenerate(); h.render();
   assert.deepEqual(h.requests[0].input.messages, messages);
   h.respond(0, "EXAMPLE"); await generating; h.render();
+});
+
+test("real prompt routing reaches preview, manual generation and all automatic API request payloads", async () => {
+  const source = "API_SOURCE_ONLY: Books have titles.";
+  const cq = JSON.stringify({ cqs: [{ id: "CQ1", question: "What title does a book have?", evidence: [{ text: source }] }] });
+  const model = JSON.stringify({ elements: [{ id: "https://example.org/Book", kind: "class", label: "Book", cq_ids: ["CQ1"] }], triples: [] });
+  const ttl = '<https://example.org/Book> a <http://www.w3.org/2002/07/owl#Class> ; <https://example.org/yonsei/relatedCQ> "CQ1" .';
+  const answers = ["Book specification", "Book reuse decisions", cq, model, model, '{"elements":[],"triples":[]}', '{"elements":[],"triples":[]}', ttl, ttl];
+  const h = pageHarness({ yonsei: {
+    yonseiDefaults: () => ({ ...yonseiDefaults(), domain_description: source }), yonseiDefinitions,
+    fewShotMessages, resolveYonseiContext, yonseiPipelineContext, yonseiPrerequisite, assessYonseiOutput,
+  } });
+  h.selectYonsei(); h.useApi();
+  const preview = h.panel().props.preview.getMessages();
+  assert.ok(preview.user.endsWith(h.panel().props.getInstruction()));
+  assert.doesNotMatch(JSON.stringify(preview), /API_SOURCE_ONLY/);
+  assert.doesNotMatch(preview.user, /FEW-SHOT EXAMPLES|\{few_shot_\d+\}/);
+  const manualGeneration = h.panel().props.onGenerate();
+  assert.deepEqual(h.requests[0].input.messages, preview);
+  assert.doesNotMatch(JSON.stringify(h.requests[0].input), /API_SOURCE_ONLY/);
+  assert.match(h.confirmations.at(-1), /실제 원문·CQ 근거·이전 산출물은 자동으로 넣지/);
+  h.respond(0, "HYPOTHETICAL EXAMPLE 01"); await manualGeneration; h.render();
+  h.autoAdvance(); h.run();
+  for (let number = 1; number <= 9; number++) {
+    const id = String(number).padStart(2, "0");
+    if (number >= 2 && number <= 8) {
+      const messages = h.panel().props.preview.getMessages();
+      assert.ok(messages.user.endsWith(h.panel().props.getInstruction()));
+      const generating = h.startTimers(); h.render();
+      const request = h.requests.at(-1);
+      assert.equal(request.input.purpose, "few-shot");
+      assert.doesNotMatch(request.input.messages.user, /FEW-SHOT EXAMPLES|\{few_shot_\d+\}/);
+      assert.deepEqual(request.input.messages, messages);
+      assert.doesNotMatch(JSON.stringify(request.input), /API_SOURCE_ONLY|What title does a book have/);
+      h.respond(h.requests.length - 1, "HYPOTHETICAL EXAMPLE " + id); await generating; h.render();
+    }
+    const executing = h.startTimers();
+    const request = h.requests.at(-1);
+    assert.equal(request.input.stageId, id);
+    assert.notEqual(request.input.purpose, "few-shot");
+    if (number <= 8) assert.ok(request.input.messages.user.includes("HYPOTHETICAL EXAMPLE " + id));
+    assert.doesNotMatch(request.input.messages.user, /###start_previous###/, id);
+    if (number === 2) assert.equal(request.input.messages.user.split(answers[0]).length - 1, 1);
+    if (number === 3) {
+      assert.equal(request.input.messages.user.split(source).length - 1, 1);
+      assert.ok(request.input.messages.user.includes("###start_document###\n" + source + "\n###end_document###"));
+      assert.doesNotMatch(request.input.messages.user, /DOCUMENT PARAGRAPHS|"paragraph_id"\s*:|P0001/);
+    }
+    if (number === 4) assert.equal(request.input.messages.user.split("What title does a book have?").length - 1, 1);
+    if (number === 9) assert.equal(request.input.messages.user.split(ttl).length - 1, 1);
+    if ([1, 3, 9].includes(number)) assert.ok(request.input.messages.user.includes(source), id);
+    else assert.doesNotMatch(JSON.stringify(request.input), /API_SOURCE_ONLY|P0001|\\"evidence\\"/, id);
+    if (number === 9) assert.match(request.input.messages.user, /mapped[\s\S]*https:\/\/example.org\/Book/);
+    if (number >= 8) {
+      const response = simulateCompletion(request.input.messages, answers[number - 1]);
+      delete response.simulation; response.execution = { provider: "openai", requestId: "routing-" + id };
+      request.resolve({ response, ontology: ttl });
+    } else h.respond(h.requests.length - 1, answers[number - 1]);
+    await executing; h.render();
+  }
+  await h.startTimers();
+  const log = h.save();
+  assert.equal(log.current.runState, "done");
+  assert.equal(log.currentOutputs["yonsei-03"], cq);
+  assert.equal(Object.hasOwn(JSON.parse(log.currentOutputs["yonsei-03"]).cqs[0].evidence[0], "paragraph_id"), false);
+  assert.equal(log.valuesByMethod.yonsei.domain_description, source);
+  assert.equal(h.requests.length, 17);
+});
+
+test("Yonsei step 02 template popup and execution both show only one accepted specification", async () => {
+  const h = pageHarness({ yonsei: { yonseiDefinitions, yonseiDefaults, resolveYonseiContext, yonseiPipelineContext } });
+  h.selectYonsei(); h.useApi(); h.navigate("02");
+  h.one(node => node.props?.id === "context-previous-output").props.onChange("UNIQUE_ACCEPTED_SPECIFICATION"); h.render();
+  h.one(node => node.type === "button" && node.props.children === "변경 적용").props.onClick(); h.render();
+  h.one(node => node.type === "button" && node.props["aria-controls"] === "full-prompt-editor").props.onClick(); h.render();
+  const displayed = h.one(node => node.props?.id === "combined-message").props.value;
+  assert.equal(displayed.split("UNIQUE_ACCEPTED_SPECIFICATION").length - 1, 1);
+  h.one(node => node.type === "button" && node.props.children === "프롬프트 양식 보기").props.onClick(); h.render();
+  const template = h.one(node => node.props?.id === "combined-template").props.value;
+  assert.equal(template.split("{previous_step_content}").length - 1, 1);
+  assert.doesNotMatch(template, /###start_previous###/);
+  h.run(); const executing = h.startTimers();
+  assert.equal(h.requests[0].input.messages.user.split("UNIQUE_ACCEPTED_SPECIFICATION").length - 1, 1);
+  assert.doesNotMatch(h.requests[0].input.messages.user, /###start_previous###/);
+  h.respond(0, "Updated specification"); await executing; h.render();
 });
 
 test("Yonsei page cancellation ignores late few-shot responses and releases the controls", async () => {
@@ -710,10 +846,12 @@ test("all methodologies expose the template switch inside the full-prompt editor
     assert.equal(trigger().props["aria-expanded"], true);
     const popup = h.one(node => node.type?.name === "PromptEditorDialog");
     assert.equal(findAll(popup, node => node.props?.id === "combined-message").length, 1);
+    assertPromptToolbar(popup, h.one(node => node.props?.id === "combined-message"));
     const original = readPrompt(h).user;
     h.one(node => node.type === "button" && node.props.children === "프롬프트 양식 보기").props.onClick(); h.render();
     assert.match(h.one(node => node.props?.id === "combined-template").props.value, /\{persona\}/);
     assert.equal(h.one(node => node.props?.id === "combined-template").props.readOnly, true);
+    assertPromptToolbar(h.one(node => node.type?.name === "PromptEditorDialog"), h.one(node => node.props?.id === "combined-template"));
     h.one(node => node.type === "button" && node.props.children === "전체 프롬프트 보기").props.onClick(); h.render();
     assert.equal(readPrompt(h).user, original);
     assert.equal(h.requests.length, 0);
@@ -727,6 +865,7 @@ test("a combined edit updates both roles atomically and sends no display separat
   h.one(node => node.type === "button" && node.props["aria-controls"] === "full-prompt-editor").props.onClick(); h.render();
   const expected = { system: "Edited system instructions\n", user: '\nEdited user request {"literal":true}' };
   h.one(node => node.props?.id === "combined-message").props.onChange(promptDisplay(expected).text); h.render();
+  assertPromptToolbar(h.one(node => node.type?.name === "PromptEditorDialog"), h.one(node => node.props?.id === "combined-message"));
   assert.deepEqual(h.save().promptOverrides["yonsei-01"], expected);
   h.run(); const executing = h.startTimers();
   assert.deepEqual(h.requests[0].input.messages, expected);

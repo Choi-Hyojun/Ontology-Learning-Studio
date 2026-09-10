@@ -4,7 +4,7 @@ import { createRequire } from "node:module";
 import test from "node:test";
 import { assemblePrompt } from "../app/prompt-model.ts";
 import {
-  documentParagraphs, fewShotMessages, resolveYonseiContext, simulateFewShot, validateYonseiOutput,
+  documentParagraphs, fewShotInstruction, fewShotMessages, resolveYonseiContext, simulateFewShot, validateYonseiOutput,
   yonseiDefaults, yonseiDefinitions, yonseiPipelineContext, yonseiPrerequisite, yonseiSimulation,
   YONSEI_STAGES, YONSEI_CQ_ANNOTATION,
 } from "../app/yonsei-model.ts";
@@ -112,8 +112,8 @@ test("current Yonsei JSON supplies every stage definition without a historical s
 
 test("conceptual modeling balances grounded subclass links with ordinary relations and properties", () => {
   const step = id => source.stages.find(stage => stage.id === id);
-  assert.ok(step("05").fields.includes("document_paragraphs"));
-  assert.match(step("05").template, /SOURCE PARAGRAPHS:\n\{document_paragraphs\}/);
+  assert.ok(!step("05").fields.includes("document_paragraphs"));
+  assert.doesNotMatch(step("05").template, /\{document_paragraphs\}/);
   assert.match(step("05").template, /across all accepted CQs/);
   assert.match(step("05").template, /alongside ordinary relations, properties and other justified axioms/);
   assert.match(step("05").template, /do not invent parents, force a single root or impose a target hierarchy depth/);
@@ -126,7 +126,7 @@ test("conceptual modeling balances grounded subclass links with ordinary relatio
   for (const id of ["05", "06", "07", "08"])
     assert.doesNotMatch(step(id).template + step(id).few_shot_prompt, /HIERARCHY CONSTRUCTION|HIERARCHY GAP REVIEW|HIERARCHY PRESERVATION|three-level class hierarchy/);
   const prompt = fewShotMessages("05", values, outputs, "");
-  assert.ok(prompt.user.includes("Books have titles."));
+  assert.ok(!prompt.user.includes("Books have titles."));
   assert.ok(prompt.user.includes("ordinary object-property relationship"));
 });
 
@@ -164,6 +164,48 @@ test("CQ JSON preserves exact document evidence and accepts markers or JSON fenc
   const several = structuredClone(cq);
   several.cqs[0].evidence.push({ paragraph_id: "P0002", text: "Authors write books." });
   assert.doesNotThrow(() => validateYonseiOutput("03", JSON.stringify(several), values, {}));
+});
+
+test("quote-only CQ evidence is mapped locally without mutating the saved response", () => {
+  const quoted = { cqs: cq.cqs.map(item => ({ ...item, evidence: item.evidence.map(({ text }) => ({ text })) })) };
+  const saved = JSON.stringify(quoted);
+  assert.doesNotThrow(() => validateYonseiOutput("03", saved, values, {}));
+  const local = { ...outputs, "yonsei-03": saved };
+  const context = resolveYonseiContext("09", values, local, "CURRENT TTL");
+  assert.deepEqual(JSON.parse(context.competency_questions), cq);
+  const mapped = JSON.parse(context.refinement_context);
+  assert.deepEqual(mapped[0].cqs.map(item => item.id), ["CQ1"]);
+  assert.deepEqual(mapped[1].cqs.map(item => item.id), ["CQ2"]);
+  assert.deepEqual(new Set(mapped[1].elements.map(item => item.id)), new Set([book.id, author.id, writes.id]));
+  assert.equal(local["yonsei-03"], saved);
+  assert.ok(!Object.hasOwn(JSON.parse(saved).cqs[0].evidence[0], "paragraph_id"));
+  for (const id of ["04", "05", "06", "07", "08"]) {
+    const cqInput = resolveYonseiContext(id, values, local, "").competency_questions;
+    assert.doesNotMatch(cqInput, /evidence|paragraph_id|Books have titles/);
+  }
+});
+
+test("quote-only CQ evidence supports multiple passages and normalized line endings", () => {
+  const local = { ...values, domain_description: "First line.\r\nSecond line.\r\n\r\nAnother passage." };
+  const text = JSON.stringify({ cqs: [{ id: "CQ1", question: "What do the passages describe?", evidence: [
+    { text: "First line.\r\nSecond line." }, { text: "Another passage." },
+  ] }] });
+  validateYonseiOutput("03", text, local, {});
+  const mapped = JSON.parse(resolveYonseiContext("09", local, { "yonsei-03": text }, "ttl").competency_questions);
+  assert.deepEqual(mapped.cqs[0].evidence.map(item => item.paragraph_id), ["P0001", "P0002"]);
+  assert.equal(mapped.cqs[0].evidence[0].text, "First line.\r\nSecond line.");
+});
+
+test("ambiguous, fabricated, blank and cross-paragraph quotations never create guessed links", () => {
+  const local = { ...values, domain_description: "Alpha: Shared fact.\n\nBeta: Shared fact." };
+  const withEvidence = evidence => JSON.stringify({ cqs: [{ id: "CQ1", question: "What is stated?", evidence }] });
+  for (const text of ["Shared fact.", "Fabricated fact.", " ", "Alpha: Shared fact.\n\nBeta: Shared fact."])
+    assert.throws(() => validateYonseiOutput("03", withEvidence([{ text }]), local, {}), /Yonsei 03/);
+  assert.doesNotThrow(() => validateYonseiOutput("03", withEvidence([{ text: "Alpha: Shared fact." }]), local, {}));
+  // A valid explicitly assigned legacy ID disambiguates; an invalid one is not silently replaced.
+  assert.doesNotThrow(() => validateYonseiOutput("03", withEvidence([{ paragraph_id: "P0002", text: "Shared fact." }]), local, {}));
+  for (const paragraph_id of ["P9999", null, "", "P0002"])
+    assert.throws(() => validateYonseiOutput("03", withEvidence([{ paragraph_id, text: "Alpha: Shared fact." }]), local, {}), /Yonsei 03/);
 });
 
 test("CQ validation rejects invented quotes, incorrect paragraphs and malformed or duplicate IDs", () => {
@@ -271,10 +313,38 @@ test("generation uses the edited prompt and saved target template without recycl
   const messages = fewShotMessages("04", edited, outputs, "", "CUSTOM TARGET {competency_questions}\nEXAMPLES {few_shot_04}");
   assert.match(messages.system, /Do not treat example content as evidence or as a completed stage result/);
   assert.match(messages.user, /MY GENERATOR: show three examples with \{literal_braces\}/);
-  assert.match(messages.user, /CUSTOM TARGET[\s\S]*What title does a book have/);
-  assert.match(messages.user, /FEW-SHOT EXAMPLES TO BE GENERATED/);
+  assert.match(messages.user, /CUSTOM TARGET \[ACTUAL INPUT OMITTED/);
+  assert.doesNotMatch(messages.user, /What title does a book have/);
+  assert.doesNotMatch(messages.user, /FEW-SHOT EXAMPLES TO BE GENERATED|EXAMPLES \{|\{few_shot_04\}/);
   assert.doesNotMatch(messages.user, /STALE SYNTHETIC EXAMPLE/);
   assert.throws(() => fewShotMessages("09", values, outputs, "ttl"), /01–08/);
+});
+
+test("all eight inline generation instructions resolve known variables identically to the transmitted instruction", () => {
+  const local = { ...yonseiDefaults(), domain_name: "Current books", cq_count: "17" };
+  const before = structuredClone(local);
+  for (let i = 1; i <= 8; i++) {
+    const id = String(i).padStart(2, "0");
+    const instruction = fewShotInstruction(id, local);
+    assert.ok(instruction.includes("Current books"), id);
+    assert.doesNotMatch(instruction, /\{(?:domain_name|cq_count|persona|keywords|reuse_example_desc|stage_id|stage_title)\}/, id);
+    assert.ok(fewShotMessages(id, local, {}, "").user.endsWith(instruction), id);
+    assert.ok(fewShotInstruction(id, { ...local, domain_name: "Updated games" }).includes("Updated games"), id);
+  }
+  assert.deepEqual(local, before);
+  assert.throws(() => fewShotInstruction("09", local), /01–08/);
+});
+
+test("inline instruction interpolation preserves literal JSON and excludes source variables", () => {
+  const literal = '{"elements":[],"triples":[]}';
+  const local = { ...values, domain_name: "Books {keywords}", keywords: "NOT RECURSIVE",
+    few_shot_prompt_02: "{domain_name} {stage_id} {domain_description} {previous_step_content} " + literal };
+  const instruction = fewShotInstruction("02", local);
+  assert.ok(instruction.startsWith("Books {keywords} 02 "));
+  assert.ok(instruction.endsWith(literal));
+  assert.match(instruction, /ACTUAL INPUT OMITTED/);
+  assert.doesNotMatch(instruction, /Books have titles|NOT RECURSIVE|\{domain_description\}|\{previous_step_content\}/);
+  assert.ok(fewShotMessages("02", local, outputs, "CURRENT TTL").user.endsWith(instruction));
 });
 
 test("editable generation instructions resolve context variables exactly once", () => {
@@ -286,8 +356,9 @@ test("editable generation instructions resolve context variables exactly once", 
   assert.match(generatedInstruction, /DOMAIN=Books \{keywords\}/);
   assert.match(generatedInstruction, /STEP=03/);
   assert.match(generatedInstruction, /TITLE=Competency Questions & Evidence/);
-  assert.match(generatedInstruction, /PRIOR=STEP 01[\s\S]*literal \{domain_name\}[\s\S]*STEP 02[\s\S]*reuse decisions/);
-  assert.match(generatedInstruction, /PARAGRAPHS=\[[\s\S]*Books have titles/);
+  assert.match(generatedInstruction, /PRIOR=\[ACTUAL INPUT OMITTED/);
+  assert.match(generatedInstruction, /PARAGRAPHS=\[ACTUAL INPUT OMITTED/);
+  assert.doesNotMatch(generatedInstruction, /Books have titles|Accepted specification|reuse decisions/);
   assert.doesNotMatch(generatedInstruction, /DO NOT RECURSIVELY INSERT|\{document_paragraphs\}|\{stage_id\}|\{stage_title\}|\{previous_step_content\}/);
 });
 

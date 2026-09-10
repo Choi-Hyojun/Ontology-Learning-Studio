@@ -66,6 +66,26 @@ test("inline inputs expose an accessible popup button even when editing is locke
   }
 });
 
+test("inputs inside a full-prompt dialog omit duplicate tools without changing text editing", () => {
+  const writes = [];
+  const props = { id: "full-prompt", label: "전체 프롬프트", value: "Current full prompt", showTools: false,
+    onChange: value => writes.push(value) };
+  const h = harness("ContextTextarea", props);
+  const tree = h.render();
+  const input = find(tree, node => node.type === "textarea");
+  assert.equal(input.props.value, props.value);
+  assert.equal(input.props.readOnly, false);
+  assert.equal(find(tree, node => node.type === "button" || node.type?.name === "CopyButton"), undefined);
+  input.props.onChange({ target: { value: "Edited full prompt" } });
+  assert.deepEqual(writes, ["Edited full prompt"]);
+  const { ContextTextarea } = load();
+  for (const readOnly of [false, true]) {
+    const html = renderToStaticMarkup(createElement(ContextTextarea, { ...props, readOnly }));
+    assert.match(html, /<textarea/);
+    assert.doesNotMatch(html, /<button|<dialog|크게 보기|전체 복사|context-textarea-tools/);
+  }
+});
+
 test("read-only popup toolbar switches displayed text and copy content inside the same dialog", () => {
   let toggles = 0;
   const props = { label: "Full prompt", value: "Assembled request", readOnly: true, onClose() {},

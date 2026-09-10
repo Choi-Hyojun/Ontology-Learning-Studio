@@ -123,8 +123,9 @@ button { color:inherit; }
 .run-button.done { background:var(--blue); }
 .prompt-section { padding:20px 26px 18px; }
 .subheading { justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:11px; }
-.subheading span { font-size:12px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+.subheading > span { font-size:12px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
 .subheading small { color:var(--muted); font-size:10px; }
+.prompt-editor-actions { display:flex; align-items:center; flex-wrap:wrap; gap:8px; min-width:0; }
 .prompt-cards { display:grid; min-width:0; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
 .prompt-card { min-height:105px; padding:14px; position:relative; border:1px solid var(--line); border-radius:11px; background:var(--surface); }
 .prompt-index { position:absolute; top:11px; right:12px; color:var(--muted); font:18px Georgia,serif; }

@@ -1,5 +1,6 @@
 import source from "./yonsei-prompts.json" with { type: "json" };
 import neon from "./neon-prompts.json" with { type: "json" };
+import { withoutFewShotInputs } from "./few-shot-template.ts";
 import type { PromptMessages, PromptValues } from "./prompt-model";
 import type { ValidationMode } from "./execution-model";
 
@@ -66,10 +67,22 @@ function readCqs(text: string, values: PromptValues): YonseiCQ[] {
       throw new Error("Yonsei 03 단계: 각 CQ에 고유한 CQ1 형식의 ID, question, 비어 있지 않은 evidence가 필요합니다.");
     seen.add(item.id);
     const evidence = item.evidence.map((entry: unknown) => {
-      if (!object(entry) || typeof entry.paragraph_id !== "string" || !nonempty(entry.text)
-        || !paragraphs.get(entry.paragraph_id)?.includes(entry.text))
+      if (!object(entry) || !nonempty(entry.text))
+        throw new Error(`Yonsei 03 단계 ${item.id}: evidence에 비어 있지 않은 원문 인용 text가 필요합니다.`);
+      const quote = entry.text.replace(/\r\n?/g, "\n");
+      // Legacy outputs may carry explicit IDs; validate them, never silently fix
+      // a wrong ID. New requests return quotations only, matched locally.
+      if (Object.hasOwn(entry, "paragraph_id")) {
+        if (typeof entry.paragraph_id !== "string" || !paragraphs.get(entry.paragraph_id)?.includes(quote))
+          throw new Error(`Yonsei 03 단계 ${item.id}: evidence의 문단 ID와 인용문이 현재 문서 원문에 일치하지 않습니다. CQ를 다시 생성하세요.`);
+        return { paragraph_id: entry.paragraph_id, text: entry.text };
+      }
+      const matches = [...paragraphs].filter(([, paragraph]) => paragraph.includes(quote));
+      if (!matches.length)
         throw new Error(`Yonsei 03 단계 ${item.id}: evidence의 문단 ID와 인용문이 현재 문서 원문에 일치하지 않습니다. CQ를 다시 생성하세요.`);
-      return { paragraph_id: entry.paragraph_id, text: entry.text };
+      if (matches.length > 1)
+        throw new Error(`Yonsei 03 단계 ${item.id}: 같은 인용문이 여러 문단에 있습니다. 해당 문단을 구별할 수 있도록 더 긴 원문 인용을 사용하세요.`);
+      return { paragraph_id: matches[0][0], text: entry.text };
     });
     return { id: item.id, question: item.question, evidence };
   });
@@ -118,9 +131,26 @@ function collectElements(outputs: Record<string, string>, cqIds: Set<string>, be
   return [...catalog.values()];
 }
 
+// Projection for model-building requests only. The original CQ output (including
+// evidence) remains in session outputs for validation and the stage 09 join.
+function cqQuestionContext(text: string): string {
+  try {
+    const value = readObject(text, "03");
+    if (!Array.isArray(value.cqs) || value.cqs.some(item => !object(item) || !nonempty(item.id) || !nonempty(item.question))) {
+      throw new Error("Invalid CQ list");
+    }
+    return json({ cqs: value.cqs.map(item => ({ id: item.id, question: item.question })) });
+  } catch {
+    // Never forward malformed raw CQ JSON: it may contain source quotations.
+    return json({ cqs: [], note: "CQ IDs/questions could not be read. Correct the saved stage 03 output. Raw evidence is retained locally, not forwarded here." });
+  }
+}
+
 export function resolveYonseiContext(stageId: string, values: PromptValues, outputs: Record<string, string>, ontology: string, mode: ValidationMode = "strict"): PromptValues {
   const stage = stageNumber(stageId);
-  const paragraphs = documentParagraphs(values.domain_description ?? "");
+  // Stage 03's current template uses the untouched document. Keep the derived
+  // field available for previously saved/user-authored paragraph-based templates.
+  const paragraphs = stage === 3 || stage === 9 ? documentParagraphs(values.domain_description ?? "") : [];
   let cqs: YonseiCQ[] = [], elements: YonseiElement[] = [];
   // Rendering an imported/edited session is safe even if its outputs are invalid.
   // Execution separately calls yonseiPrerequisite and rejects invalid provenance.
@@ -130,20 +160,26 @@ export function resolveYonseiContext(stageId: string, values: PromptValues, outp
   if (cqs.length) {
     try { elements = collectElements(outputs, new Set(cqs.map(cq => cq.id)), stage); } catch { /* No unverified catalog. */ }
   }
-  const refinement = paragraphs.map(paragraph => {
+  const refinement = stage === 9 ? paragraphs.map(paragraph => {
     const related = cqs.filter(cq => cq.evidence.some(entry => entry.paragraph_id === paragraph.paragraph_id));
     const ids = new Set(related.map(cq => cq.id));
     return { ...paragraph, status: related.length ? "mapped" : "no_linked_cq", cqs: related,
       elements: elements.filter(entry => entry.cq_ids.some(id => ids.has(id))) };
-  });
+  }) : [];
   const rawCqs = stage > 3 ? stageOutput(outputs, 3) : "";
   const rawModel = [4, 5, 6, 7].filter(id => id < stage && stageOutput(outputs, id))
     .map(id => "STEP " + String(id).padStart(2, "0") + "\n" + stageOutput(outputs, id)).join("\n\n");
   const fallbackCqs = mode === "exploratory" && !cqs.length && !!rawCqs;
   const fallbackModel = mode === "exploratory" && !elements.length && !!rawModel;
-  return { ...values, document_paragraphs: json(paragraphs), competency_questions: fallbackCqs ? rawCqs : json({ cqs }),
+  return { ...values,
+    domain_description: [1, 3, 9].includes(stage) ? values.domain_description ?? "" : "",
+    document_paragraphs: json(paragraphs),
+    competency_questions: stage >= 4 && stage <= 8
+      ? cqs.length ? json({ cqs: cqs.map(({ id, question }) => ({ id, question })) })
+        : mode === "exploratory" && rawCqs ? cqQuestionContext(rawCqs) : json({ cqs: [] })
+      : fallbackCqs ? rawCqs : json({ cqs }),
     element_catalog: fallbackModel ? rawModel : json({ elements }),
-    refinement_context: fallbackCqs || fallbackModel
+    refinement_context: stage !== 9 ? "[]" : fallbackCqs || fallbackModel
       ? "DOCUMENT PARAGRAPHS\n" + json(paragraphs) + "\n\nUNVERIFIED CQ OUTPUT\n" + rawCqs + "\n\nUNVERIFIED MODEL OUTPUTS\n" + rawModel
       : json(refinement), ontology_snapshot: stage >= 9 ? ontology : "" };
 }
@@ -151,26 +187,47 @@ export function resolveYonseiContext(stageId: string, values: PromptValues, outp
 export function yonseiPipelineContext(stageId: string, outputs: Record<string, string>, ontology: string, previousOutput: string): string {
   const stage = stageNumber(stageId);
   if (stage === 9) return ontology;
+  // Stage 04 also gets the previous output through assemblePrompt's wrapper.
+  // Strip evidence there too, not just in competency_questions.
+  if (stage === 4) return cqQuestionContext(stageOutput(outputs, 3) || previousOutput);
   const sources = stage === 3 ? [1, 2] : stage >= 6 && stage <= 8 ? [5, 6, 7].filter(id => id < stage) : [];
   if (!sources.length) return previousOutput;
   return sources.map(id => stageOutput(outputs, id) ? "STEP " + String(id).padStart(2, "0") + "\n" + stageOutput(outputs, id) : "").filter(Boolean).join("\n\n");
 }
 
-export function fewShotMessages(stageId: string, values: PromptValues, outputs: Record<string, string>, ontology: string, targetTemplate?: string, mode: ValidationMode = "strict"): PromptMessages {
+function fewShotContext(stageId: string, values: PromptValues) {
   const id = stageCode(stageId);
   const definition = source.stages.find(stage => stage.id === id);
   if (!definition || id === "09") throw new Error("Yonsei few-shot 생성은 01–08 단계에서 사용합니다.");
-  const context = resolveYonseiContext(id, values, outputs, ontology, mode);
-  const previous = yonseiPipelineContext(id, outputs, ontology, stageOutput(outputs, Number(id) - 1));
-  const target = fill(targetTemplate ?? definition.template, { ...context, previous_step_content: previous,
-    ["few_shot_" + id]: "[FEW-SHOT EXAMPLES TO BE GENERATED; NOT SOURCE EVIDENCE]" });
-  const generation = fill(values["few_shot_prompt_" + id] ?? definition.few_shot_prompt ?? "", { ...context,
-    previous_step_content: previous, stage_id: id, stage_title: definition.title });
+  // Allowlist only domain-level settings. Do not spread values or resolve actual
+  // stage context: both can carry documents, CQ evidence or past output text.
+  const context: PromptValues = Object.fromEntries(["persona", "domain_name", "keywords", "reuse_example_desc", "cq_count"]
+    .map(key => [key, values[key] ?? ""]));
+  for (const key of ["domain_description", "document_paragraphs", "competency_questions", "element_catalog", "refinement_context", "ontology_snapshot", "previous_step_content"]) {
+    context[key] = "[ACTUAL INPUT OMITTED — generate a hypothetical example instead]";
+  }
+  return { id, definition, context };
+}
+
+// Use the exact same interpolation for the inline preview and API generation.
+// Keep the editable template separate so domain changes still update references.
+export function fewShotInstruction(stageId: string, values: PromptValues): string {
+  const { id, definition, context } = fewShotContext(stageId, values);
+  return fill(withoutFewShotInputs(values["few_shot_prompt_" + id] ?? definition.few_shot_prompt ?? ""), { ...context,
+    stage_id: id, stage_title: definition.title });
+}
+
+export function fewShotMessages(stageId: string, values: PromptValues, _outputs: Record<string, string>, _ontology: string, targetTemplate?: string, _mode: ValidationMode = "strict"): PromptMessages {
+  // Keep the existing caller signature while deliberately excluding these inputs.
+  void _outputs; void _ontology; void _mode;
+  const { id, definition, context } = fewShotContext(stageId, values);
+  const target = fill(withoutFewShotInputs(targetTemplate ?? definition.template), context);
+  const generation = fewShotInstruction(stageId, values);
   // Each template is interpolated once, before insertion into the outer template.
   // Braces inside an inserted document, result or user value remain literal.
   return { system: source.few_shot.system, user: fill(source.few_shot.context_template, { ...context,
     stage_id: id, stage_title: definition.title, stage_template: target,
-    previous_step_content: previous, generation_instruction: generation }) };
+    generation_instruction: generation }) };
 }
 
 export function validateYonseiOutput(stageId: string, text: string, values: PromptValues, outputs: Record<string, string>): void {
@@ -288,7 +345,7 @@ export function yonseiSimulation(stageId: string, values: PromptValues, outputs:
     // This only demonstrates data wiring; the real LLM provides semantic CQs.
     const paragraph = documentParagraphs(values.domain_description)[0];
     content = json({ simulation: true, note: "A single structural CQ demonstrates the schema; no semantic extraction or full CQ coverage was performed.",
-      cqs: [{ id: "CQ1", question: fill(source.simulation.question, { paragraph_id: paragraph.paragraph_id }), evidence: [paragraph] }] });
+      cqs: [{ id: "CQ1", question: source.simulation.question, evidence: [{ text: paragraph.text }] }] });
   }
   if (stage === 4) content = json({ simulation: true, ...simulationModel(values, outputs) });
   if (stage === 5) content = json({ simulation: true, ...readModel(stageOutput(outputs, 4), "04", new Set(readCqs(stageOutput(outputs, 3), values).map(cq => cq.id))) });

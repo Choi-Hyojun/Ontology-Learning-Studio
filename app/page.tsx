@@ -13,7 +13,7 @@ import { editStageOutput } from "./output-edit";
 import { FewShotPanel } from "./few-shot-panel";
 import { clearFewShots } from "./few-shot-state";
 import { YONSEI_STAGES, yonseiDefaults, yonseiDefinitions, resolveYonseiContext, yonseiPipelineContext,
-  fewShotMessages, simulateFewShot, yonseiSimulation, assessYonseiOutput, yonseiPrerequisite } from "./yonsei-model";
+  fewShotInstruction, fewShotMessages, simulateFewShot, yonseiSimulation, assessYonseiOutput, yonseiPrerequisite } from "./yonsei-model";
 import { ParameterHelp } from "./parameter-help";
 import { ExecutionStats } from "./execution-stats";
 import { FIELD_LABELS, STAGE_HELP, fieldHelp } from "./stage-help";
@@ -169,13 +169,13 @@ export default function Home() {
     const context = method === "yonsei" ? yonseiPipelineContext(stage.id, outputs, previousOntology, previousOutput)
       : pipelineContext(method, stage.id, outputs, previousOntology, previousOutput);
     const result = assemblePrompt(template, effectiveValues, context);
-    const format = promptTemplateMessages(template, !!context);
-    if (method === "tao" && previousOntology && !definition.fields.includes("ontology_snapshot")) {
+    const format = promptTemplateMessages(template, context, effectiveValues);
+    if (method === "tao" && previousOntology && !template.includes("{ontology_snapshot}") && !result.user.includes(previousOntology)) {
       result.user += "\n\nCURRENT FULL ONTOLOGY SNAPSHOT:\n" + previousOntology;
       format.user += "\n\nCURRENT FULL ONTOLOGY SNAPSHOT:\n{ontology_snapshot}";
     }
     return { assembled: result, messageTemplate: format };
-  }, [template, effectiveValues, previousOutput, previousOntology, method, stage.id, outputs, definition.fields]);
+  }, [template, effectiveValues, previousOutput, previousOntology, method, stage.id, outputs]);
   const manual = overrides[outputKey];
   const messages = manual ?? assembled;
   const displayedMessages = promptDisplay(messages);
@@ -460,7 +460,7 @@ export default function Home() {
     if (busy || editingPrevious || fewShotController.current || !hasFewShot || manual) return;
     if (prerequisite) { setNotice(prerequisite); return; }
     if (!values[generatorKey]?.trim()) { setNotice("Few-shot 생성 프롬프트를 입력하세요."); return; }
-    if (engine === "api" && !window.confirm(`${provider === "openai" ? "GPT" : "Claude"} API로 Few-shot 예시를 생성합니다. 프롬프트와 입력 문서가 외부로 전송되고 비용이 발생할 수 있습니다. 현재 단계 실행은 별도 호출입니다. 생성할까요?`)) return;
+    if (engine === "api" && !window.confirm(`${provider === "openai" ? "GPT" : "Claude"} API로 Few-shot 예시를 생성합니다. 도메인 설정·단계 양식·생성 지시문이 외부로 전송되고 비용이 발생할 수 있습니다. 실제 원문·CQ 근거·이전 산출물은 자동으로 넣지 않지만, 직접 붙인 텍스트는 전송됩니다. 현재 단계 실행은 별도 호출입니다. 생성할까요?`)) return;
     const controller = new AbortController();
     let request: PromptMessages;
     try { request = fewShotMessages(stage.id, values, outputs, previousOntology, definition.template, validationMode); }
@@ -672,6 +672,7 @@ export default function Home() {
               </div>)}
             </div>
             {hasFewShot && <FewShotPanel key={outputKey} stageId={stage.id} prompt={values[generatorKey] ?? ""} result={values[fewShotKey] ?? ""}
+              getInstruction={() => fewShotInstruction(stage.id, values)}
               preview={{ getMessages: () => fewShotMessages(stage.id, values, outputs, previousOntology, definition.template, validationMode), targetTemplate: definition.template }}
               running={fewShotRunning} disabled={runState === "running" || !!editingPrevious} simulation={engine === "simulation"} prerequisite={prerequisite} manual={!!manual}
               onPromptChange={(value) => editFewShot(generatorKey, value)} onResultChange={(value) => editFewShot(fewShotKey, value)}
@@ -679,6 +680,9 @@ export default function Home() {
             </div>
             {editorOpen && <PromptEditorDialog key={outputKey} stageLabel={`STEP ${stage.id} · ${stage.title}`} onClose={() => setEditorOpen(false)}>
               <div className="subheading"><span>{templateViewKey === outputKey ? "프롬프트 양식 · 읽기 전용" : manual ? "직접 편집" : "변수에서 자동 조립"}</span>
+                <div className="prompt-editor-actions">
+                <CopyButton value={templateViewKey === outputKey ? promptDisplay(messageTemplate).text : displayedMessages.text}
+                  label={templateViewKey === outputKey ? "전체 프롬프트 양식" : "전체 프롬프트"} />
                 <button type="button" className="prompt-toggle" aria-pressed={templateViewKey === outputKey}
                   onClick={() => setTemplateViewKey(templateViewKey === outputKey ? null : outputKey)}>
                   {templateViewKey === outputKey ? "전체 프롬프트 보기" : "프롬프트 양식 보기"}
@@ -686,18 +690,19 @@ export default function Home() {
                 {templateViewKey !== outputKey &&
                 <button type="button" className="prompt-toggle" disabled={!manual || busy} onClick={restoreAssembly}>변수로 다시 조립</button>
                 }
+                </div>
               </div>
               {templateViewKey === outputKey ? <>
                 <p className="context-help">변수 치환 전 자동 조립 양식입니다. 보기를 전환해도 편집한 전체 메시지는 유지됩니다. 직접 편집 모드에서는 이 양식이 아닌 수정한 전체 메시지가 전송됩니다.</p>
                 <label htmlFor="combined-template">전체 프롬프트 양식 · 출력 형식 포함</label>
-                <ContextTextarea key={outputKey + "-combined-template"} id="combined-template" label="전체 프롬프트 양식" value={promptDisplay(messageTemplate).text} rows={26} readOnly />
+                <ContextTextarea key={outputKey + "-combined-template"} id="combined-template" label="전체 프롬프트 양식" value={promptDisplay(messageTemplate).text} rows={26} readOnly showTools={false} />
               </> : <>
               <p className="context-help">변수가 치환되고 이전 출력이 포함된 전체 메시지입니다. 직접 수정하면 현재 단계에 즉시 적용되며, 이후 변수·이전 출력 변경을 자동 반영하지 않습니다.</p>
               <p className="context-help">하나의 입력칸으로 표시합니다. ‘사용자 요청’ 구분선 위는 System, 아래는 User 메시지로 나누어 전송하며 구분선 자체는 보내지 않습니다. 편집 시 구분선과 앞뒤 빈 줄을 유지해 주세요.</p>
               {messageEditError?.key === outputKey && <p className="validation-warning" role="alert">{messageEditError.message}</p>}
               <label htmlFor="combined-message">전체 프롬프트</label>
               <ContextTextarea key={outputKey + "-combined-message"} id="combined-message" label="전체 프롬프트" value={displayedMessages.text} rows={26}
-                disabled={busy} onChange={editMessage} />
+                disabled={busy} onChange={editMessage} showTools={false} />
               </>}
             </PromptEditorDialog>}
             {engine === "api" && <p className="context-help">현재 메시지를 서버에서 선택한 API로 전송합니다. {method === "yonsei"

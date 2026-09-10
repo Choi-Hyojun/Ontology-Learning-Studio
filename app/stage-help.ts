@@ -74,11 +74,11 @@ export const FIELD_HELP: Record<string, string> = {
 };
 
 const YONSEI_FIELD_HELP: Record<string, string> = {
-  domain_description: "Yonsei의 도메인 문서 원문입니다. 기본값은 첨부의 Video Game 문서이며, UTF-8 TXT/MD를 불러오거나 수정할 수 있습니다. 변경하면 문단 ID·CQ 연결을 새로 만들도록 기존 결과와 Few-shot을 초기화합니다.",
-  competency_questions: "Yonsei 03단계에서 생성한 CQ와 문단 ID·원문 인용의 JSON입니다. 이후 클래스·프로퍼티 추출과 Refine에 자동으로 연결되는 읽기 전용 결과입니다. Few-shot 예시와는 구별합니다.",
+  domain_description: "Yonsei의 도메인 문서 원문입니다. 01·03단계에 원문을 제공하고, 09단계에서 문단·CQ·요소 연결로 다시 사용합니다. 02·04–08단계와 Few-shot 생성에는 원문을 자동 전달하지 않습니다. UTF-8 TXT/MD를 불러오거나 수정할 수 있으며, 변경하면 기존 결과와 Few-shot을 초기화합니다.",
+  competency_questions: "03단계는 원본 문서에서 CQ와 정확한 근거 인용 text를 생성합니다. 앱이 인용문을 실제 문단에 연결하며, 04–08단계에는 id·question만 전달합니다. 09단계에서 근거 문단과 요소의 cq_ids를 연결해 Refine에 사용합니다. 여러 문단에 반복되는 인용은 더 길게 수정해야 합니다.",
   ontology_snapshot: "Yonsei 08단계의 최신 유효한 전체 TTL을 Refine에 전달합니다. 재실행은 이 스냅샷에서 시작하며 별도 OWL 추론기는 실행하지 않습니다.",
   reuse_example_desc: "재사용할 어휘·모델링 패턴에 관한 힌트입니다. 기본 참조 설명은 NeOn 첨부에서 가져오지만 Few-shot 자체는 현재 단계의 별도 생성 버튼으로 만듭니다. 관련 없는 도메인 조각을 강제 적용하지 마세요.",
-  previous_step_content: "직전 Yonsei 단계의 출력 원문입니다. 03단계에는 01·02의 요구사항, 06–08단계에는 누적 개념 모델, 09단계에는 전체 TTL과 문단별 CQ·요소 연결을 별도로 조립합니다. 전체 프롬프트에서 확인하세요.",
+  previous_step_content: "직전 단계 저장본을 확인·편집하는 카드입니다. 04단계 실제 요청에서는 이 카드의 CQ evidence를 제외하고 id·question만 조립합니다. 03은 01·02 요구사항, 06–08은 누적 모델, 09는 전체 TTL과 보관한 문단·CQ·요소 연결을 사용합니다.",
 };
 
 export function fieldHelp(key: string, method?: "neon" | "tao" | "yonsei"): string {

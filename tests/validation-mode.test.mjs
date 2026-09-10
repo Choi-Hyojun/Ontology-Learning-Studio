@@ -32,12 +32,16 @@ test("exploration preserves prose, malformed JSON and unknown CQ references whil
   assert.throws(() => assessYonseiOutput("06", " ", values, outputs, "exploratory"));
 });
 
-test("raw CQ and accumulated model reach stage and few-shot contexts, including refinement", () => {
+test("unstructured CQ stays saved but is withheld before Refine and never sent to few-shot generation", () => {
   for (const id of ["04", "06", "07", "08", "09"]) {
     assert.equal(yonseiPrerequisite(id, values, outputs, "", "exploratory"), "");
     assert.notEqual(yonseiPrerequisite(id, values, outputs, ""), "");
     const context = resolveYonseiContext(id, values, outputs, outputs["yonsei-08"], "exploratory");
-    assert.equal(context.competency_questions, outputs["yonsei-03"]);
+    if (id === "09") assert.equal(context.competency_questions, outputs["yonsei-03"]);
+    else {
+      assert.deepEqual(JSON.parse(context.competency_questions).cqs, []);
+      assert.ok(!context.competency_questions.includes(outputs["yonsei-03"]));
+    }
     if (Number(id) >= 6) assert.ok(context.element_catalog.includes(outputs["yonsei-05"]));
     if (id === "09") {
       assert.ok(context.refinement_context.includes(outputs["yonsei-03"]));
@@ -45,7 +49,8 @@ test("raw CQ and accumulated model reach stage and few-shot contexts, including 
       assert.equal(context.ontology_snapshot, outputs["yonsei-08"]);
     } else {
       const prompt = fewShotMessages(id, values, outputs, "", undefined, "exploratory");
-      assert.ok(prompt.user.includes(outputs["yonsei-03"]));
+      assert.ok(!prompt.user.includes(outputs["yonsei-03"]));
+      assert.ok(!prompt.user.includes(outputs["yonsei-05"]));
     }
   }
   const pipeline = yonseiPipelineContext("08", outputs, "", outputs["yonsei-07"]);
