@@ -1,10 +1,11 @@
 import type { PromptMessages, PromptValues } from "./prompt-model";
-import type { Completion, Engine, Provider } from "./execution-model";
+import type { Completion, Engine, Provider, ValidationMode } from "./execution-model";
 import type { Attachment } from "./document-field";
 
 export type MethodKey = "neon" | "tao" | "yonsei";
 export type RunRecord = { request: PromptMessages; response: Completion;
   startedAt: string; completedAt: string; ontology: string | null;
+  validationMode?: ValidationMode; warnings?: string[];
   outputEdit?: { content: string; at: string } };
 export type LogEntry = { at: string; event: string; method: MethodKey; stageId?: string; data?: unknown };
 export type PromptDefinition = { template: string; fields: string[] };
@@ -13,7 +14,7 @@ export type SessionDefaults = {
   promptDefinitions: Record<string, PromptDefinition>;
 };
 export type RestoredSession = SessionDefaults & {
-  current: { method: MethodKey; stageId: string; runState: "paused"; autoAdvance: boolean; engine?: Engine; provider?: Provider };
+  current: { method: MethodKey; stageId: string; runState: "paused"; autoAdvance: boolean; engine?: Engine; provider?: Provider; validationMode?: ValidationMode };
   promptOverrides: Record<string, PromptMessages>;
   attachments: Record<string, Attachment>;
   history: LogEntry[];
@@ -103,6 +104,7 @@ export function parseSessionLog(text: string, defaults: SessionDefaults): Restor
   const stageId = string(current.stageId, "current.stageId"); stageKey(method + "-" + stageId);
   check(["idle", "running", "paused", "done"].includes(String(current.runState)), "current.runState");
   check(typeof current.autoAdvance === "boolean", "current.autoAdvance");
+  check(current.validationMode === undefined || current.validationMode === "strict" || current.validationMode === "exploratory", "current.validationMode");
   if (supportsApi) {
     check(current.engine === "simulation" || current.engine === "api", "current.engine");
     check(current.provider === "openai" || current.provider === "anthropic", "current.provider");
@@ -184,6 +186,8 @@ export function parseSessionLog(text: string, defaults: SessionDefaults): Restor
   for (const [key, value] of Object.entries(object(log.attachments, "attachments"))) {
     check(key === "neon-domain_description" || key === "tao-page_text" || key === "yonsei-domain_description", "첨부 문서 " + key);
     const item = object(value, key);
+    check(item.validationMode === undefined || item.validationMode === "strict" || item.validationMode === "exploratory", key + ".validationMode");
+    if (item.warnings !== undefined) check(Array.isArray(item.warnings) && item.warnings.every(warning => typeof warning === "string"), key + ".warnings");
     const text = string(item.text, key + ".text");
     check(typeof item.edited === "boolean", key + ".edited");
     const [owner, field] = key.split("-");
@@ -253,6 +257,7 @@ export function parseSessionLog(text: string, defaults: SessionDefaults): Restor
     return { at, event, method, ...(stageId !== undefined ? { stageId } : {}), ...(entry.data !== undefined ? { data: entry.data } : {}) };
   });
   return { current: { method, stageId, runState: "paused", autoAdvance: current.autoAdvance,
+      ...(current.validationMode !== undefined ? { validationMode: current.validationMode as ValidationMode } : {}),
       ...(supportsApi ? { engine: current.engine as Engine, provider: current.provider as Provider } : {}) },
     valuesByMethod, promptDefinitions, promptOverrides, attachments, history, currentRecords, currentOutputs,
     tokenCount: log.tokenCount === undefined ? calculatedTokens : natural(log.tokenCount, "tokenCount"), exportedAt,

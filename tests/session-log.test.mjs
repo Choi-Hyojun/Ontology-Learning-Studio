@@ -64,10 +64,16 @@ test("v4 roundtrip preserves edited outputs separately from original responses",
   const log = fixture();
   log.version = 4;
   log.current.engine = "simulation"; log.current.provider = "openai";
+  log.current.validationMode = "exploratory";
   const key = "neon-02", original = log.currentRecords[key].response.choices[0].message.content;
   log.currentRecords[key].outputEdit = { content: "Edited specification", at };
+  log.currentRecords[key].validationMode = "exploratory";
+  log.currentRecords[key].warnings = ["Unverified output"];
   log.currentOutputs[key] = "Edited specification";
   const restored = parseSessionLog(exportLog(log), defaults);
+  assert.equal(restored.current.validationMode, "exploratory");
+  assert.equal(restored.currentRecords[key].validationMode, "exploratory");
+  assert.deepEqual(restored.currentRecords[key].warnings, ["Unverified output"]);
   assert.equal(restored.currentOutputs[key], "Edited specification");
   assert.equal(restored.currentRecords[key].response.choices[0].message.content, original);
   assert.deepEqual(restored.currentRecords[key].outputEdit, { content: "Edited specification", at });

@@ -1,4 +1,4 @@
-import { ontologyFromResponse, ServiceError, YONSEI_TYPES } from "../app/ontology-response.ts";
+import { assessOntologyResponse, ServiceError, YONSEI_TYPES } from "../app/ontology-response.ts";
 export { ontologyFromResponse } from "../app/ontology-response.ts";
 import type { ApiCompletion, GenerationRequest, Provider } from "../app/execution-model";
 
@@ -32,6 +32,7 @@ export function validateGeneration(value: unknown): GenerationRequest {
   if (!isObject(value) || !["openai", "anthropic"].includes(String(value.provider)) || !["neon", "tao", "yonsei"].includes(String(value.method))
     || typeof value.stageId !== "string" || !/^(neon-(0[1-9]|1[0-9]|20)|tao-0[1-8]|yonsei-0[1-9])$/.test(value.method + "-" + value.stageId)
     || (value.purpose !== undefined && value.purpose !== "stage" && value.purpose !== "few-shot")
+    || (value.validationMode !== undefined && value.validationMode !== "strict" && value.validationMode !== "exploratory")
     || (value.purpose === "few-shot" && (value.method !== "yonsei" || value.stageId === "09"))
     || !isObject(value.messages) || typeof value.messages.system !== "string" || typeof value.messages.user !== "string"
     || !value.messages.user.trim() || typeof value.previousOntology !== "string") fail("INVALID_REQUEST", "제공업체·단계·프롬프트 형식을 확인하세요.");
@@ -130,8 +131,8 @@ export async function handleGeneration(request: Request, env: ApiEnvironment, tr
       fail("INVALID_PROVIDER_RESPONSE", "API 응답 JSON을 읽지 못했습니다.", 502);
     }
     const response = normalizeResponse(raw, input.provider, model, requestId);
-    const ontology = ontologyFromResponse(response.choices[0].message.content, input);
-    return json({ response, ontology });
+    const { ontology, warnings } = assessOntologyResponse(response.choices[0].message.content, input);
+    return json({ response, ontology, ...(warnings.length ? { warnings } : {}) });
   } catch (error) {
     const safe = error instanceof ServiceError ? error : new ServiceError("SERVER_ERROR", "서버 내부 오류가 발생했습니다. 서버 상태를 확인하세요.", 500);
     // Never return provider error bodies, exception stacks, prompt text, keys, or headers.

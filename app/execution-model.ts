@@ -2,6 +2,7 @@ import type { PromptMessages, simulateCompletion } from "./prompt-model";
 
 export type Provider = "openai" | "anthropic";
 export type Engine = "simulation" | "api";
+export type ValidationMode = "exploratory" | "strict";
 export type ApiCompletion = {
   object: "chat.completion"; model: string;
   choices: { index: number; message: { role: string; content: string }; finish_reason: string }[];
@@ -16,6 +17,7 @@ export type ExecutionIssue = {
 export type GenerationRequest = {
   provider: Provider; method: "neon" | "tao" | "yonsei"; stageId: string; messages: PromptMessages; previousOntology: string;
   purpose?: "stage" | "few-shot";
+  validationMode?: ValidationMode;
   yonseiTrace?: {
     cqIds: string[];
     elements: { id: string; kind: "class" | "object_property" | "data_property"; cq_ids: string[] }[];
@@ -48,7 +50,7 @@ export function restoredIssues(history: { event: string; at: string; method: str
   });
 }
 
-export async function requestGeneration(input: GenerationRequest, signal: AbortSignal, transport: typeof fetch = fetch): Promise<{ response: ApiCompletion; ontology: string | null }> {
+export async function requestGeneration(input: GenerationRequest, signal: AbortSignal, transport: typeof fetch = fetch): Promise<{ response: ApiCompletion; ontology: string | null; warnings?: string[] }> {
   const timeout = AbortSignal.timeout(135000);
   let result: Response;
   try {
@@ -72,7 +74,8 @@ export async function requestGeneration(input: GenerationRequest, signal: AbortS
   }
   if (typeof data?.response?.choices?.[0]?.message?.content !== "string" || data.response.execution?.provider !== input.provider
     || !(data.ontology === null || typeof data.ontology === "string") || !Number.isFinite(data.response.usage?.prompt_tokens)
-    || !Number.isFinite(data.response.usage?.completion_tokens)) {
+    || !Number.isFinite(data.response.usage?.completion_tokens)
+    || (data.warnings !== undefined && (!Array.isArray(data.warnings) || data.warnings.some((warning: unknown) => typeof warning !== "string")))) {
     throw new GenerationError({ code: "INVALID_SERVER_RESPONSE", message: "서버 응답의 본문·사용량·온톨로지 형식이 올바르지 않습니다." });
   }
   return data;

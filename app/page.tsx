@@ -11,18 +11,18 @@ import { editStageOutput } from "./output-edit";
 import { FewShotPanel } from "./few-shot-panel";
 import { clearFewShots } from "./few-shot-state";
 import { YONSEI_STAGES, yonseiDefaults, yonseiDefinitions, resolveYonseiContext, yonseiPipelineContext,
-  fewShotMessages, simulateFewShot, yonseiSimulation, validateYonseiOutput, yonseiPrerequisite } from "./yonsei-model";
+  fewShotMessages, simulateFewShot, yonseiSimulation, assessYonseiOutput, yonseiPrerequisite } from "./yonsei-model";
 import { ParameterHelp } from "./parameter-help";
 import { ExecutionStats } from "./execution-stats";
 import { FIELD_LABELS, STAGE_HELP, fieldHelp } from "./stage-help";
-import { currentOntology, downloadText, exportLog, simulatedOntology } from "./project-files";
+import { currentOntology, ontologyContext, downloadText, exportLog, simulatedOntology } from "./project-files";
 import { OntologyViewer } from "./ontology-viewer";
 import { SessionImportDialog } from "./session-import-dialog";
 import { ErrorLogDialog } from "./error-log-dialog";
 import { MethodologyDialog } from "./methodology-dialog";
 import { ThemeSelector } from "./theme-selector";
 import { useSidePanelLayout } from "./use-side-panel-layout";
-import { completionProvider, requestGeneration, restoredIssues, safeIssue, GenerationError, type Completion, type Engine, type ExecutionIssue, type Provider } from "./execution-model";
+import { completionProvider, requestGeneration, restoredIssues, safeIssue, GenerationError, type Completion, type Engine, type ExecutionIssue, type Provider, type ValidationMode } from "./execution-model";
 import { invalidateStageResults, removeNeonMetrics, type LogEntry, type MethodKey, type RestoredSession, type RunRecord, type SessionDefaults } from "./session-log";
 
 type RunState = "idle" | "running" | "paused" | "done";
@@ -99,6 +99,7 @@ export default function Home() {
   const [stageIndex, setStageIndex] = useState(0);
   const [runState, setRunState] = useState<RunState>("idle");
   const [engine, setEngine] = useState<Engine>("simulation");
+  const [validationMode, setValidationMode] = useState<ValidationMode>("exploratory");
   const [provider, setProvider] = useState<Provider>("openai");
   const [apiCalls, setApiCalls] = useState(0);
   const [issues, setIssues] = useState<ExecutionIssue[]>([]);
@@ -146,14 +147,16 @@ export default function Home() {
   const previousRecord = previous ? records[`${method}-${previous.id}`] : undefined;
   const editingPrevious = previousDraft?.key === outputKey ? previousDraft : null;
   const currentOutput = outputs[outputKey] ?? (runState === "running" ? (engine === "api" ? "API 응답을 기다리고 있습니다…" : "시뮬레이터가 응답을 생성하고 있습니다…") : "실행 버튼을 눌러 현재 단계의 응답을 생성하세요.");
-  const previousOntology = currentOntology(Object.fromEntries(Object.entries(records).filter(([key]) => key.startsWith(method + "-") && Number(key.split("-")[1]) < Number(stage.id))), method);
+  const previousOntology = ontologyContext(records, outputs, method, stage.id, validationMode);
 
   const definition = promptDefinitions[outputKey];
-  const effectiveValues = useMemo(() => method === "yonsei" ? resolveYonseiContext(stage.id, values, outputs, previousOntology)
+  const effectiveValues = useMemo(() => method === "yonsei" ? resolveYonseiContext(stage.id, values, outputs, previousOntology, validationMode)
     : resolveExampleContext(method, stage.id, values, outputs, previousOntology),
-    [method, stage.id, values, outputs, previousOntology]);
+    [method, stage.id, values, outputs, previousOntology, validationMode]);
   const fields = [...new Set(["persona", ...definition.fields])].filter((field) => (method !== "neon" || field !== "ontology_metrics") && !(hasFewShot && field === fewShotKey));
-  const prerequisite = method === "yonsei" ? yonseiPrerequisite(stage.id, values, outputs, previousOntology) : "";
+  const prerequisite = method === "yonsei" ? yonseiPrerequisite(stage.id, values, outputs, previousOntology, validationMode) : "";
+  const contextWarning = validationMode === "exploratory" && method === "yonsei" && !prerequisite
+    ? yonseiPrerequisite(stage.id, values, outputs, previousOntology) : "";
   const template = (method === "neon" ? removeNeonMetrics(definition.template) : definition.template)
     + (engine === "api" && method === "tao" && ["04", "08"].includes(stage.id)
       ? "\n\nThis is a text-only API workflow. Do not call tools or claim to edit files. Return the complete updated ontology as valid Turtle ONLY between ###start_turtle### and ###end_turtle### markers." : "");
@@ -211,7 +214,7 @@ export default function Home() {
       if (autoAdvance && hasFewShot && !values[fewShotKey]?.trim() && !manual) {
         try {
           if (!values[generatorKey]?.trim()) throw new GenerationError({ code: "EMPTY_FEW_SHOT_PROMPT", message: "Few-shot 생성 프롬프트를 입력한 뒤 자동 실행을 재개하세요." });
-          const request = fewShotMessages(stage.id, values, outputs, previousOntology, definition.template);
+          const request = fewShotMessages(stage.id, values, outputs, previousOntology, definition.template, validationMode);
           fewShotStartedAt = new Date().toISOString();
           fewShotController.current = controller;
           setFewShotRunning(true);
@@ -249,23 +252,26 @@ export default function Home() {
       try {
         let response: Completion;
         let generatedOntology: string | null;
+        let warnings: string[] = contextWarning ? [contextWarning] : [];
         if (engine === "api") {
           setApiCalls((value) => value + 1);
-          const yonseiTrace = method === "yonsei" && Number(stage.id) >= 8 ? {
+          const yonseiTrace = method === "yonsei" && Number(stage.id) >= 8 && !contextWarning ? {
             cqIds: (JSON.parse(effectiveValues.competency_questions) as { cqs: { id: string }[] }).cqs.map(cq => cq.id),
             elements: (JSON.parse(effectiveValues.element_catalog) as { elements: { id: string; kind: "class" | "object_property" | "data_property"; cq_ids: string[] }[] }).elements,
           } : undefined;
-          const result = await requestGeneration({ provider, method, stageId: stage.id, messages, previousOntology,
+          const result = await requestGeneration({ provider, method, stageId: stage.id, messages, previousOntology, validationMode,
             ...(yonseiTrace ? { yonseiTrace } : {}) }, controller.signal);
           response = result.response; generatedOntology = result.ontology;
+          warnings.push(...(result.warnings ?? []));
         } else {
           await new Promise<void>((resolve, reject) => {
             const wait = window.setTimeout(resolve, 1100);
             controller.signal.addEventListener("abort", () => { window.clearTimeout(wait); reject(new DOMException("Cancelled", "AbortError")); }, { once: true });
           });
           if (method === "yonsei") {
-            const sample = yonseiSimulation(stage.id, values, outputs, previousOntology);
+            const sample = yonseiSimulation(stage.id, values, outputs, previousOntology, validationMode);
             response = simulateCompletion(messages, sample.content); generatedOntology = sample.ontology;
+            warnings.push(...(sample.warnings ?? []));
           } else {
             response = simulateCompletion(messages, exampleResponse(method, stage.id));
             generatedOntology = simulatedOntology(method, stage.id);
@@ -273,7 +279,7 @@ export default function Home() {
         }
         if (controller.signal.aborted || executionVersion.current !== version) return;
         if (method === "yonsei") {
-          try { validateYonseiOutput(stage.id, response.choices[0].message.content, values, outputs); }
+          try { warnings.push(...assessYonseiOutput(stage.id, response.choices[0].message.content, values, outputs, validationMode)); }
           catch (error) {
             setTokenCount((value) => value + response.usage.prompt_tokens + response.usage.completion_tokens);
             setHistory((items) => [...items, { at: new Date().toISOString(), event: "stage_output_rejected", method, stageId: stage.id,
@@ -282,7 +288,8 @@ export default function Home() {
           }
         }
         const completedAt = new Date().toISOString();
-        const saved: RunRecord = { request: { ...messages }, response, startedAt, completedAt, ontology: generatedOntology };
+        warnings = [...new Set(warnings)];
+        const saved: RunRecord = { request: { ...messages }, response, startedAt, completedAt, ontology: generatedOntology, validationMode, warnings };
         finished = true;
         setOutputs((current) => ({ ...current, [outputKey]: response.choices[0].message.content }));
         setRecords((current) => ({ ...current, [outputKey]: saved }));
@@ -306,7 +313,7 @@ export default function Home() {
       if (startedAt && !finished) setHistory((items) => [...items, { at: new Date().toISOString(), event: "stage_cancelled",
         method, stageId: stage.id, data: { startedAt, engine, reason: "실행 중지 또는 단계 이동; 이미 전송된 API 요청은 과금될 수 있음" } }]);
     };
-  }, [engine, provider, previousOntology, autoAdvance, messages, method, outputKey, previousOutput, runState, stage, stageIndex, stages, values, manual, reportIssue, outputs, prerequisite, hasFewShot, fewShotKey, effectiveValues, generatorKey, definition.template]);
+  }, [engine, provider, previousOntology, autoAdvance, messages, method, outputKey, previousOutput, runState, stage, stageIndex, stages, values, manual, reportIssue, outputs, prerequisite, hasFewShot, fewShotKey, effectiveValues, generatorKey, definition.template, validationMode, contextWarning]);
 
   const chooseMethod = (value: MethodKey) => {
     setPreviousDraft(null); setPreviousEditError("");
@@ -365,14 +372,14 @@ export default function Home() {
       setPreviousDraft(null); setPreviousEditError(""); return;
     }
     try {
-      const updated = editStageOutput(method, previous.id, editingPrevious.value, values, outputs, records);
+      const updated = editStageOutput(method, previous.id, editingPrevious.value, values, outputs, records, validationMode);
       const key = `${method}-${previous.id}`;
       invalidateResults(stageIndex, false);
       setOutputs((current) => ({ ...current, [key]: editingPrevious.value }));
       setRecords((current) => ({ ...current, [key]: updated }));
       if (method === "yonsei") setValuesByMethod((current) => ({ ...current, yonsei: clearFewShots(current.yonsei, stageIndex) }));
       setHistory((items) => [...items, { at: updated.outputEdit!.at, event: "stage_output_edited", method, stageId: previous.id,
-        data: { previousOutput, outputEdit: updated.outputEdit, ontology: updated.ontology } }]);
+        data: { previousOutput, outputEdit: updated.outputEdit, ontology: updated.ontology, validationMode, warnings: updated.warnings } }]);
       setPreviousDraft(null); setPreviousEditError("");
     } catch (error) {
       setPreviousEditError(error instanceof Error ? error.message : "출력을 적용하지 못했습니다.");
@@ -423,7 +430,7 @@ export default function Home() {
     if (engine === "api" && !window.confirm(`${provider === "openai" ? "GPT" : "Claude"} API로 Few-shot 예시를 생성합니다. 프롬프트와 입력 문서가 외부로 전송되고 비용이 발생할 수 있습니다. 현재 단계 실행은 별도 호출입니다. 생성할까요?`)) return;
     const controller = new AbortController();
     let request: PromptMessages;
-    try { request = fewShotMessages(stage.id, values, outputs, previousOntology, definition.template); }
+    try { request = fewShotMessages(stage.id, values, outputs, previousOntology, definition.template, validationMode); }
     catch (error) { reportIssue(safeIssue(error, { method, stageId: stage.id })); return; }
     fewShotController.current = controller;
     setFewShotRunning(true); setNotice("");
@@ -469,7 +476,7 @@ export default function Home() {
       downloadText(fileName, exportLog({
         version: 4, simulation: apiCalls === 0 && !Object.values(records).some((item) => "execution" in item.response), apiCalls,
         scope: "현재 프로젝트의 모든 방법론; Few-shot 생성 요청·응답과 불러온 과거 이력 포함",
-        current: { method, stageId: stage.id, runState, autoAdvance, engine, provider },
+        current: { method, stageId: stage.id, runState, autoAdvance, engine, provider, validationMode },
         valuesByMethod, promptDefinitions, promptOverrides: overrides, attachments, tokenCount,
         templates: { neon: neonPrompts.stages, tao: taoBlueprint }, history,
         currentRecords: records, currentOutputs: outputs,
@@ -496,6 +503,7 @@ export default function Home() {
     setStageIndex(Number(session.current.stageId) - 1);
     setAutoAdvance(session.current.autoAdvance);
     setEngine(session.current.engine ?? "simulation");
+    setValidationMode(session.current.validationMode ?? "strict");
     setProvider(session.current.provider ?? "openai");
     setApiCalls(session.apiCalls ?? 0);
     setIssues(restoredIssues(session.history)); setErrorOpen(false);
@@ -551,6 +559,16 @@ export default function Home() {
           <label>제공업체 <select value={provider} disabled={engine !== "api" || busy} onChange={(event) => changeEngine("api", event.target.value as Provider)}>
             <option value="openai">GPT · OpenAI</option><option value="anthropic">Claude · Anthropic</option>
           </select></label>
+          <div className="validation-modes" role="radiogroup" aria-label="산출물 검증 모드">
+            {(["exploratory", "strict"] as const).map(mode => <label key={mode}>
+              <input type="radio" name="validation-mode" value={mode} checked={validationMode === mode} disabled={busy}
+                onChange={() => {
+                  setValidationMode(mode); setPreviousEditError("");
+                  setHistory(items => [...items, { at: new Date().toISOString(), event: "validation_mode_changed", method,
+                    data: { validationMode: mode } }]);
+                }} />{mode === "exploratory" ? "탐색 모드" : "엄격 검증"}
+            </label>)}
+          </div>
           <p id="engine-mode-help"><ExecutionStats engine={engine} provider={provider} apiCalls={apiCalls} tokenCount={tokenCount} /></p>
         </div>
         <div className="method-actions">
@@ -587,6 +605,7 @@ export default function Home() {
             {loadedLogName && <p className="context-help">{loadedLogName}에서 복원한 프롬프트 템플릿입니다. 편집 후 이어서 실행할 수 있습니다.</p>}
             {manual && <p className="manual-notice">직접 편집 모드입니다. 아래 변수는 자동 조립에 사용된 참고값이며, 실행에는 직접 수정한 전체 메시지가 사용됩니다. 변수 연결을 재개하려면 ‘변수로 다시 조립’을 누르세요.</p>}
             {method === "yonsei" && prerequisite && <p className="manual-notice" role="status">{prerequisite}</p>}
+            {contextWarning && <p className="validation-warning" role="status">검증 경고: {contextWarning}</p>}
             <div className={hasFewShot ? "yonsei-workbench" : undefined}>
             <div className="prompt-cards editable-context">
               {previous && <div className="prompt-card context-field previous-output-card">
@@ -611,6 +630,7 @@ export default function Home() {
                   descriptionId="previous-output-help"
                   placeholder="이전 단계를 실행하면 출력이 이곳에 표시됩니다." />
                 {editingPrevious && previousEditError && <small className="previous-output-error" role="alert">{previousEditError}</small>}
+                {previousRecord?.warnings?.map((warning, index) => <p className="validation-warning" role="status" key={index}>검증 경고: {warning}</p>)}
                 <small id="previous-output-help">
                   {manual
                     ? "이전 단계의 최신 산출물입니다. 직접 편집 모드에서는 자동 반영되지 않으므로 전체 프롬프트를 확인하세요."
@@ -630,7 +650,7 @@ export default function Home() {
               </div>)}
             </div>
             {hasFewShot && <FewShotPanel key={outputKey} stageId={stage.id} prompt={values[generatorKey] ?? ""} result={values[fewShotKey] ?? ""}
-              preview={{ getMessages: () => fewShotMessages(stage.id, values, outputs, previousOntology, definition.template), targetTemplate: definition.template }}
+              preview={{ getMessages: () => fewShotMessages(stage.id, values, outputs, previousOntology, definition.template, validationMode), targetTemplate: definition.template }}
               running={fewShotRunning} disabled={runState === "running" || !!editingPrevious} simulation={engine === "simulation"} prerequisite={prerequisite} manual={!!manual}
               onPromptChange={(value) => editFewShot(generatorKey, value)} onResultChange={(value) => editFewShot(fewShotKey, value)}
               onGenerate={generateFewShot} onCancel={cancelFewShot} />}
@@ -659,6 +679,7 @@ export default function Home() {
             <span className="live-indicator"><i />{record ? completionProvider(record.response) : engine === "api" ? provider : "Local only"}</span></div>
             <div className="output-copy-tools"><CopyButton key={outputKey + activeTab} value={outputContent} label={outputLabel} /></div>
             {activeTab === "output" && record?.outputEdit && <div className="output-edit-status">사용자 수정본</div>}
+            {activeTab === "output" && record?.warnings?.map((warning, index) => <p className="validation-warning" role="status" key={index}>검증 경고: {warning}</p>)}
             <pre className="output-box">{outputContent}</pre></div>
           <div className="stage-controls"><button onClick={() => move(-1)} disabled={!previous}>← 이전</button><span>산출물 검토 후 다음 단계로 전달</span><button className="primary" onClick={() => move(1)} disabled={!next}>다음 단계 →</button></div>
         </section>

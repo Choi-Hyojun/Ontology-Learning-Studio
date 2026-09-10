@@ -1,4 +1,5 @@
 import examples from "./methodology-examples.json" with { type: "json" };
+import type { ValidationMode } from "./execution-model";
 
 export const MAX_TEXT_BYTES = 2 * 1024 * 1024;
 
@@ -29,6 +30,18 @@ export type OntologyRecord = { ontology: string | null; completedAt: string };
 export function currentOntology(records: Record<string, OntologyRecord>, method: string) {
   return Object.entries(records).filter(([key, record]) => key.startsWith(method + "-") && record.ontology)
     .sort(([left], [right]) => left.localeCompare(right)).at(-1)?.[1].ontology ?? "";
+}
+
+export function ontologyContext(records: Record<string, OntologyRecord>, outputs: Record<string, string>, method: string,
+  stageId: string, mode: ValidationMode = "strict"): string {
+  const earlier = Object.fromEntries(Object.entries(records)
+    .filter(([key]) => key.startsWith(method + "-") && Number(key.split("-")[1]) < Number(stageId)));
+  if (mode === "exploratory") {
+    const latest = Object.keys(earlier).filter(key => method === "tao"
+      ? [4, 8].includes(Number(key.split("-")[1])) : Number(key.split("-")[1]) >= 8).sort().at(-1);
+    if (latest) return earlier[latest].ontology ?? outputs[latest] ?? "";
+  }
+  return currentOntology(earlier, method);
 }
 
 export function exportLog(payload: Record<string, unknown>) {

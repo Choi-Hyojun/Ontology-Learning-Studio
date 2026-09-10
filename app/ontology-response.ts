@@ -58,3 +58,13 @@ export function ontologyFromResponse(text: string, input: GenerationRequest): st
     throw new ServiceError("INVALID_TURTLE", "생성된 Turtle의 문법 검증에 실패했습니다. 해당 단계는 완료 처리하지 않았습니다. 프롬프트를 수정한 뒤 다시 실행하세요.", 422);
   }
 }
+
+export function assessOntologyResponse(text: string, input: GenerationRequest): { ontology: string | null; warnings: string[] } {
+  try { return { ontology: ontologyFromResponse(text, input), warnings: [] }; }
+  catch (error) {
+    if (input.validationMode !== "exploratory" || !(error instanceof ServiceError)) throw error;
+    return { ontology: null, warnings: [error.code === "INVALID_TURTLE"
+      ? "Turtle 문법이 유효하지 않아 스냅샷을 만들지 못했습니다. 원문은 보존됩니다."
+      : error.message] };
+  }
+}

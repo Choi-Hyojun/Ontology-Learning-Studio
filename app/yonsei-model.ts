@@ -1,6 +1,7 @@
 import source from "./yonsei-prompts.json" with { type: "json" };
 import neon from "./neon-prompts.json" with { type: "json" };
 import type { PromptMessages, PromptValues } from "./prompt-model";
+import type { ValidationMode } from "./execution-model";
 
 export type DocumentParagraph = { paragraph_id: string; text: string };
 export type YonseiCQ = { id: string; question: string; evidence: DocumentParagraph[] };
@@ -117,7 +118,7 @@ function collectElements(outputs: Record<string, string>, cqIds: Set<string>, be
   return [...catalog.values()];
 }
 
-export function resolveYonseiContext(stageId: string, values: PromptValues, outputs: Record<string, string>, ontology: string): PromptValues {
+export function resolveYonseiContext(stageId: string, values: PromptValues, outputs: Record<string, string>, ontology: string, mode: ValidationMode = "strict"): PromptValues {
   const stage = stageNumber(stageId);
   const paragraphs = documentParagraphs(values.domain_description ?? "");
   let cqs: YonseiCQ[] = [], elements: YonseiElement[] = [];
@@ -135,8 +136,16 @@ export function resolveYonseiContext(stageId: string, values: PromptValues, outp
     return { ...paragraph, status: related.length ? "mapped" : "no_linked_cq", cqs: related,
       elements: elements.filter(entry => entry.cq_ids.some(id => ids.has(id))) };
   });
-  return { ...values, document_paragraphs: json(paragraphs), competency_questions: json({ cqs }), element_catalog: json({ elements }),
-    refinement_context: json(refinement), ontology_snapshot: stage >= 9 ? ontology : "" };
+  const rawCqs = stage > 3 ? stageOutput(outputs, 3) : "";
+  const rawModel = [4, 5, 6, 7].filter(id => id < stage && stageOutput(outputs, id))
+    .map(id => "STEP " + String(id).padStart(2, "0") + "\n" + stageOutput(outputs, id)).join("\n\n");
+  const fallbackCqs = mode === "exploratory" && !cqs.length && !!rawCqs;
+  const fallbackModel = mode === "exploratory" && !elements.length && !!rawModel;
+  return { ...values, document_paragraphs: json(paragraphs), competency_questions: fallbackCqs ? rawCqs : json({ cqs }),
+    element_catalog: fallbackModel ? rawModel : json({ elements }),
+    refinement_context: fallbackCqs || fallbackModel
+      ? "DOCUMENT PARAGRAPHS\n" + json(paragraphs) + "\n\nUNVERIFIED CQ OUTPUT\n" + rawCqs + "\n\nUNVERIFIED MODEL OUTPUTS\n" + rawModel
+      : json(refinement), ontology_snapshot: stage >= 9 ? ontology : "" };
 }
 
 export function yonseiPipelineContext(stageId: string, outputs: Record<string, string>, ontology: string, previousOutput: string): string {
@@ -147,11 +156,11 @@ export function yonseiPipelineContext(stageId: string, outputs: Record<string, s
   return sources.map(id => stageOutput(outputs, id) ? "STEP " + String(id).padStart(2, "0") + "\n" + stageOutput(outputs, id) : "").filter(Boolean).join("\n\n");
 }
 
-export function fewShotMessages(stageId: string, values: PromptValues, outputs: Record<string, string>, ontology: string, targetTemplate?: string): PromptMessages {
+export function fewShotMessages(stageId: string, values: PromptValues, outputs: Record<string, string>, ontology: string, targetTemplate?: string, mode: ValidationMode = "strict"): PromptMessages {
   const id = stageCode(stageId);
   const definition = source.stages.find(stage => stage.id === id);
   if (!definition || id === "09") throw new Error("Yonsei few-shot 생성은 01–08 단계에서 사용합니다.");
-  const context = resolveYonseiContext(id, values, outputs, ontology);
+  const context = resolveYonseiContext(id, values, outputs, ontology, mode);
   const previous = yonseiPipelineContext(id, outputs, ontology, stageOutput(outputs, Number(id) - 1));
   const target = fill(targetTemplate ?? definition.template, { ...context, previous_step_content: previous,
     ["few_shot_" + id]: "[FEW-SHOT EXAMPLES TO BE GENERATED; NOT SOURCE EVIDENCE]" });
@@ -189,13 +198,14 @@ export function validateYonseiOutput(stageId: string, text: string, values: Prom
   // RDF syntax and complete-ontology handling are enforced by the API service.
 }
 
-export function yonseiPrerequisite(stageId: string, values: PromptValues, outputs: Record<string, string>, ontology: string): string {
+export function yonseiPrerequisite(stageId: string, values: PromptValues, outputs: Record<string, string>, ontology: string, mode: ValidationMode = "strict"): string {
   const stage = stageNumber(stageId);
   if (!Number.isInteger(stage) || stage < 1 || stage > 9) return "알 수 없는 Yonsei 단계입니다.";
   if (!documentParagraphs(values.domain_description ?? "").length) return "도메인 문서를 먼저 입력하세요.";
   const required = stage === 1 ? [] : stage === 3 ? [1, 2] : stage === 8 ? [3, 4, 5, 6, 7] : stage === 9 ? [3, 4, 5, 6, 7, 8] : [stage - 1];
   const missing = required.filter(id => !stageOutput(outputs, id).trim());
   if (missing.length) return "먼저 Yonsei " + missing.map(id => String(id).padStart(2, "0")).join(", ") + " 단계를 실행하세요.";
+  if (mode === "exploratory") return "";
   try {
     if (stage > 3) {
       const cqIds = new Set(readCqs(stageOutput(outputs, 3), values).map(cq => cq.id));
@@ -204,6 +214,15 @@ export function yonseiPrerequisite(stageId: string, values: PromptValues, output
   } catch (error) { return error instanceof Error ? error.message : "이전 단계 JSON의 CQ·문서 연결을 확인하세요."; }
   if (stage === 9 && !ontology.trim()) return "먼저 Yonsei 08 단계에서 전체 Turtle 온톨로지를 생성하세요.";
   return "";
+}
+
+export function assessYonseiOutput(stageId: string, text: string, values: PromptValues, outputs: Record<string, string>, mode: ValidationMode = "strict"): string[] {
+  if (!text.trim()) throw new Error("출력 내용을 비워 둘 수 없습니다.");
+  try { validateYonseiOutput(stageId, text, values, outputs); return []; }
+  catch (error) {
+    if (mode !== "exploratory") throw error;
+    return [error instanceof Error ? error.message : "출력 구조를 확인할 수 없습니다."];
+  }
 }
 
 export function simulateFewShot(stageId: string): string {
@@ -248,7 +267,16 @@ function simulationTurtle(values: PromptValues, outputs: Record<string, string>)
   return lines.join("\n") + "\n";
 }
 
-export function yonseiSimulation(stageId: string, values: PromptValues, outputs: Record<string, string>, ontology: string): { content: string; ontology: string | null } {
+export function yonseiSimulation(stageId: string, values: PromptValues, outputs: Record<string, string>, ontology: string, mode: ValidationMode = "strict"): { content: string; ontology: string | null; warnings?: string[] } {
+  if (mode === "exploratory") {
+    const blocked = yonseiPrerequisite(stageId, values, outputs, ontology, mode);
+    if (blocked) throw new Error(blocked);
+    try { return yonseiSimulation(stageId, values, outputs, ontology); }
+    catch {
+      return { content: "[LOCAL SIMULATION; NO LLM CALL]\nNo structured simulation was generated from the unverified input.", ontology: null,
+        warnings: ["이전 결과를 구조화할 수 없어 모의 모델·Turtle을 생성하지 않았습니다. 입력 원문은 유지됩니다."] };
+    }
+  }
   const id = stageCode(stageId), stage = stageNumber(id);
   const blocked = yonseiPrerequisite(id, values, outputs, ontology);
   if (blocked) throw new Error(blocked);

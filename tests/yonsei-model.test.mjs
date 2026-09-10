@@ -62,6 +62,64 @@ test("every main prompt resolves numeric few-shot fields and current derived inp
   }
 });
 
+test("balanced modeling revision leaves unrelated stages and serialization unchanged", () => {
+  const backup = JSON.parse(readFileSync(new URL("../app/yonsei-prompts.pre-hierarchy-2026-09-10.json", import.meta.url), "utf8"));
+  for (const id of ["01", "02", "03", "04", "08", "09"])
+    assert.deepEqual(source.stages.find(stage => stage.id === id), backup.stages.find(stage => stage.id === id));
+  const { stages: _originalStages, ...originalSettings } = backup;
+  const { stages: _currentStages, ...currentSettings } = source;
+  assert.deepEqual(currentSettings, originalSettings);
+  assert.doesNotMatch(backup.stages.find(stage => stage.id === "05").template, /HIERARCHY CONSTRUCTION/);
+  for (const id of ["06", "07"]) {
+    const current = source.stages.find(stage => stage.id === id);
+    const original = backup.stages.find(stage => stage.id === id);
+    for (const key of ["fields", "few_shot_prompt", "simulation_example"])
+      assert.deepEqual(current[key], original[key]);
+    const connectionCheck = "When adding a concept, also check its connections to the existing model and include missing source-supported links, whether ordinary relationships or direct subclass relationships, without forcing a parent. ";
+    assert.equal(current.template.replace(connectionCheck, ""), original.template);
+  }
+});
+
+test("conceptual modeling balances grounded subclass links with ordinary relations and properties", () => {
+  const step = id => source.stages.find(stage => stage.id === id);
+  assert.ok(step("05").fields.includes("document_paragraphs"));
+  assert.match(step("05").template, /SOURCE PARAGRAPHS:\n\{document_paragraphs\}/);
+  assert.match(step("05").template, /across all accepted CQs/);
+  assert.match(step("05").template, /alongside ordinary relations, properties and other justified axioms/);
+  assert.match(step("05").template, /do not invent parents, force a single root or impose a target hierarchy depth/);
+  assert.match(step("05").few_shot_prompt, /ordinary object-property relationship/);
+  assert.match(step("05").few_shot_prompt, /data property's domain and range/);
+  for (const id of ["06", "07"]) {
+    assert.match(step(id).template, /Return ONLY additions/);
+    assert.match(step(id).template, /ordinary relationships or direct subclass relationships, without forcing a parent/);
+  }
+  for (const id of ["05", "06", "07", "08"])
+    assert.doesNotMatch(step(id).template + step(id).few_shot_prompt, /HIERARCHY CONSTRUCTION|HIERARCHY GAP REVIEW|HIERARCHY PRESERVATION|three-level class hierarchy/);
+  const prompt = fewShotMessages("05", values, outputs, "");
+  assert.ok(prompt.user.includes("Books have titles."));
+  assert.ok(prompt.user.includes("ordinary object-property relationship"));
+});
+
+test("conceptual teaching example validates and distinguishes subclass, object and data relationships", () => {
+  const example = source.stages.find(stage => stage.id === "05").simulation_example;
+  const input = JSON.parse(example.split("Example input extraction:\n")[1].split("\nExample complete output model:\n")[0]);
+  const model = JSON.parse(example.split("Example complete output model:\n")[1].split("\nExplanation:")[0]);
+  const ex = "https://example.org/example/", rdfs = "http://www.w3.org/2000/01/rdf-schema#";
+  const exampleValues = { ...values, domain_description: "Books are works. Books have titles. Authors write books." };
+  const exampleCqs = { cqs: cq.cqs.map(item => ({ ...item, evidence: [{ paragraph_id: "P0001", text: exampleValues.domain_description }] })) };
+  assert.doesNotThrow(() => validateYonseiOutput("05", JSON.stringify(model), exampleValues, {
+    "yonsei-03": JSON.stringify(exampleCqs), "yonsei-04": JSON.stringify(input),
+  }));
+  assert.deepEqual(model.triples.filter(triple => triple.predicate === rdfs + "subClassOf"), [
+    { subject: ex + "Book", predicate: rdfs + "subClassOf", object: ex + "Work", cq_ids: ["CQ1"] },
+  ]);
+  assert.ok(model.triples.some(triple => triple.predicate === ex + "writtenBy" && triple.object === ex + "AuthorExample"));
+  assert.ok(model.elements.some(element => element.id === ex + "writtenBy" && element.kind === "object_property"));
+  assert.ok(model.elements.some(element => element.id === ex + "title" && element.kind === "data_property"));
+  for (const predicate of ["domain", "range"])
+    assert.ok(model.triples.some(triple => triple.subject === ex + "title" && triple.predicate === rdfs + predicate));
+});
+
 test("paragraph IDs are deterministic blank-line blocks with normalized line endings", () => {
   assert.deepEqual(documentParagraphs("  First line.\r\nStill first.\r\n  \r\nSecond block.\r\n\r\n"), [
     { paragraph_id: "P0001", text: "First line.\nStill first." }, { paragraph_id: "P0002", text: "Second block." },

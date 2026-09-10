@@ -10,6 +10,8 @@ import { clearFewShots } from "../app/few-shot-state.ts";
 import { assemblePrompt, simulateCompletion } from "../app/prompt-model.ts";
 import { invalidateStageResults, removeNeonMetrics } from "../app/session-log.ts";
 import { editStageOutput } from "../app/output-edit.ts";
+import { ontologyContext } from "../app/project-files.ts";
+import { assessYonseiOutput, yonseiPrerequisite, resolveYonseiContext, yonseiPipelineContext } from "../app/yonsei-model.ts";
 
 const read = name => readFileSync(new URL("../app/" + name, import.meta.url), "utf8");
 function load(name, overrides = {}, globals = {}) {
@@ -251,17 +253,18 @@ function pageHarness(options = {}) {
     },
     simulateFewShot: id => "MOCK FEW-SHOT " + id,
     yonseiSimulation: id => ({ content: "MOCK STAGE OUTPUT " + id, ontology: null }),
-    validateYonseiOutput() {},
+    assessYonseiOutput() { return []; },
     yonseiPrerequisite: (id, values, outputs) => !values.domain_description.trim() ? "문서를 입력하세요." : Number(id) > 1 && !outputs[`yonsei-${String(Number(id) - 1).padStart(2, "0")}`] ? "이전 단계를 실행하세요." : "",
   };
   class GenerationError extends Error { constructor(issue) { super(issue.message); this.issue = issue; } }
   const { default: Home } = load("page.tsx", {
     ...doubles, react: hooks,
-    "./few-shot-panel": { FewShotPanel }, "./few-shot-state": { clearFewShots }, "./yonsei-model": yonsei,
+    "./few-shot-panel": { FewShotPanel }, "./few-shot-state": { clearFewShots }, "./yonsei-model": { ...yonsei, ...options.yonsei },
     "./prompt-model": { assemblePrompt, simulateCompletion },
     "./example-model": { exampleResponse: () => "Example output", pipelineContext: () => "", resolveExampleContext: (_method, _stage, values) => values },
     "./stage-help": { STAGE_HELP: { neon: Array.from({ length: 20 }, () => ({ description: "NeOn stage" })), tao: Array.from({ length: 8 }, () => ({ description: "TAO stage" })) }, FIELD_LABELS: { persona: "페르소나", domain_description: "문서 원문" }, fieldHelp: () => "Field help" },
     "./project-files": {
+      ontologyContext,
       currentOntology: (records, method) => Object.entries(records).filter(([key, record]) => key.startsWith(method + "-") && record.ontology).sort(([left], [right]) => left.localeCompare(right)).at(-1)?.[1].ontology ?? "",
       simulatedOntology: () => null, exportLog: payload => JSON.stringify(payload), downloadText: (name, content, mime) => downloads.push({ name, content, mime }),
     },
@@ -342,6 +345,41 @@ test("previous output starts locked; drafts cancel cleanly and applied edits fee
   assert.equal(h.save().currentOutputs["yonsei-02"], undefined);
   click("잠금 해제"); h.navigate("03"); h.navigate("02");
   assert.equal(field().props.readOnly, true);
+});
+
+test("validation mode switches without clearing outputs, persists, and gates raw CQ edits and execution", async () => {
+  const h = pageHarness({ yonsei: { assessYonseiOutput, yonseiPrerequisite, resolveYonseiContext, yonseiPipelineContext } });
+  h.selectYonsei(); h.useApi();
+  const mode = value => h.one(node => node.type === "input" && node.props.name === "validation-mode" && node.props.value === value);
+  const selectMode = value => { mode(value).props.onChange(); h.render(); };
+  assert.equal(mode("exploratory").props.checked, true);
+  for (const id of ["01", "02", "03"]) {
+    h.navigate(id); h.run(); const pending = h.startTimers();
+    assert.equal(mode("strict").props.disabled, true);
+    const index = h.requests.length - 1;
+    assert.equal(h.requests[index].input.validationMode, "exploratory");
+    h.respond(index, "RAW OUTPUT " + id); await pending; h.render();
+  }
+  assert.ok(h.save().currentRecords["yonsei-03"].warnings.length);
+  h.navigate("04"); selectMode("strict");
+  h.run(); await h.startTimers(); h.render();
+  assert.equal(h.requests.length, 3);
+  assert.equal(h.save().currentOutputs["yonsei-03"], "RAW OUTPUT 03");
+  h.one(node => node.props?.["aria-label"] === "이전 단계 출력 잠금 해제").props.onClick(); h.render();
+  h.one(node => node.props?.id === "context-previous-output").props.onChange("CQ1: Which games?"); h.render();
+  const apply = () => { h.one(node => node.type === "button" && node.props.children === "적용하고 잠금").props.onClick(); h.render(); };
+  apply();
+  assert.equal(h.one(node => node.props?.id === "context-previous-output").props.readOnly, false);
+  selectMode("exploratory"); apply();
+  assert.equal(h.one(node => node.props?.id === "context-previous-output").props.readOnly, true);
+  assert.equal(h.save().current.validationMode, "exploratory");
+  h.run(); const pending = h.startTimers();
+  assert.match(h.requests[3].input.messages.user, /CQ1: Which games\?/);
+  h.respond(3, "Class: Game"); await pending; h.render();
+  const saved = h.save();
+  assert.equal(saved.currentOutputs["yonsei-04"], "Class: Game");
+  assert.ok(saved.currentRecords["yonsei-04"].warnings.length);
+  assert.equal(saved.currentRecords["yonsei-04"].ontology, null);
 });
 
 test("invalid previous-output edits leave results intact and stay editable", async () => {
