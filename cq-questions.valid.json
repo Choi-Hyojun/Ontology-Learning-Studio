@@ -1,0 +1,565 @@
+{
+  "cqs": [
+    {
+      "id": "CQ1",
+      "question": "What interaction and output characteristics are used to distinguish video games from broader electronic games?",
+      "evidence": [
+        {
+          "paragraph_id": "P0002",
+          "text": "A video game, computer game, or simply game is an electronic game that involves interaction with a user interface or input device (such as a joystick, controller, keyboard, or motion sensing device) to generate visual feedback from a display device, most commonly shown in a video format on a television set, computer monitor, flat-panel display or touchscreen on handheld devices, or a virtual reality headset."
+        },
+        {
+          "paragraph_id": "P0020",
+          "text": "To distinguish from electronic games, a video game is generally considered to require a platform, the hardware which contains computing elements, to process player interaction from some type of input device and displays the results to a video output display."
+        }
+      ]
+    },
+    {
+      "id": "CQ2",
+      "question": "How can the term \"computer game\" vary in meaning by context and region?",
+      "evidence": [
+        {
+          "paragraph_id": "P0008",
+          "text": "\"Computer game\" may also be used as a descriptor, as all these types of games essentially require the use of a computer processor; in some cases, it is used interchangeably with \"video game\". Particularly in the United Kingdom and Western Europe, this is common due to the historic relevance of domestically produced microcomputers."
+        },
+        {
+          "paragraph_id": "P0008",
+          "text": "The term \"computer game\" can also refer to PC games, which are played primarily on personal computers or other flexible hardware systems, to distinguish them from console games, arcade games, or mobile games."
+        }
+      ]
+    },
+    {
+      "id": "CQ3",
+      "question": "Which historical or regional alternative terms for video games are documented, and how has their use varied over time and place?",
+      "evidence": [
+        {
+          "paragraph_id": "P0009",
+          "text": "Other terms, such as \"television game\", \"telegame\", or \"TV game\", had been used in the 1970s and early 1980s, particularly for home gaming consoles that rely on connection to a television set."
+        },
+        {
+          "paragraph_id": "P0009",
+          "text": "In Japan, where consoles like the Odyssey were first imported and then made within the country by the large television manufacturers such as Toshiba and Sharp Corporation, such games are known as \"TV games\", \"TV geemu\", or \"terebi geemu\". The term \"TV game\" is still commonly used into the 21st century."
+        }
+      ]
+    },
+    {
+      "id": "CQ4",
+      "question": "What evidence does the source give for the early emergence of the term \"video game\"?",
+      "evidence": [
+        {
+          "paragraph_id": "P0010",
+          "text": "The first appearance of the term \"video game\" emerged around 1973. The Oxford English Dictionary cited a 10 November 1973 BusinessWeek article as the first printed use of the term. Though Bushnell believed the term came from a vending magazine review of Computer Space in 1971, a review of the major vending magazines Vending Times and Cashbox showed that the term may have come even earlier, appearing first in a letter dated July 10, 1972."
+        }
+      ]
+    },
+    {
+      "id": "CQ5",
+      "question": "Can something be treated as a video game despite limited interaction or the absence of a victory condition?",
+      "evidence": [
+        {
+          "paragraph_id": "P0013",
+          "text": "To distinguish between these two, video games are considered to require some interactivity that affects the visual display."
+        },
+        {
+          "paragraph_id": "P0014",
+          "text": "The introduction of walking simulators (adventure games that allow for exploration but lack any objectives) like Gone Home, and empathy games (video games that tend to focus on emotion) like That Dragon, Cancer brought the idea of games that did not have any such type of winning condition and raising the question of whether these were actually games. These are still commonly justified as video games as they provide a game world that the player can interact with by some means."
+        }
+      ]
+    },
+    {
+      "id": "CQ6",
+      "question": "What common gameplay elements can appear before and during level-based play?",
+      "evidence": [
+        {
+          "paragraph_id": "P0017",
+          "text": "Most games will launch into a title screen and give the player a chance to review options such as the number of players before starting a game. Most games are divided into levels which the player must work the avatar through, scoring points, collecting power-ups to boost the avatar's innate attributes, all while either using special attacks to defeat enemies or moves to avoid them. This information is relayed to the player through a type of on-screen user interface such as a heads-up display atop the rendering of the game itself."
+        }
+      ]
+    },
+    {
+      "id": "CQ7",
+      "question": "How can avatar health and lives lead to a game-over state?",
+      "evidence": [
+        {
+          "paragraph_id": "P0017",
+          "text": "Taking damage will deplete their avatar's health, and if that falls to zero or if the avatar otherwise falls into an impossible-to-escape location, the player will lose one of their lives. Should they lose all their lives without gaining an extra life or \"1-UP\", then the player will reach the \"game over\" screen."
+        }
+      ]
+    },
+    {
+      "id": "CQ8",
+      "question": "What mechanisms can let a player save or later resume a game?",
+      "evidence": [
+        {
+          "paragraph_id": "P0017",
+          "text": "In some games, intermediate points between levels will offer save points where the player can create a saved game on storage media to restart the game should they lose all their lives or need to stop the game and restart at a later time. These also may be in the form of a passage that can be written down and reentered at the title screen."
+        }
+      ]
+    },
+    {
+      "id": "CQ9",
+      "question": "How can bugs, glitches, cheat mechanisms, and trainers be exploited or used to alter play?",
+      "evidence": [
+        {
+          "paragraph_id": "P0018",
+          "text": "Product flaws include software bugs which can manifest as glitches which may be exploited by the player; this is often the foundation of speedrunning a video game. These bugs, along with cheat codes, Easter eggs, and other hidden secrets that were intentionally added to the game can also be exploited. On some consoles, cheat cartridges allow players to execute these cheat codes, and user-developed trainers allow similar bypassing for computer software games. Both of which might make the game easier, give the player additional power-ups, or change the appearance of the game."
+        }
+      ]
+    },
+    {
+      "id": "CQ10",
+      "question": "What constitutes a video-game platform, and how can platform or brand exclusivity be used?",
+      "evidence": [
+        {
+          "paragraph_id": "P0022",
+          "text": "Video games require a platform, a specific combination of electronic components or computer hardware and associated software, to operate."
+        },
+        {
+          "paragraph_id": "P0022",
+          "text": "Games are typically designed to be played on one or a limited number of platforms, and exclusivity to a platform or brand is used by platform holders as a competitive edge in the video game market."
+        }
+      ]
+    },
+    {
+      "id": "CQ11",
+      "question": "How are ports or conversions, remasters, and remakes distinguished?",
+      "evidence": [
+        {
+          "paragraph_id": "P0022",
+          "text": "However, games may be developed for alternative platforms than intended, which are described as ports or conversions. These also may be remasters - where most of the original game's source code is reused and art assets, models, and game levels are updated for modern systems – and remakes, where in addition to asset improvements, significant reworking of the original game and possibly from scratch is performed."
+        }
+      ]
+    },
+    {
+      "id": "CQ12",
+      "question": "What platform characteristics can make the same PC game operate differently and support capabilities such as emulation, mods, or open online hosting?",
+      "evidence": [
+        {
+          "paragraph_id": "P0025",
+          "text": "Personal computers are not dedicated game platforms, so there may be differences running the same game on different hardware. Also, the openness allows some features to developers like reduced software cost, increased flexibility, increased innovation, emulation, creation of modifications or mods, open hosting for online gaming (in which a person plays a video game with people who are in a different household) and others."
+        }
+      ]
+    },
+    {
+      "id": "CQ13",
+      "question": "What characteristics distinguish a home console from a personal computer as a game platform?",
+      "evidence": [
+        {
+          "paragraph_id": "P0027",
+          "text": "A console game is played on a home console, a specialized electronic device that connects to a common television set or composite video monitor. Home consoles are specifically designed to play games using a dedicated hardware environment, giving developers a concrete hardware target for development and assurances of what features will be available, simplifying development compared to PC game development."
+        }
+      ]
+    },
+    {
+      "id": "CQ14",
+      "question": "What components and portability characteristics define a handheld game console?",
+      "evidence": [
+        {
+          "paragraph_id": "P0029",
+          "text": "A handheld game console is a small, self-contained electronic device that is portable and can be held in a user's hands. It features the console, a small screen, speakers and buttons, joystick or other game controllers in a single unit."
+        }
+      ]
+    },
+    {
+      "id": "CQ15",
+      "question": "What hardware and cabinet features commonly characterize an arcade video game?",
+      "evidence": [
+        {
+          "paragraph_id": "P0031",
+          "text": "An arcade video game generally refers to a game played on an even more specialized type of electronic device that is typically designed to play only one game and is encased in a special, large coin-operated cabinet which has one built-in console, controllers (joystick, buttons, etc.), a CRT screen, and audio amplifier and speakers."
+        }
+      ]
+    },
+    {
+      "id": "CQ16",
+      "question": "How do browser games use web technologies as a cross-platform environment, and how may such games be identified?",
+      "evidence": [
+        {
+          "paragraph_id": "P0033",
+          "text": "A browser game takes advantages of standardizations of technologies for the functionality of web browsers across multiple devices providing a cross-platform environment. These games may be identified based on the website that they appear, such as with Miniclip games. Others are named based on the programming platform used to develop them, such as Java and Flash games."
+        }
+      ]
+    },
+    {
+      "id": "CQ17",
+      "question": "Which mobile-device capabilities may be used to support augmented-reality gameplay?",
+      "evidence": [
+        {
+          "paragraph_id": "P0035",
+          "text": "These games may use unique features of mobile devices that are not necessary present on other platforms, such as accelerometers, global positioning information and camera devices to support augmented reality gameplay."
+        }
+      ]
+    },
+    {
+      "id": "CQ18",
+      "question": "How does cloud gaming connect player input and display output to remotely computed and rendered gameplay?",
+      "evidence": [
+        {
+          "paragraph_id": "P0037",
+          "text": "Cloud gaming requires a minimal hardware device, such as a basic computer, console, laptop, mobile phone or even a dedicated hardware device connected to a display with good Internet connectivity that connects to hardware systems by the cloud gaming provider. The game is computed and rendered on the remote hardware, using a number of predictive methods to reduce the network latency between player input and output on their display device."
+        }
+      ]
+    },
+    {
+      "id": "CQ19",
+      "question": "What equipment and tracking or control mechanisms are generally used by virtual-reality games?",
+      "evidence": [
+        {
+          "paragraph_id": "P0039",
+          "text": "Virtual reality (VR) games generally require players to use a special head-mounted unit that provides stereoscopic screens and motion tracking to immerse a player within virtual environment that responds to their head movements. Some VR systems include control units for the player's hands as to provide a direct way to interact with the virtual world. VR systems generally require a separate computer, console, or other processing device that couples with the head-mounted unit."
+        }
+      ]
+    },
+    {
+      "id": "CQ20",
+      "question": "How do emulation and backward compatibility differ in the way they enable older games on newer systems?",
+      "evidence": [
+        {
+          "paragraph_id": "P0041",
+          "text": "An emulator enables games from a console or otherwise different system to be run in a type of virtual machine on a modern system, simulating the hardware of the original and allows old games to be played."
+        },
+        {
+          "paragraph_id": "P0043",
+          "text": "Backward compatibility is similar in nature to emulation in that older games can be played on newer platforms, but typically directly though hardware and built-in software within the platform."
+        }
+      ]
+    },
+    {
+      "id": "CQ21",
+      "question": "What physical media formats and non-physical distribution mechanisms are used for video games?",
+      "evidence": [
+        {
+          "paragraph_id": "P0045",
+          "text": "Physical formats include ROM cartridges, magnetic storage including magnetic-tape data storage and floppy discs, optical media formats including CD-ROM and DVDs, and flash memory cards. Furthermore digital distribution over the Internet or other communication methods as well as cloud gaming alleviate the need for any physical media."
+        }
+      ]
+    },
+    {
+      "id": "CQ22",
+      "question": "How can game media function either as direct read-only memory or as installation media?",
+      "evidence": [
+        {
+          "paragraph_id": "P0045",
+          "text": "In some cases, the media serves as the direct read-only memory for the game, or it may be the form of installation media that is used to write the main assets to the player's platform's local storage for faster loading periods and later updates."
+        }
+      ]
+    },
+    {
+      "id": "CQ23",
+      "question": "How can expansion packs or downloadable content extend a game and support free or monetized post-release content?",
+      "evidence": [
+        {
+          "paragraph_id": "P0046",
+          "text": "Games can be extended with new content and software patches through either expansion packs which are typically available as physical media, or as downloadable content nominally available via digital distribution. These can be offered freely or can be used to monetize a game following its initial release."
+        }
+      ]
+    },
+    {
+      "id": "CQ24",
+      "question": "How can user-generated content and mods extend games, and how can modding differ between unofficial and officially supported forms?",
+      "evidence": [
+        {
+          "paragraph_id": "P0046",
+          "text": "Several games offer players the ability to create user-generated content to share with others to play. Other games, mostly those on personal computers, can be extended with user-created modifications or mods that alter or add onto the game; these often are unofficial and were developed by players from reverse engineering of the game, but other games provide official support for modding the game."
+        }
+      ]
+    },
+    {
+      "id": "CQ25",
+      "question": "What common and specialized input devices can translate player actions into game input?",
+      "evidence": [
+        {
+          "paragraph_id": "P0048",
+          "text": "Most common is the use of game controllers like gamepads and joysticks for most consoles, and as accessories for personal computer systems along keyboard and mouse controls."
+        },
+        {
+          "paragraph_id": "P0048",
+          "text": "Specialized controllers may be used for certain genres of games, including racing wheels, light guns and dance pads. Digital cameras,s microphones and motion detectors can capture sound and movement from the player as input into the game, which can, in some cases, effectively eliminate the control, and on other systems such as virtual reality, are used to enhance immersion into the game."
+        }
+      ]
+    },
+    {
+      "id": "CQ26",
+      "question": "How are standard bundled controllers distinguished from separately purchased peripheral controllers, and what controls can they contain?",
+      "evidence": [
+        {
+          "paragraph_id": "P0048",
+          "text": "Common controls on the most recent controllers include face buttons, shoulder triggers, analog sticks, and directional pads (\"d-pads\"). Consoles typically include standard controllers which are shipped or bundled with the console itself, while peripheral controllers are available as a separate purchase from the console manufacturer or third-party vendors."
+        }
+      ]
+    },
+    {
+      "id": "CQ27",
+      "question": "Which display devices and graphical output forms can a video game use?",
+      "evidence": [
+        {
+          "paragraph_id": "P0050",
+          "text": "By definition, all video games are intended to output graphics to an external video display, such as cathode ray tube televisions, newer liquid-crystal display (LCD) televisions and built-in screens, projectors or computer monitors, depending on the type of platform the game is played on."
+        },
+        {
+          "paragraph_id": "P0050",
+          "text": "The game's output can range from fixed displays using LED or LCD elements, text-based games, two-dimensional and three-dimensional graphics, and augmented reality displays."
+        }
+      ]
+    },
+    {
+      "id": "CQ28",
+      "question": "What factors jointly determine color depth, refresh rate, frame rate, and screen resolution?",
+      "evidence": [
+        {
+          "paragraph_id": "P0050",
+          "text": "Features such as color depth, refresh rate, frame rate, and screen resolution are a combination of the limitations of the game platform and display device and the program efficiency of the game itself."
+        }
+      ]
+    },
+    {
+      "id": "CQ29",
+      "question": "How can audio and haptic mechanisms provide feedback to the player?",
+      "evidence": [
+        {
+          "paragraph_id": "P0051",
+          "text": "This often will include sound effects tied to the player's actions to provide audio feedback, as well as background music for the game."
+        },
+        {
+          "paragraph_id": "P0052",
+          "text": "This is most commonly haptic technology built into the game controller, such as causing the controller to shake in the player's hands to simulate a shaking earthquake occurring in game."
+        }
+      ]
+    },
+    {
+      "id": "CQ30",
+      "question": "On what basis are video-game genres generally classified, and what narrative-based exception is documented?",
+      "evidence": [
+        {
+          "paragraph_id": "P0056",
+          "text": "However, unlike film or television which use visual or narrative elements, video games are generally categorized into genres based on their gameplay interaction, since this is the primary means which one interacts with a video game."
+        },
+        {
+          "paragraph_id": "P0056",
+          "text": "An exception is the horror game genre, used for games that are based on narrative elements of horror fiction, the supernatural, and psychological horror."
+        }
+      ]
+    },
+    {
+      "id": "CQ31",
+      "question": "How can genre classification express subgenres, cross-genre membership, and historically changing genre names?",
+      "evidence": [
+        {
+          "paragraph_id": "P0057",
+          "text": "The names may shift over time as players, developers and the media come up with new terms; for example, first-person shooters were originally called \"Doom clones\" based on the 1993 game. A hierarchy of game genres exist, with top-level genres like \"shooter game\" and \"action game\" that broadly capture the game's main gameplay style, and several subgenres of specific implementation, such as within the shooter game first-person shooter and third-person shooter. Some cross-genre types also exist that fall until multiple top-level genres such as action-adventure game."
+        }
+      ]
+    },
+    {
+      "id": "CQ32",
+      "question": "What multiplayer configurations and interaction styles are supported, from local or LAN play to online, cooperative, asymmetric, and massively multiplayer play?",
+      "evidence": [
+        {
+          "paragraph_id": "P0059",
+          "text": "Within the latter category, multiplayer games can be played in a variety of ways, including locally at the same device, on separate devices connected through a local network such as LAN parties, or online via separate Internet connections. Most multiplayer games are based on competitive gameplay, but many offer cooperative and team-based options as well as asymmetric gameplay. Online games use server structures that can also enable massively multiplayer online games (MMOs) to support hundreds of players at the same time."
+        }
+      ]
+    },
+    {
+      "id": "CQ33",
+      "question": "What characterizes a zero-player game and the player's role in such play?",
+      "evidence": [
+        {
+          "paragraph_id": "P0060",
+          "text": "A small number of video games are zero-player games, in which the player has very limited interaction with the game itself. These are most commonly simulation games where the player may establish a starting state and then let the game proceed on its own, watching the results as a passive observer, such as with many computerized simulations of Conway's Game of Life."
+        }
+      ]
+    },
+    {
+      "id": "CQ34",
+      "question": "How do core or hard-core games contrast with casual and hyper-casual games in learning effort, accessibility, audience, and play style?",
+      "evidence": [
+        {
+          "paragraph_id": "P0064",
+          "text": "These games typically require a fair amount of time to learn and master, in contrast to casual games, and thus are most appealing to gamers rather than a broader audience."
+        },
+        {
+          "paragraph_id": "P0066",
+          "text": "In contrast to core games, casual games are designed for ease of accessibility, simple to understand gameplay and quick to grasp rule sets, and aimed at mass market audience. They frequently support the ability to jump in and out of play on demand, such as during commuting or lunch breaks."
+        },
+        {
+          "paragraph_id": "P0066",
+          "text": "More recent, starting in the late 2010s, are hyper-casual games which use even more simplistic rules for short but infinitely replayable games, such as Flappy Bird."
+        }
+      ]
+    },
+    {
+      "id": "CQ35",
+      "question": "How do edutainment games and educational video games differ in their educational emphasis?",
+      "evidence": [
+        {
+          "paragraph_id": "P0068",
+          "text": "These are broadly split between edutainment games that tend to focus on the entertainment value and rote learning but are unlikely to engage in critical thinking, and educational video games that are geared towards problem solving through motivation and positive reinforcement while downplaying the entertainment value."
+        }
+      ]
+    },
+    {
+      "id": "CQ36",
+      "question": "What makes a game a serious game, and what serious-game types and purposes are documented?",
+      "evidence": [
+        {
+          "paragraph_id": "P0070",
+          "text": "Further extending from educational games, serious games are those where the entertainment factor may be augmented, overshadowed, or even eliminated by other purposes for the game."
+        },
+        {
+          "paragraph_id": "P0070",
+          "text": "Educational games are a form of serious games, but other types of games include fitness games that incorporate significant physical exercise to help keep the player fit (such as Wii Fit), simulator games that resemble flight simulators to pilot aircraft (such as Microsoft Flight Simulator), advergames that are built around the advertising of a product (such as Pepsiman), and newsgames aimed at conveying a specific advocacy message (such as NarcoGuerra)."
+        }
+      ]
+    },
+    {
+      "id": "CQ37",
+      "question": "What goals and play characteristics are associated with art or arthouse games?",
+      "evidence": [
+        {
+          "paragraph_id": "P0072",
+          "text": "These art or arthouse games are designed to generate emotion and empathy from the player by challenging societal norms and offering critique through the interactivity of the video game medium. They may not have any type of win condition and are designed to let the player explore through the game world and scenarios."
+        }
+      ]
+    },
+    {
+      "id": "CQ38",
+      "question": "What age, descriptor, and content-theme information can a video-game rating communicate?",
+      "evidence": [
+        {
+          "paragraph_id": "P0074",
+          "text": "Like with film content ratings, video game ratings typing identify the target age group that the national or regional ratings board believes is appropriate for the player, ranging from all-ages, to a teenager-or-older, to mature, to the infrequent adult-only games. Most content review is based on the level of violence, both in the type of violence and how graphic it may be represented, and sexual content, but other themes such as drug and alcohol use and gambling that can influence children may also be identified. A primary identifier based on a minimum age is used by nearly all systems, along with additional descriptors to identify specific content that players and parents should be aware of."
+        }
+      ]
+    },
+    {
+      "id": "CQ39",
+      "question": "What ESRB categories are documented for the United States, and is the system voluntary?",
+      "evidence": [
+        {
+          "paragraph_id": "P0076",
+          "text": "- Entertainment Software Rating Board (ESRB) that oversees games released in the United States. ESRB ratings are voluntary and rated along a E (Everyone), E10+ (Everyone 10 and older), T (Teen), M (Mature), and AO (Adults Only)."
+        }
+      ]
+    },
+    {
+      "id": "CQ40",
+      "question": "What PEGI age categories and geographic coverage are documented?",
+      "evidence": [
+        {
+          "paragraph_id": "P0077",
+          "text": "- Pan European Game Information (PEGI) covering the United Kingdom, most of the European Union and other European countries, replacing previous national-based systems. The PEGI system uses content rated based on minimum recommended ages, which include 3+, 8+, 12+, 16+, and 18+."
+        }
+      ]
+    },
+    {
+      "id": "CQ41",
+      "question": "What ratings can the Australian Classification Board assign or refuse, and what distribution consequence is described for unrated or RC games?",
+      "evidence": [
+        {
+          "paragraph_id": "P0078",
+          "text": "- Australian Classification Board (ACB) oversees the ratings of games and other works in Australia, using ratings of G (General), PG (Parental Guidance), M (Mature), MA15+ (Mature Accompanied), R18+ (Restricted), and X (Restricted for pornographic material). ACB can also deny to give a rating to game (RC – Refused Classification). The ACB's ratings are enforceable by law, and importantly, games cannot be imported or purchased digitally in Australia if they have failed to gain a rating or were given the RC rating, leading to a number of notable banned games."
+        }
+      ]
+    },
+    {
+      "id": "CQ42",
+      "question": "What rating categories are documented for CERO in Japan and USK in Germany?",
+      "evidence": [
+        {
+          "paragraph_id": "P0079",
+          "text": "- Computer Entertainment Rating Organization (CERO) rates games for Japan. Their ratings include A (all ages), B (12 and older), C (15 and over), D (17 and over), and Z (18 and over)."
+        },
+        {
+          "paragraph_id": "P0080",
+          "text": "- Unterhaltungssoftware Selbstkontrolle (USK) rates games for Germany. Their ratings include 0, 6, 12, 16, and 18."
+        }
+      ]
+    },
+    {
+      "id": "CQ43",
+      "question": "What role is the International Age Rating Coalition described as playing across regional content-rating systems?",
+      "evidence": [
+        {
+          "paragraph_id": "P0081",
+          "text": "Additionally, the major content system provides have worked to create the International Age Rating Coalition (IARC), a means to streamline and align the content ratings system between different region, so that a publisher would only need to complete the content ratings review for one provider, and use the IARC transition to affirm the content rating for all other regions."
+        }
+      ]
+    },
+    {
+      "id": "CQ44",
+      "question": "How did the German treatment of Nazi imagery in games change in 2018?",
+      "evidence": [
+        {
+          "paragraph_id": "P0082",
+          "text": "Within Germany, until 2018, the Unterhaltungssoftware Selbstkontrolle (Entertainment Software Self-Regulation) would refuse to classify, and thus allow sale, of any game depicting Nazi imagery, and thus often requiring developers to replace such imagery with fictional ones. This ruling was relaxed in 2018 to allow for such imagery for \"social adequacy\" purposes that applied to other works of art."
+        }
+      ]
+    },
+    {
+      "id": "CQ45",
+      "question": "What review and modification requirements are described for games published in China?",
+      "evidence": [
+        {
+          "paragraph_id": "P0082",
+          "text": "China's video game segment is mostly isolated from the rest of the world due to the government's censorship, and all games published there must adhere to strict government review, disallowing content such as smearing the image of the Chinese Communist Party. Foreign games published in China often require modification by developers and publishers to meet these requirements."
+        }
+      ]
+    },
+    {
+      "id": "CQ46",
+      "question": "What sequence of early milestones connects the 1950s–1960s prototypes, Spacewar!, Computer Space, Pong, and the Magnavox Odyssey?",
+      "evidence": [
+        {
+          "paragraph_id": "P0004",
+          "text": "The first video game prototypes in the 1950s and 1960s were simple extensions of electronic games using video-like output from large, room-sized mainframe computers. The first consumer video game was the arcade video game Computer Space in 1971, which took inspiration from the earlier 1962 computer game Spacewar!. In 1972 came the now-iconic video game Pong and the first home console, the Magnavox Odyssey."
+        }
+      ]
+    },
+    {
+      "id": "CQ47",
+      "question": "What period is described as the arcade golden age, and what factors led to the 1983 North American video-game market crash?",
+      "evidence": [
+        {
+          "paragraph_id": "P0004",
+          "text": "The industry grew quickly during the \"golden age\" of arcade video games from the late 1970s to early 1980s, and companies like Atari, Mattel, and Coleco also released highly successful consoles for the home market: however, loss of publishing control and saturation of the console gaming market led to the crash of the North American video game market in 1983."
+        }
+      ]
+    },
+    {
+      "id": "CQ48",
+      "question": "What historically qualified shifts are described in console, PC, arcade, handheld, AAA, indie, and smartphone gaming after the 1983 crash?",
+      "evidence": [
+        {
+          "paragraph_id": "P0004",
+          "text": "Following the crash, the industry matured and diversified: by the late 1980s video game consoles became dominated by Japanese companies such as Nintendo, Sega, and later Sony, whereas the Microsoft Windows (and MS-DOS before it) line of operating systems increasingly came to dominate the computer gaming space, with multiplayer online PC games seeing the establishment of the nascent eSports scene. Arcades on the other hand steadily lost their technological edge and popularity by the end of the 1990s in the face of advancements in the console and computer space, especially in North America and Europe, while in the handheld space Nintendo achieved dominance with the Game Boy line. By the 2000s, Sega exited the console space, and from then on the landscape has been dominated by the \"big three\" console manufacturers of Nintendo, Sony, and Microsoft. At this time the core industry also increasingly centered on \"AAA\" games, leaving less room for riskier, experimental, and lower-budget games. Coupled with increasing availability of high-speed Internet and digital distribution, this gave room for independent video game development (or \"indie games\") to gain prominence into the 2010s."
+        },
+        {
+          "paragraph_id": "P0004",
+          "text": "The emerging Asian markets and proliferation of smartphone games in particular are altering player demographics towards casual and cozy gaming, and increasing monetization by incorporating games as a service."
+        }
+      ]
+    },
+    {
+      "id": "CQ49",
+      "question": "Which industry parties are described as collaborating to bring a video game to consumers?",
+      "evidence": [
+        {
+          "paragraph_id": "P0005",
+          "text": "Today, video game development requires numerous skills, vision, teamwork, and liaisons between different parties, including developers, publishers, distributors, retailers, hardware manufacturers, and other marketers, to successfully bring a game to its consumers."
+        }
+      ]
+    },
+    {
+      "id": "CQ50",
+      "question": "What 2020 market-revenue estimate and electronics-industry influence are attributed to the video-game market?",
+      "evidence": [
+        {
+          "paragraph_id": "P0005",
+          "text": "As of 2020, the global video game market had estimated annual revenues of US$159 billion across hardware, software, and services, which is three times the size of the global music industry and four times that of the film industry in 2019, making it a formidable heavyweight across the modern entertainment industry. The video game market is also a major influence behind the electronics industry, where personal computer component, console, and peripheral sales, as well as consumer demands for better game performance, have been powerful driving factors for hardware design and innovation."
+        }
+      ]
+    }
+  ],
+  "note": "Source basis: the authoritative document paragraphs in the supplied file. "
+}

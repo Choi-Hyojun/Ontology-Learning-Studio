@@ -12,6 +12,7 @@ import { invalidateStageResults, removeNeonMetrics } from "../app/session-log.ts
 import { editStageOutput } from "../app/output-edit.ts";
 import { ontologyContext } from "../app/project-files.ts";
 import { assessYonseiOutput, yonseiPrerequisite, resolveYonseiContext, yonseiPipelineContext } from "../app/yonsei-model.ts";
+import * as actualYonsei from "../app/yonsei-model.ts";
 
 const read = name => readFileSync(new URL("../app/" + name, import.meta.url), "utf8");
 function load(name, overrides = {}, globals = {}) {
@@ -425,6 +426,30 @@ test("invalid previous-output edits leave results intact and stay editable", asy
   assert.equal(h.one(node => node.props?.id === "context-previous-output").props.readOnly, false);
   assert.equal(h.save().currentOutputs["yonsei-01"], "VALID OUTPUT");
   assert.equal(h.save().currentRecords["yonsei-01"].outputEdit, undefined);
+});
+
+test("page loads current persona and six-example defaults and sends them in actual request assembly", async () => {
+  const h = pageHarness({ yonsei: actualYonsei });
+  const persona = JSON.parse(read("neon-prompts.json")).defaults.persona;
+  assert.match(persona, /^You are an expert knowledge and ontology engineer/);
+  assert.equal(h.save().valuesByMethod.neon.persona, persona);
+  h.selectYonsei();
+  const field = h.one(node => node.props?.id === "context-persona");
+  assert.equal(field.props.value, persona);
+  for (let step = 1; step <= 8; step++) {
+    h.navigate(String(step).padStart(2, "0"));
+    assert.match(h.panel().props.prompt, /^Generate six /);
+  }
+  h.navigate("01"); h.useApi();
+  const generating = h.panel().props.onGenerate(); h.render();
+  assert.match(h.requests[0].input.messages.user, /Number the six examples 1 through 6/);
+  h.respond(0, "REVIEWED SIX EXAMPLES"); await generating; h.render();
+  h.run(); const executing = h.startTimers();
+  assert.ok(h.requests[1].input.messages.system.startsWith(persona + "\n"));
+  assert.ok(h.requests[1].input.messages.user.startsWith(persona + "\n\n"));
+  assert.match(h.requests[1].input.messages.user, /REVIEWED SIX EXAMPLES/);
+  assert.doesNotMatch(h.requests[1].input.messages.user, /You are a You are/);
+  h.respond(1, "SPECIFICATION"); await executing; h.render();
 });
 
 test("Yonsei page runs few-shot and stage as separate API requests, links generated text and exports both", async () => {

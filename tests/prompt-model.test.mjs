@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { assemblePrompt, interpolate, promptTemplateMessages, simulateCompletion } from "../app/prompt-model.ts";
+import { yonseiDefaults, yonseiDefinitions } from "../app/yonsei-model.ts";
 
 const source = JSON.parse(readFileSync(new URL("../app/neon-prompts.json", import.meta.url), "utf8"));
 
@@ -41,13 +42,30 @@ test("specification uses four editable fields without ontology metrics, preservi
   const values = { ...source.defaults, persona: "Custom persona", domain_name: "Custom {keywords}",
     domain_description: "Custom description", keywords: "Alpha, Beta", ontology_metrics: "Classes: 7" };
   const result = assemblePrompt(source.stages[0].template, values, "");
-  assert.ok(result.user.startsWith("You are a Custom persona."));
+  assert.ok(result.user.startsWith("Custom persona\n"));
   assert.ok(result.user.includes("Custom {keywords}"));
   assert.ok(result.user.includes("###start_document###\nCustom description\n###end_document###"));
   assert.ok(result.user.includes("Alpha, Beta"));
   assert.doesNotMatch(result.user, /ontology_metrics|Classes: 7|previous metrics|subclass count/);
   assert.deepEqual(new Set(source.stages[0].fields), new Set(["persona", "domain_name", "domain_description", "keywords"]));
   assert.ok(result.system.startsWith("Custom persona\n"));
+});
+
+test("NeOn and Yonsei share the supplied complete persona without a duplicate role prefix", () => {
+  const persona = source.defaults.persona;
+  assert.ok(persona.startsWith("You are an expert knowledge and ontology engineer"));
+  for (const phrase of ["game studies", "SHACL", "Protégé", "PROV-O", "Domain Name: Video Game", "Domain Description:"])
+    assert.ok(persona.includes(phrase), phrase);
+  assert.equal(yonseiDefaults().persona, persona);
+  for (const [template, values] of [
+    [source.stages[0].template, source.defaults],
+    [yonseiDefinitions()["yonsei-01"].template, yonseiDefaults()],
+  ]) {
+    const messages = assemblePrompt(template, values, "");
+    assert.ok(messages.system.startsWith(persona + "\n"));
+    assert.ok(messages.user.startsWith(persona + "\n\n"));
+    assert.doesNotMatch(messages.user, /You are a You are/);
+  }
 });
 
 test("all NeOn stages and defaults exclude metric input and metric-based size constraints", () => {

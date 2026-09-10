@@ -50,6 +50,59 @@ test("Yonsei has nine separate JSON-managed stages and eight generation prompts"
   assert.match(source.provenance.status, /not a published methodology/);
 });
 
+test("all eight Yonsei generators request six distinct examples without changing the stage contracts", () => {
+  for (const stage of source.stages.filter(stage => stage.id !== "09")) {
+    assert.match(stage.few_shot_prompt, /^Generate six /);
+    assert.match(stage.few_shot_prompt, /Number the six examples 1 through 6/);
+    assert.match(stage.few_shot_prompt, /distinct small cases/);
+    const messages = fewShotMessages(stage.id, values, outputs, "CURRENT TTL");
+    assert.ok(messages.user.includes(stage.few_shot_prompt));
+  }
+  for (const id of ["06", "07"])
+    assert.match(source.stages.find(stage => stage.id === id).few_shot_prompt, /at least one no-op/);
+  assert.match(source.stages.find(stage => stage.id === "05").few_shot_prompt, /Across the six examples/);
+  assert.match(source.stages.find(stage => stage.id === "08").few_shot_prompt, /using its CQ IDs from the example input/);
+});
+
+test("JSON stages and teaching examples require parseable strings without changing other output formats", () => {
+  const stringPrefix = "Valid string example (syntax only, not document evidence): ";
+  const literalPrefix = "Valid Turtle-literal JSON example (syntax only): ";
+  for (const stage of source.stages) {
+    const jsonStage = ["03", "04", "05", "06", "07"].includes(stage.id);
+    const jsonExamples = jsonStage || stage.id === "08";
+    assert.equal(stage.template.includes("JSON SYNTAX REQUIREMENTS:"), jsonStage);
+    assert.equal((stage.few_shot_prompt ?? "").includes("JSON SYNTAX REQUIREMENTS:"), jsonExamples);
+    for (const field of ["template", "few_shot_prompt"]) {
+      if (!(field === "template" ? jsonStage : jsonExamples)) continue;
+      const instruction = stage[field];
+      assert.match(instruction, /JSON\.parse/);
+      assert.match(instruction, /Preserve the original question, evidence and literal text after JSON decoding/);
+      const sample = instruction.split("\n").find(line => line.startsWith(stringPrefix)).slice(stringPrefix.length);
+      assert.equal(JSON.parse(sample).text, 'The term "computer game" is used.\nA second line.');
+      assert.ok(instruction.includes(String.raw`encode a double quote as \"`));
+      if (stage.id !== "03") {
+        const literal = instruction.split("\n").find(line => line.startsWith(literalPrefix)).slice(literalPrefix.length);
+        const store = rdf.graph();
+        rdf.parse(`<urn:subject> <urn:predicate> ${JSON.parse(literal).object} .`, store, "https://example.org/", "text/turtle");
+        assert.equal(store.statements[0].object.value, 'He said "Go".');
+      }
+      if (field === "template") assert.match(instruction, /exactly one complete JSON object/);
+      else assert.match(instruction, /not to the whole numbered example collection/);
+    }
+  }
+  for (const id of ["08", "09"])
+    assert.match(source.stages.find(stage => stage.id === id).template, /###start_turtle###/);
+});
+
+test("CQ validation accepts escaped source quotes and rejects their unescaped JSON representation", () => {
+  const text = 'A game may be called a "computer game".\nPaths may contain a backslash: \\.';
+  const document = { ...values, domain_description: text };
+  const output = JSON.stringify({ cqs: [{ id: "CQ1", question: 'What is a "computer game"?', evidence: [{ paragraph_id: "P0001", text }] }] });
+  assert.doesNotThrow(() => validateYonseiOutput("03", output, document, {}));
+  assert.throws(() => validateYonseiOutput("03", output.replaceAll('\\"', '"'), document, {}), /JSON/);
+  assert.throws(() => validateYonseiOutput("03", output.replaceAll('\\n', '\n'), document, {}), /JSON/);
+});
+
 test("every main prompt resolves numeric few-shot fields and current derived inputs", () => {
   const definitions = yonseiDefinitions();
   for (let step = 1; step <= 9; step++) {
@@ -64,8 +117,13 @@ test("every main prompt resolves numeric few-shot fields and current derived inp
 
 test("balanced modeling revision leaves unrelated stages and serialization unchanged", () => {
   const backup = JSON.parse(readFileSync(new URL("../app/yonsei-prompts.pre-hierarchy-2026-09-10.json", import.meta.url), "utf8"));
-  for (const id of ["01", "02", "03", "04", "08", "09"])
-    assert.deepEqual(source.stages.find(stage => stage.id === id), backup.stages.find(stage => stage.id === id));
+  const withoutGenerator = ({ few_shot_prompt, ...stage }) => ({ ...stage, template: stage.template.split("\n\nJSON SYNTAX REQUIREMENTS:\n")[0] });
+  const originalSpecification = backup.stages.find(stage => stage.id === "01");
+  assert.deepEqual(withoutGenerator(source.stages.find(stage => stage.id === "01")), {
+    ...withoutGenerator(originalSpecification), template: originalSpecification.template.replace("You are a {persona}.", "{persona}"),
+  });
+  for (const id of ["02", "03", "04", "08", "09"])
+    assert.deepEqual(withoutGenerator(source.stages.find(stage => stage.id === id)), withoutGenerator(backup.stages.find(stage => stage.id === id)));
   const { stages: _originalStages, ...originalSettings } = backup;
   const { stages: _currentStages, ...currentSettings } = source;
   assert.deepEqual(currentSettings, originalSettings);
@@ -73,10 +131,10 @@ test("balanced modeling revision leaves unrelated stages and serialization uncha
   for (const id of ["06", "07"]) {
     const current = source.stages.find(stage => stage.id === id);
     const original = backup.stages.find(stage => stage.id === id);
-    for (const key of ["fields", "few_shot_prompt", "simulation_example"])
+    for (const key of ["fields", "simulation_example"])
       assert.deepEqual(current[key], original[key]);
     const connectionCheck = "When adding a concept, also check its connections to the existing model and include missing source-supported links, whether ordinary relationships or direct subclass relationships, without forcing a parent. ";
-    assert.equal(current.template.replace(connectionCheck, ""), original.template);
+    assert.equal(withoutGenerator(current).template.replace(connectionCheck, ""), original.template);
   }
 });
 
