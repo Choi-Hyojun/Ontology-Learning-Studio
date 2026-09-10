@@ -7,7 +7,7 @@ import ts from "typescript";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { clearFewShots } from "../app/few-shot-state.ts";
-import { assemblePrompt, simulateCompletion } from "../app/prompt-model.ts";
+import { assemblePrompt, promptTemplateMessages, simulateCompletion } from "../app/prompt-model.ts";
 import { invalidateStageResults, removeNeonMetrics } from "../app/session-log.ts";
 import { editStageOutput } from "../app/output-edit.ts";
 import { ontologyContext } from "../app/project-files.ts";
@@ -73,15 +73,30 @@ test("few-shot preview opens exact full messages read-only without truncation an
 
 test("few-shot template preview preserves placeholders and includes instruction and target output format", () => {
   const render = previewHarness();
+  let calls = 0;
   const props = { instruction: "Custom {domain_name}", targetTemplate: 'Output JSON {"cqs":[]} using {few_shot_03}',
-    getMessages: () => { throw new Error("Template view must not assemble messages"); } };
-  findAll(render(props), node => node.type === "button")[1].props.onClick();
-  const dialog = findAll(render(props), node => node.type === ExpandedTextDialog)[0];
+    getMessages: () => { calls++; return { system: "Synthetic only", user: "Assembled request" }; } };
+  assert.equal(findAll(render(props), node => node.type === "button").length, 1);
+  findAll(render(props), node => node.type === "button")[0].props.onClick();
+  let dialog = findAll(render(props), node => node.type === ExpandedTextDialog)[0];
+  assert.equal(dialog.props.toolbar.props.children, "프롬프트 양식 보기");
+  dialog.props.toolbar.props.onClick();
+  dialog = findAll(render(props), node => node.type === ExpandedTextDialog)[0];
+  assert.equal(calls, 1, "Template view does not assemble messages");
   const source = JSON.parse(read("yonsei-prompts.json"));
   for (const text of [source.few_shot.system, source.few_shot.context_template, props.instruction, props.targetTemplate]) {
     assert.ok(dialog.props.value.includes(text));
   }
   assert.equal(dialog.props.readOnly, true);
+  assert.equal(dialog.props.toolbar.props["aria-pressed"], true);
+  assert.equal(dialog.props.toolbar.props.children, "전체 프롬프트 보기");
+  dialog.props.toolbar.props.onClick();
+  dialog = findAll(render(props), node => node.type === ExpandedTextDialog)[0];
+  assert.match(dialog.props.value, /Assembled request/);
+  assert.equal(dialog.props.toolbar.props["aria-pressed"], false);
+  dialog.props.onClose();
+  findAll(render(props), node => node.type === "button")[0].props.onClick();
+  assert.match(findAll(render(props), node => node.type === ExpandedTextDialog)[0].props.value, /Assembled request/);
 });
 
 test("few-shot preview reports assembly failures locally and remains closable", () => {
@@ -107,10 +122,10 @@ test("Yonsei few-shot panel separates generation prompt and editable result from
   assert.match(html, /현재 단계 실행과 별도의 API 호출/);
   assert.match(html, /예시는 문서 근거가 아닙니다/);
   assert.equal((html.match(/<textarea/g) ?? []).length, 2);
-  assert.equal((html.match(/aria-haspopup="dialog"/g) ?? []).length, 4);
+  assert.equal((html.match(/aria-haspopup="dialog"/g) ?? []).length, 3);
   assert.match(html, /Few-shot 생성 프롬프트 도움말/);
   assert.match(html, /전체 프롬프트 보기/);
-  assert.match(html, /프롬프트 양식 보기/);
+  assert.doesNotMatch(html, /프롬프트 양식 보기/);
   assert.match(html, /&lt;script&gt;/);
   assert.doesNotMatch(html, /<script>/);
 });
@@ -138,7 +153,7 @@ test("busy, missing prerequisites and manual mode gate generation without hiding
     assert.equal(editors.length, 2);
     for (const editor of editors) assert.equal(editor.props.disabled, !!(patch.disabled || patch.manual));
     const html = renderToStaticMarkup(tree);
-    assert.equal((html.match(/aria-haspopup="dialog"/g) ?? []).length, 4);
+    assert.equal((html.match(/aria-haspopup="dialog"/g) ?? []).length, 3);
     if (patch.manual) assert.match(html, /변수로 다시 조립/);
     if (patch.prerequisite) assert.ok(html.includes(patch.prerequisite));
   }
@@ -260,7 +275,7 @@ function pageHarness(options = {}) {
   const { default: Home } = load("page.tsx", {
     ...doubles, react: hooks,
     "./few-shot-panel": { FewShotPanel }, "./few-shot-state": { clearFewShots }, "./yonsei-model": { ...yonsei, ...options.yonsei },
-    "./prompt-model": { assemblePrompt, simulateCompletion },
+    "./prompt-model": { assemblePrompt, promptTemplateMessages, simulateCompletion },
     "./example-model": { exampleResponse: () => "Example output", pipelineContext: () => "", resolveExampleContext: (_method, _stage, values) => values },
     "./stage-help": { STAGE_HELP: { neon: Array.from({ length: 20 }, () => ({ description: "NeOn stage" })), tao: Array.from({ length: 8 }, () => ({ description: "TAO stage" })) }, FIELD_LABELS: { persona: "페르소나", domain_description: "문서 원문" }, fieldHelp: () => "Field help" },
     "./project-files": {
@@ -611,6 +626,45 @@ test("pending document imports and engine changes cannot mutate a running genera
   assert.equal(log.history.filter(item => item.event === "document_imported").length, 0);
   h.respond(0, "CURRENT DOCUMENT EXAMPLE"); await generating; h.render();
   assert.equal(h.panel().props.result, "CURRENT DOCUMENT EXAMPLE");
+});
+
+test("all methodologies expose the template switch inside the full-prompt editor", () => {
+  for (const label of ["NeOn-GPT", "TAO", "Yonsei"]) {
+    const h = pageHarness();
+    h.one(node => node.props?.role === "radio" && node.props.children[0]?.props.children === label).props.onClick(); h.render();
+    h.one(node => node.type === "button" && node.props["aria-controls"] === "full-prompt-editor").props.onClick(); h.render();
+    const original = h.one(node => node.props?.id === "user-message").props.value;
+    h.one(node => node.type === "button" && node.props.children === "프롬프트 양식 보기").props.onClick(); h.render();
+    assert.match(h.one(node => node.props?.id === "system-template").props.value, /\{persona\}/);
+    assert.equal(h.one(node => node.props?.id === "user-template").props.readOnly, true);
+    h.one(node => node.type === "button" && node.props.children === "전체 프롬프트 보기").props.onClick(); h.render();
+    assert.equal(h.one(node => node.props?.id === "user-message").props.value, original);
+    assert.equal(h.requests.length, 0);
+  }
+});
+
+test("stage prompt template switch preserves manual messages, records and API requests", () => {
+  const h = pageHarness(); h.selectYonsei(); h.useApi();
+  const toggle = text => { h.one(node => node.type === "button" && node.props.children === text).props.onClick(); h.render(); };
+  const open = () => { h.one(node => node.type === "button" && node.props["aria-controls"] === "full-prompt-editor").props.onClick(); h.render(); };
+  open();
+  h.one(node => node.props?.id === "user-message").props.onChange("MANUAL EDIT {literal}"); h.render();
+  const before = h.save();
+  toggle("프롬프트 양식 보기");
+  const format = h.one(node => node.props?.id === "user-template");
+  assert.equal(format.props.readOnly, true);
+  assert.equal(format.props.onChange, undefined);
+  assert.match(format.props.value, /\{domain_description\}/);
+  assert.match(h.one(node => node.props?.id === "system-template").props.value, /\{persona\}/);
+  toggle("전체 프롬프트 보기");
+  assert.equal(h.one(node => node.props?.id === "user-message").props.value, "MANUAL EDIT {literal}");
+  const after = h.save();
+  for (const key of ["promptOverrides", "currentOutputs", "currentRecords", "history", "valuesByMethod"]) assert.deepEqual(after[key], before[key]);
+  assert.equal(h.requests.length, 0);
+  toggle("프롬프트 양식 보기"); open(); open();
+  assert.equal(h.one(node => node.props?.id === "user-message").props.value, "MANUAL EDIT {literal}");
+  toggle("프롬프트 양식 보기"); h.navigate("02");
+  assert.match(h.one(node => node.props?.id === "user-message").props.value, /Few-shot:/);
 });
 
 test("full-message override explicitly bypasses automatic examples and reconnects only after restoring assembly", async () => {

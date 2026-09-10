@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import neonPrompts from "./neon-prompts.json";
 import taoPrompts from "./tao-prompts.json";
 import { exampleResponse, pipelineContext, resolveExampleContext } from "./example-model";
-import { assemblePrompt, simulateCompletion, type PromptMessages, type PromptValues } from "./prompt-model";
+import { assemblePrompt, promptTemplateMessages, simulateCompletion, type PromptMessages, type PromptValues } from "./prompt-model";
 import { DocumentField, type Attachment } from "./document-field";
 import { ContextTextarea, CopyButton } from "./context-textarea";
 import { editStageOutput } from "./output-edit";
@@ -125,6 +125,7 @@ export default function Home() {
   const [records, setRecords] = useState<Record<string, RunRecord>>({});
   const [overrides, setOverrides] = useState<Record<string, PromptMessages>>({});
   const [editorOpen, setEditorOpen] = useState(false);
+  const [templateViewKey, setTemplateViewKey] = useState<string | null>(null);
   const [autoAdvance, setAutoAdvance] = useState(false);
   const [attachments, setAttachments] = useState<Record<string, Attachment>>({});
   const [history, setHistory] = useState<LogEntry[]>([]);
@@ -161,12 +162,16 @@ export default function Home() {
   const template = (method === "neon" ? removeNeonMetrics(definition.template) : definition.template)
     + (engine === "api" && method === "tao" && ["04", "08"].includes(stage.id)
       ? "\n\nThis is a text-only API workflow. Do not call tools or claim to edit files. Return the complete updated ontology as valid Turtle ONLY between ###start_turtle### and ###end_turtle### markers." : "");
-  const assembled = useMemo(() => {
+  const { assembled, messageTemplate } = useMemo(() => {
     const context = method === "yonsei" ? yonseiPipelineContext(stage.id, outputs, previousOntology, previousOutput)
       : pipelineContext(method, stage.id, outputs, previousOntology, previousOutput);
     const result = assemblePrompt(template, effectiveValues, context);
-    if (method === "tao" && previousOntology && !definition.fields.includes("ontology_snapshot")) result.user += "\n\nCURRENT FULL ONTOLOGY SNAPSHOT:\n" + previousOntology;
-    return result;
+    const format = promptTemplateMessages(template, !!context);
+    if (method === "tao" && previousOntology && !definition.fields.includes("ontology_snapshot")) {
+      result.user += "\n\nCURRENT FULL ONTOLOGY SNAPSHOT:\n" + previousOntology;
+      format.user += "\n\nCURRENT FULL ONTOLOGY SNAPSHOT:\n{ontology_snapshot}";
+    }
+    return { assembled: result, messageTemplate: format };
   }, [template, effectiveValues, previousOutput, previousOntology, method, stage.id, outputs, definition.fields]);
   const manual = overrides[outputKey];
   const messages = manual ?? assembled;
@@ -600,7 +605,7 @@ export default function Home() {
           </div>
           <div className="prompt-section">
             <div className="subheading"><span>Prompt context</span>
-              <button type="button" className="prompt-toggle" disabled={fewShotRunning} aria-expanded={editorOpen} aria-controls="full-prompt-editor" onClick={() => { setRunState("paused"); setEditorOpen(!editorOpen); }}>
+              <button type="button" className="prompt-toggle" disabled={fewShotRunning} aria-expanded={editorOpen} aria-controls="full-prompt-editor" onClick={() => { setRunState("paused"); setTemplateViewKey(null); setEditorOpen(!editorOpen); }}>
                 {editorOpen ? "전체 프롬프트 접기" : "전체 프롬프트 확인·수정"}
               </button>
             </div>
@@ -657,9 +662,22 @@ export default function Home() {
               onGenerate={generateFewShot} onCancel={cancelFewShot} />}
             </div>
             {editorOpen && <section id="full-prompt-editor" className="full-prompt-editor" aria-label="전체 프롬프트 편집">
-              <div className="subheading"><span>{manual ? "직접 편집" : "변수에서 자동 조립"}</span>
+              <div className="subheading"><span>{templateViewKey === outputKey ? "프롬프트 양식 · 읽기 전용" : manual ? "직접 편집" : "변수에서 자동 조립"}</span>
+                <button type="button" className="prompt-toggle" aria-pressed={templateViewKey === outputKey}
+                  onClick={() => setTemplateViewKey(templateViewKey === outputKey ? null : outputKey)}>
+                  {templateViewKey === outputKey ? "전체 프롬프트 보기" : "프롬프트 양식 보기"}
+                </button>
+                {templateViewKey !== outputKey &&
                 <button type="button" className="prompt-toggle" disabled={!manual || busy} onClick={restoreAssembly}>변수로 다시 조립</button>
+                }
               </div>
+              {templateViewKey === outputKey ? <>
+                <p className="context-help">변수 치환 전 자동 조립 양식입니다. 보기를 전환해도 편집한 전체 메시지는 유지됩니다. 직접 편집 모드에서는 이 양식이 아닌 수정한 전체 메시지가 전송됩니다.</p>
+                <label htmlFor="system-template">System 메시지 양식</label>
+                <ContextTextarea key={outputKey + "-system-template"} id="system-template" label="System 메시지 양식" value={messageTemplate.system} rows={8} readOnly />
+                <label htmlFor="user-template">User 메시지 양식 · 출력 형식 포함</label>
+                <ContextTextarea key={outputKey + "-user-template"} id="user-template" label="User 메시지 양식" value={messageTemplate.user} rows={18} readOnly />
+              </> : <>
               <p className="context-help">변수가 치환되고 이전 출력이 포함된 전체 메시지입니다. 직접 수정하면 현재 단계에 즉시 적용되며, 이후 변수·이전 출력 변경을 자동 반영하지 않습니다.</p>
               <label htmlFor="system-message">System 메시지 · persona와 출력 형식</label>
               <ContextTextarea key={outputKey + "-system"} id="system-message" label="System 메시지" value={messages.system} rows={8}
@@ -667,6 +685,7 @@ export default function Home() {
               <label htmlFor="user-message">User 메시지 · send_and_capture에 전달되는 전체 본문</label>
               <ContextTextarea key={outputKey + "-user"} id="user-message" label="User 메시지" value={messages.user} rows={18}
                 disabled={busy} onChange={(value) => editMessage("user", value)} />
+              </>}
             </section>}
             {engine === "api" && <p className="context-help">현재 메시지를 서버에서 선택한 API로 전송합니다. {method === "yonsei"
               ? "Few-shot 생성과 단계 실행은 각각 별도 호출입니다. Refine은 모든 문단별 CQ·클래스·프로퍼티 문맥과 최신 TTL을 한 번에 전달합니다. OWL 추론기를 실행하지 않습니다."

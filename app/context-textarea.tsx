@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 
 export function CopyButton({ value, label }: { value: string; label: string }) {
   const [feedback, setFeedback] = useState<{ value: string; state: "copying" | "copied" | "failed" } | null>(null);
@@ -64,8 +64,9 @@ export function ContextTextarea({ id, label, value, rows = 5, placeholder, disab
   </div>;
 }
 
-export function ExpandedTextDialog({ label, value, readOnly, onApply, onClose }: {
+export function ExpandedTextDialog({ label, value, readOnly, onApply, onClose, toolbar }: {
   label: string; value: string; readOnly: boolean; onApply?: (value: string) => void; onClose: () => void;
+  toolbar?: ReactNode;
 }) {
   // Drafts stay local: typing or cancelling must not invalidate pipeline results.
   const [originalValue] = useState(value);
@@ -100,6 +101,7 @@ export function ExpandedTextDialog({ label, value, readOnly, onApply, onClose }:
         {locked ? "닫기 ×" : "취소 ×"}
       </button>
     </header>
+    {toolbar && <div className="expanded-text-toolbar">{toolbar}</div>}
     <div className="expanded-text-body">
       <textarea ref={editorRef} className="expanded-text-editor" aria-label={`${label} 전체 내용`}
         value={content} readOnly={locked} spellCheck={false} onChange={(event) => setDraft(event.target.value)} />

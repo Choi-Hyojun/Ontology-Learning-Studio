@@ -1,6 +1,13 @@
 export type PromptMessages = { system: string; user: string };
 export type PromptValues = Record<string, string>;
 
+const SYSTEM_TEMPLATE = "{persona}\nRespond ONLY between ###start_output### and ###end_output### markers.\nFor Turtle syntax responses, use ONLY ###start_turtle### and ###end_turtle### markers.\nAvoid explanations or text outside these markers.";
+const PREVIOUS_TEMPLATE = "The following content was generated in the previous step:\n###start_previous###\n{previous_step_content}\n###end_previous###\n\n";
+
+export function promptTemplateMessages(template: string, includePrevious: boolean): PromptMessages {
+  return { system: SYSTEM_TEMPLATE, user: (includePrevious ? PREVIOUS_TEMPLATE : "") + template };
+}
+
 // Replace only once: braces inside user text, JSON examples or prior output
 // must remain literal, never be interpreted as another variable.
 export function interpolate(template: string, values: PromptValues): string {
@@ -10,10 +17,10 @@ export function interpolate(template: string, values: PromptValues): string {
 export function assemblePrompt(template: string, values: PromptValues, previousOutput: string): PromptMessages {
   const user = interpolate(template, { ...values, previous_step_content: previousOutput || "(이전 단계 출력 대기)" });
   const previous = previousOutput
-    ? `The following content was generated in the previous step:\n###start_previous###\n${previousOutput}\n###end_previous###\n\n`
+    ? interpolate(PREVIOUS_TEMPLATE, { previous_step_content: previousOutput })
     : "";
   return {
-    system: `${values.persona}\nRespond ONLY between ###start_output### and ###end_output### markers.\nFor Turtle syntax responses, use ONLY ###start_turtle### and ###end_turtle### markers.\nAvoid explanations or text outside these markers.`,
+    system: interpolate(SYSTEM_TEMPLATE, { persona: String(values.persona) }),
     user: previous + user,
   };
 }

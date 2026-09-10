@@ -26,10 +26,13 @@ export function FewShotPromptPreview({ getMessages, targetTemplate, instruction 
   return <>
     <div className="few-shot-preview-tools">
       <button type="button" className="context-expand" aria-haspopup="dialog" onClick={() => setView("messages")}>전체 프롬프트 보기 ↗</button>
-      <button type="button" className="context-expand" aria-haspopup="dialog" onClick={() => setView("template")}>프롬프트 양식 보기 ↗</button>
     </div>
     {view && <ExpandedTextDialog
       label={view === "messages" ? "Few-shot 전체 프롬프트 · 현재 입력 기준" : "Few-shot 프롬프트 양식 · 변수 치환 전"}
-      value={content} readOnly onClose={() => setView(null)} />}
+      value={content} readOnly onClose={() => setView(null)}
+      toolbar={<button type="button" className="context-expand" aria-pressed={view === "template"}
+        onClick={() => setView(view === "template" ? "messages" : "template")}>
+        {view === "template" ? "전체 프롬프트 보기" : "프롬프트 양식 보기"}
+      </button>} />}
   </>;
 }

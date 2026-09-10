@@ -66,6 +66,21 @@ test("inline inputs expose an accessible popup button even when editing is locke
   }
 });
 
+test("read-only popup toolbar switches displayed text and copy content inside the same dialog", () => {
+  let toggles = 0;
+  const props = { label: "Full prompt", value: "Assembled request", readOnly: true, onClose() {},
+    toolbar: createElement("button", { onClick: () => toggles++ }, "프롬프트 양식 보기") };
+  const h = harness("ExpandedTextDialog", props);
+  const tree = h.render();
+  const toolbar = find(tree, node => node.props?.className === "expanded-text-toolbar");
+  button(toolbar, "프롬프트 양식 보기").props.onClick();
+  assert.equal(toggles, 1);
+  const updated = h.render({ ...props, label: "Template", value: "Raw {persona}" });
+  assert.equal(find(updated, node => node.type === "textarea").props.value, "Raw {persona}");
+  assert.equal(find(updated, node => node.type?.name === "CopyButton").props.value, "Raw {persona}");
+  assert.equal(find(updated, node => node.type === "textarea").props.readOnly, true);
+});
+
 test("popup drafts do not write until apply, then preserve long text exactly once", () => {
   const writes = []; let closes = 0;
   const value = "# 원문\n" + "긴 텍스트 {persona} <tag>\n".repeat(3000);
@@ -185,7 +200,9 @@ test("all prompt surfaces share the popup and reset it when changing stages", ()
   const page = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
   const document = readFileSync(new URL("../app/document-field.tsx", import.meta.url), "utf8");
   const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
-  assert.equal((page.match(/<ContextTextarea/g) || []).length, 4);
+  assert.equal((page.match(/<ContextTextarea/g) || []).length, 6);
+  assert.match(page, /key=\{outputKey \+ "-system-template"\}/);
+  assert.match(page, /key=\{outputKey \+ "-user-template"\}/);
   assert.match(document, /<ContextTextarea/);
   assert.doesNotMatch(page + document, /<textarea/);
   assert.match(page, /key=\{outputKey\} id="context-previous-output"/);

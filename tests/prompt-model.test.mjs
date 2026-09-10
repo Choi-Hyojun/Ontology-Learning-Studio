@@ -1,9 +1,23 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { assemblePrompt, simulateCompletion } from "../app/prompt-model.ts";
+import { assemblePrompt, interpolate, promptTemplateMessages, simulateCompletion } from "../app/prompt-model.ts";
 
 const source = JSON.parse(readFileSync(new URL("../app/neon-prompts.json", import.meta.url), "utf8"));
+
+test("template messages share exact system and previous-context formatting with actual requests", () => {
+  const template = 'Domain: {domain_name}\nPrevious: {previous_step_content}\nJSON: {"literal":true}';
+  const values = { persona: "Engineer {domain_name}", domain_name: "Games" };
+  for (const previous of ["", "Prior {persona}\nLong document"]) {
+    const format = promptTemplateMessages(template, !!previous);
+    const actual = assemblePrompt(template, values, previous);
+    assert.ok(format.system.startsWith("{persona}\n"));
+    assert.ok(format.user.endsWith(template));
+    assert.equal(format.user.includes("###start_previous###"), !!previous);
+    assert.equal(interpolate(format.system, values), actual.system);
+    assert.equal(interpolate(format.user, { ...values, previous_step_content: previous || "(이전 단계 출력 대기)" }), actual.user);
+  }
+});
 
 test("numbered few-shot fields interpolate once without reinterpreting inserted JSON", () => {
   const prompt = assemblePrompt("Example: {few_shot_03}", { persona: "Expert", few_shot_03: '{"question":"{domain_name}"}' }, "");
