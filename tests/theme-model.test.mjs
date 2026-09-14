@@ -70,17 +70,21 @@ test("theme preference writes only its own key and a failed save does not undo t
   assert.equal(root.dataset.theme, "dark");
 });
 
-test("brand is an accessible theme trigger and server rendering needs no browser globals", () => {
+test("brand mark and title share one accessible theme dialog button", () => {
   const file = new URL("../app/theme-selector.tsx", import.meta.url);
   const source = readFileSync(file, "utf8"), exports = {}, require = createRequire(file);
   const { outputText } = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2022 } });
   runInNewContext(outputText, { exports, require: id => id === "./theme-model" ? themes : require(id) });
   const html = renderToStaticMarkup(createElement(exports.ThemeSelector));
-  assert.match(html, /Ontology Learning Studio/);
-  assert.match(html, /LLM Based Ontology Generation Workbench/);
+  assert.match(html, /brand-mark/);
+  assert.match(html, /<button[^>]*>[\s\S]*brand-mark[\s\S]*brand-name[\s\S]*Ontology Studio[\s\S]*<\/button>/);
+  assert.equal((html.match(/<button\b/g) || []).length, 1);
+  assert.match(html, /테마 선택/);
+  assert.doesNotMatch(html, /Ontology Learning Studio|brand-copy/);
   assert.match(html, /aria-haspopup="dialog"/);
   assert.match(html, /aria-expanded="false"/);
-  assert.doesNotMatch(source, /fetch\(|requestGeneration|setRunState|setValuesByMethod/);
+  assert.doesNotMatch(source, /fetch\(|requestGeneration|setRunState|setValuesByMethod|selectWorkspace/);
+  assert.match(source, /onClick=\{\(\) => setOpen\(true\)\}/);
   assert.match(source, /type="radio"/);
   assert.match(source, /theme\.colors\.paper\.toUpperCase\(\)/);
   assert.match(source, /onCancel=/);

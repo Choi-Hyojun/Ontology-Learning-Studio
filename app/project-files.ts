@@ -1,4 +1,4 @@
-import examples from "./methodology-examples.json" with { type: "json" };
+import demos from "./demo-ontologies.json" with { type: "json" };
 import type { ValidationMode } from "./execution-model";
 
 export const MAX_TEXT_BYTES = 2 * 1024 * 1024;
@@ -18,12 +18,11 @@ export function decodeDocument(bytes: ArrayBuffer) {
   return text;
 }
 
-// Exact source snapshots only. Missing intermediate outputs and QA/repair
-// results must not masquerade as a newly generated ontology.
+// Exact demonstration snapshots only; no API result or inferred repair is replaced.
 export function simulatedOntology(method: string, stageId: string): string | null {
-  if (method !== "neon" && method !== "tao") return null;
-  const snapshots: Record<string, string> = examples[method].ontologies;
-  return snapshots[stageId] ?? null;
+  if (method !== "neon" && method !== "tao" && method !== "yonsei") return null;
+  const demo = demos[method];
+  return demo.stages.includes(stageId) ? demo.ttl : null;
 }
 
 export type OntologyRecord = { ontology: string | null; completedAt: string };

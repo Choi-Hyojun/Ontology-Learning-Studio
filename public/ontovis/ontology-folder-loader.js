@@ -104,7 +104,9 @@
     }
 
     const objects = (subject, predicate) => store.each(subject, named(predicate), undefined)
-    const has = (subject, predicate, object) => store.any(subject, named(predicate), object ? named(object) : undefined)
+    // any() returns a value for an unbound position, not triple membership.
+    // All three terms are bound when checking rdf:type owl:Restriction.
+    const has = (subject, predicate, object) => store.holds(subject, named(predicate), object ? named(object) : undefined)
     const statements = () => store.statements || []
 
     return { named, compact, objects, has, statements }
@@ -136,6 +138,8 @@
 
     const classTerms = new Map()
     const propertyTerms = new Map()
+    const objectProperties = new Set()
+    const datatypeProperties = new Set()
     const schemaSubjects = new Set()
     const directParents = new Map()
     const tboxLinks = []
@@ -159,6 +163,9 @@
 
     const schemaTypes = new Set([
       owlClass,
+      NS.rdfs + "Class",
+      NS.rdfs + "Datatype",
+      NS.owl + "DataRange",
       NS.owl + "ObjectProperty",
       NS.owl + "DatatypeProperty",
       NS.owl + "AnnotationProperty",
@@ -171,8 +178,10 @@
       const object = termValue(statement.object)
       if (predicate === NS.rdf + "type" && schemaTypes.has(object)) {
         schemaSubjects.add(termValue(statement.subject))
-        if (object === owlClass) addClass(statement.subject)
+        if (object === owlClass || object === NS.rdfs + "Class") addClass(statement.subject)
         if (object.endsWith("Property")) addProperty(statement.subject)
+        if (isNamed(statement.subject) && object === NS.owl + "ObjectProperty") objectProperties.add(termValue(statement.subject))
+        if (isNamed(statement.subject) && object === NS.owl + "DatatypeProperty") datatypeProperties.add(termValue(statement.subject))
       }
       if (predicate === subClassOf) {
         addClass(statement.subject)
@@ -188,6 +197,8 @@
       }
     })
 
+    // Count source classes before adding the synthetic root for display.
+    const classCount = classTerms.size
     if (classTerms.size) {
       const thing = h.named(owlThing)
       classTerms.forEach((term, uri) => {
@@ -197,6 +208,11 @@
     }
 
     function parseList(head, depth) {
+      // Turtle (...) is stored as a Collection by rdflib; RDF/XML may instead
+      // expose a linked rdf:first/rdf:rest chain. Support both representations.
+      if (head?.termType === "Collection" && Array.isArray(head.elements)) {
+        return head.elements.slice(0, 200).map((item) => expression(item, depth + 1))
+      }
       const items = []
       let cursor = head
       const visited = new Set()
@@ -342,6 +358,45 @@
       }
     })
 
+    // Preserve source assertions without inferring superclass memberships.
+    // owl:NamedIndividual is a declaration, not a counted class membership.
+    // Keep language/datatype qualifiers so distinct literal triples stay distinct.
+    const individualTriples = new Set()
+    const assertionMap = new Map()
+    const labelPredicates = new Set([
+      NS.rdfs + "label",
+      "http://www.w3.org/2004/02/skos/core#prefLabel",
+      "http://www.w3.org/2004/02/skos/core#altLabel",
+      "http://www.w3.org/2004/02/skos/core#hiddenLabel"
+    ])
+    h.statements().forEach((statement) => {
+      const uri = termValue(statement.subject)
+      if (!isNamed(statement.subject) || !individualTerms.has(uri)) return
+      const key = JSON.stringify([statement.subject.toNT(), statement.predicate.toNT(), statement.object.toNT()])
+      if (individualTriples.has(key)) return
+      individualTriples.add(key)
+      const predicateUri = termValue(statement.predicate)
+      const property = h.compact(statement.predicate)
+      const object = statement.object
+      const objectId = isNamed(object) ? h.compact(object) : undefined
+      const linkKey = `${h.compact(statement.subject)}\u0000${property}\u0000${objectId}`
+      const category = predicateUri === NS.rdf + "type" ? "type"
+        : labelPredicates.has(predicateUri) ? "label"
+        : isLiteral(object) ? "literal"
+        : objectId && aboxLinkKeys.has(linkKey) ? "relation" : "other"
+      let value = h.compact(object)
+      if (isLiteral(object)) {
+        const language = object.language || object.lang
+        value = JSON.stringify(object.value)
+          + (language ? `@${language}` : object.datatype ? `^^${h.compact(object.datatype)}` : "")
+      } else if (!isNamed(object) && !isBlank(object)) {
+        value = object.toNT()
+      }
+      if (!assertionMap.has(uri)) assertionMap.set(uri, [])
+      const counted = !(predicateUri === NS.rdf + "type" && termValue(object) === owlNamedIndividual)
+      assertionMap.get(uri).push({ property, predicateUri, category, value, objectId, counted })
+    })
+
     const aboxNodes = Array.from(individualTerms.values())
       .map((term) => {
         const uri = termValue(term)
@@ -351,14 +406,18 @@
           id: h.compact(term),
           types,
           color: firstType ? classColors.get(termValue(firstType)) || colorFor(h.compact(firstType)) : "#d9d9d9",
-          data: dataMap.get(uri) || []
+          data: dataMap.get(uri) || [],
+          assertions: assertionMap.get(uri) || [],
+          tripleCount: (assertionMap.get(uri) || []).filter((entry) => entry.counted).length
         }
       })
       .sort((a, b) => a.id.localeCompare(b.id))
 
     return {
-      tbox: { nodes: tboxNodes, links: tboxLinks },
-      abox: { nodes: aboxNodes, links: aboxLinks }
+      tbox: { nodes: tboxNodes, links: tboxLinks,
+        stats: { classCount, objectPropertyCount: objectProperties.size, datatypePropertyCount: datatypeProperties.size } },
+      abox: { nodes: aboxNodes, links: aboxLinks,
+        stats: { instanceCount: individualTerms.size, tripleCount: aboxNodes.reduce((total, node) => total + node.tripleCount, 0) } }
     }
   }
 

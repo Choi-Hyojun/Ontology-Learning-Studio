@@ -406,6 +406,49 @@ function pageHarness(options = {}) {
   };
 }
 
+test("workspace tabs retain Studio values and the folder viewer without a brand mode switch", () => {
+  const h = pageHarness();
+  h.selectYonsei(); h.navigate("02");
+  const draft = "Unapplied draft remains intact";
+  h.one(node => node.props?.id === "context-previous-output").props.onChange(draft); h.render();
+  const before = h.save();
+  assert.doesNotMatch(read("page.tsx"), /workspace-switch|selectWorkspace\(workspaceView/);
+  assert.match(read("page.tsx"), /<ThemeSelector \/>/);
+  assert.doesNotMatch(read("page.tsx"), /Studio → OntoVis|OntoVis → Studio|brand-subtitle/);
+  const switchView = label => {
+    h.one(node => node.type === "button" && node.props.children === label).props.onClick(); h.render();
+  };
+  assert.equal(h.one(node => node.props?.id === "studio-panel").props.hidden, false);
+  switchView("OntoVis");
+  assert.equal(h.one(node => node.props?.id === "studio-panel").props.hidden, true);
+  assert.equal(h.one(node => node.props?.id === "ontovis-panel").props.hidden, false);
+  assert.equal(h.one(node => node.type === "iframe").props.src, "/ontovis/index.html?mode=folder");
+  switchView("OntoGen");
+  assert.equal(h.one(node => node.props?.id === "ontovis-panel").props.hidden, true);
+  assert.equal(h.one(node => node.type === "iframe").props.src, "/ontovis/index.html?mode=folder");
+  assert.equal(h.one(node => node.props?.id === "context-previous-output").props.value, draft);
+  switchView("OntoVis");
+  assert.equal(h.one(node => node.props?.id === "ontovis-panel").props.hidden, false);
+  switchView("OntoGen");
+  const after = h.save();
+  for (const key of ["valuesByMethod", "promptDefinitions", "promptOverrides", "currentOutputs", "currentRecords", "history", "current"])
+    assert.deepEqual(after[key], before[key], key);
+  assert.equal(h.requests.length, 0);
+});
+
+test("switching workspaces does not cancel or restart an in-flight Studio request", async () => {
+  const h = pageHarness();
+  h.selectYonsei(); h.useApi(); h.run();
+  const pending = h.startTimers();
+  assert.equal(h.requests.length, 1);
+  h.one(node => node.type === "button" && node.props.children === "OntoVis").props.onClick(); h.render();
+  assert.equal(h.requests[0].signal.aborted, false);
+  h.respond(0, "Finished while viewing OntoVis"); await pending; h.render();
+  h.one(node => node.type === "button" && node.props.children === "OntoGen").props.onClick(); h.render();
+  assert.equal(h.save().currentOutputs["yonsei-01"], "Finished while viewing OntoVis");
+  assert.equal(h.requests.length, 1);
+});
+
 test("empty previous-output fields accept direct input before execution in every methodology", async () => {
   for (const [method, label] of [["neon", "NeOn-GPT"], ["tao", "TAO"], ["yonsei", "Yonsei"]]) {
     const h = pageHarness();

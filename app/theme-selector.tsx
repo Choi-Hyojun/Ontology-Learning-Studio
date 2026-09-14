@@ -62,12 +62,11 @@ export function ThemeSelector() {
     window.dispatchEvent(new Event(CHANGE_EVENT));
   }
   return <>
-    <button type="button" className="brand-group theme-trigger" aria-haspopup="dialog" aria-expanded={open}
-      aria-label={`Ontology Learning Studio · 테마 선택 · 현재 ${themeById(current).label}`} title="클릭하여 테마 선택"
+    <button type="button" className="theme-trigger" aria-haspopup="dialog" aria-expanded={open}
+      aria-label={`Ontology Studio · 테마 선택 · 현재 ${themeById(current).label}`} title="클릭하여 테마 선택"
       onClick={() => setOpen(true)}>
       <span className="brand-mark" aria-hidden="true">O</span>
-      <span className="brand-copy"><span className="brand-name">Ontology Learning Studio <span className="theme-caret" aria-hidden="true">▾</span></span>
-        <span className="brand-subtitle">LLM Based Ontology Generation Workbench</span></span>
+      <span className="brand-name">Ontology Studio</span>
     </button>
     {open && <ThemeDialog current={current} onSelect={select} onClose={() => setOpen(false)} saved={saved} />}
   </>;

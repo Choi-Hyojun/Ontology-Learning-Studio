@@ -63,11 +63,14 @@
         box-sizing: border-box;
       }
       #focus-suggestions {
-        position: absolute;
-        top: calc(100% + 3px);
+        position: fixed;
+        top: 0;
         left: 0;
         width: min(360px, 70vw);
         max-height: 240px;
+        box-sizing: border-box;
+        font-size: 12px;
+        overscroll-behavior: contain;
         overflow-y: auto;
         display: none;
         background: white;
@@ -278,6 +281,10 @@
         margin-bottom: 5px;
       }
       html, body { width: 100%; height: 100%; background: #f7faf7; }
+      #folder-controls { margin-bottom: 8px; }
+      #folder-controls[hidden] { display: none; }
+      #folder-controls select { max-width: min(360px, 65vw); }
+      #folder-import-status { display: block; max-width: min(560px, 80vw); white-space: normal; margin-top: 4px; }
       #controls { max-width: calc(100% - 40px); max-height: 40vh; overflow: auto; font-size: 12px; }
       #controls button, #controls input { font: inherit; }
       @media (max-width: 640px) {
@@ -288,13 +295,20 @@
   </head>
   <body>
     <div id="controls">
+      <div id="folder-controls" hidden>
+        <button id="folder-button" type="button">Open OWL/TTL Folder</button>
+        <input id="folder-input" class="visually-hidden" type="file" webkitdirectory directory multiple accept=".owl,.ttl,application/rdf+xml,text/turtle" aria-label="Select OWL/TTL folder" />
+        <label for="ontology-select">Ontology:</label>
+        <select id="ontology-select" disabled><option value="">No ontology selected</option></select>
+        <span id="folder-import-status" role="status">Files stay in this browser and are not uploaded.</span>
+      </div>
       <button id="toggle-btn" onclick="toggleMode()" style="margin-left: 8px">Show ABox</button>
       <div id="selected-ontology-name" tabindex="0" title="Drag horizontally to see the full file name">No ontology selected</div>
       <span id="folder-status" aria-live="polite">현재 Turtle을 불러오는 중…</span>
       <br /><br />
       <label id="focus-mode-label">Focus class: </label>
       <span class="focus-autocomplete">
-        <input type="text" id="focus-id" placeholder="e.g., owl:Thing" autocomplete="off" aria-autocomplete="list" aria-controls="focus-suggestions" aria-expanded="false" />
+        <input type="text" id="focus-id" placeholder="e.g., VideoGame" autocomplete="off" aria-autocomplete="list" aria-controls="focus-suggestions" aria-expanded="false" />
         <div id="focus-suggestions" role="listbox"></div>
       </span>
       <button onclick="focusOnNode()">Focus</button>
@@ -532,8 +546,48 @@
 
       const focusInput = document.getElementById("focus-id")
       const focusSuggestions = document.getElementById("focus-suggestions")
+      // Escape the controls' overflow clipping without removing its own scrollbar.
+      document.body.appendChild(focusSuggestions)
+      // Keep the input focused while using the list's own scrollbar.
+      focusSuggestions.addEventListener("pointerdown", (event) => event.preventDefault())
       let autocompleteItems = []
       let activeSuggestionIndex = -1
+
+      function positionFocusSuggestions() {
+        if (!focusSuggestions.classList.contains("open")) return
+        const anchor = focusInput.getBoundingClientRect()
+        const panel = document.getElementById("controls").getBoundingClientRect()
+        const viewport = window.visualViewport
+        const leftEdge = viewport?.offsetLeft || 0
+        const topEdge = viewport?.offsetTop || 0
+        const rightEdge = leftEdge + (viewport?.width || window.innerWidth)
+        const bottomEdge = topEdge + (viewport?.height || window.innerHeight)
+        const gap = 4, margin = 8
+        if (!anchor.width || !anchor.height || anchor.bottom <= Math.max(panel.top, topEdge)
+          || anchor.top >= Math.min(panel.bottom, bottomEdge)
+          || anchor.right <= leftEdge || anchor.left >= rightEdge) {
+          closeFocusSuggestions()
+          return
+        }
+        const width = Math.min(360, Math.max(0, rightEdge - leftEdge - margin * 2))
+        focusSuggestions.style.width = width + "px"
+        const desired = Math.min(240, focusSuggestions.scrollHeight + 2)
+        const below = Math.max(0, bottomEdge - margin - anchor.bottom - gap)
+        const above = Math.max(0, anchor.top - gap - topEdge - margin)
+        const upwards = below < desired && above > below
+        const height = Math.min(desired, upwards ? above : below)
+        if (height < 24) { closeFocusSuggestions(); return }
+        focusSuggestions.style.maxHeight = height + "px"
+        focusSuggestions.style.left = Math.max(leftEdge + margin, Math.min(anchor.left, rightEdge - margin - width)) + "px"
+        focusSuggestions.style.top = (upwards ? anchor.top - gap - height : anchor.bottom + gap) + "px"
+      }
+
+      window.addEventListener("resize", positionFocusSuggestions)
+      window.visualViewport?.addEventListener("resize", positionFocusSuggestions)
+      window.visualViewport?.addEventListener("scroll", positionFocusSuggestions)
+      document.addEventListener("scroll", (event) => {
+        if (!focusSuggestions.contains(event.target)) positionFocusSuggestions()
+      }, true)
 
       function getFocusAutocompleteNodes() {
         return currentMode === "tbox" ? allNodes : aboxData?.nodes || []
@@ -627,6 +681,7 @@
         })
         focusSuggestions.classList.add("open")
         focusInput.setAttribute("aria-expanded", "true")
+        positionFocusSuggestions()
       }
 
       focusInput.addEventListener("input", updateFocusSuggestions)
@@ -776,10 +831,11 @@
         closeFocusSuggestions()
         if (currentMode === "abox") {
           label.textContent = "Focus instance: "
-          input.placeholder = "e.g., 도어"
+          const example = aboxData?.nodes?.find((node) => node.id)
+          input.placeholder = example ? `e.g., ${displayLabel(example.id)}` : "No instances"
         } else {
           label.textContent = "Focus class: "
-          input.placeholder = "e.g., owl:Thing"
+          input.placeholder = "e.g., VideoGame"
         }
       }
 
@@ -820,10 +876,21 @@
         })
       }
 
+      function updateGraphStatistics(data) {
+        const count = (value) => value.toLocaleString("en-US")
+        if (currentMode === "tbox") {
+          setFolderStatus(`TBox · Class: ${count(data.stats.classCount)} · Object Property: ${count(data.stats.objectPropertyCount)} · Datatype Property: ${count(data.stats.datatypePropertyCount)}`)
+          folderStatus.title = "Distinct named classes identified in the source (excluding the synthetic owl:Thing display root) and explicitly declared Object/Datatype Properties."
+        } else {
+          setFolderStatus(`ABox · Instance: ${count(data.stats.instanceCount)} · Triple: ${count(data.stats.tripleCount)}${data.stats.instanceCount ? "" : " · No instances in this snapshot."}`)
+          folderStatus.title = "Displayed named instances and source triples with those instances as subjects. Includes explicitly asserted class types, literal values and annotations; excludes owl:NamedIndividual declarations and duplicates. Multiple explicit class types count separately; superclass types are not inferred."
+        }
+      }
+
       function renderCurrent() {
         const data = currentMode === "tbox" ? tboxData : aboxData
         if (!data) return
-        setFolderStatus(`${currentMode.toUpperCase()} · ${data.nodes.length} nodes · ${data.links.length} links${data.nodes.length ? "" : " · 이 스냅샷에는 인스턴스가 없습니다."}`)
+        updateGraphStatistics(data)
         const renderData = currentMode === "tbox" && baseTboxLinks.length ? { nodes: data.nodes, links: baseTboxLinks } : data
         preparePositions(renderData)
         lastRenderLinks = renderData.links
@@ -1177,6 +1244,36 @@
             content.appendChild(axLabel)
             content.appendChild(axPre)
           }
+        } else if (Array.isArray(node.assertions)) {
+          const summary = document.createElement("div")
+          summary.className = "info-label"
+          const countedAssertions = node.assertions.filter((entry) => entry.counted !== false)
+          summary.textContent = `Outgoing triples: ${countedAssertions.length}`
+          summary.title = "Counts explicitly asserted class memberships individually, but excludes owl:NamedIndividual declarations. No superclass types are inferred. These totals sum to the ABox Triple count. Incoming relations are counted at their source."
+          content.appendChild(summary)
+
+          const appendSection = (label, entries, renderLink) => {
+            const heading = document.createElement("div")
+            heading.className = "info-label"
+            heading.textContent = `${label} (${entries.length})`
+            const pre = document.createElement("pre")
+            if (renderLink && entries.length) {
+              pre.innerHTML = entries.map(renderLink).join("\n")
+            } else {
+              pre.textContent = entries.length
+                ? entries.map((entry) => `${entry.property}: ${entry.value}`).join("\n") : "(none)"
+            }
+            content.appendChild(heading)
+            content.appendChild(pre)
+          }
+          for (const [category, label] of [["type", "Types"], ["label", "Labels"], ["literal", "Literal Values"], ["relation", "Outgoing Relations"], ["other", "Other Statements"]]) {
+            const entries = countedAssertions.filter((entry) => entry.category === category)
+            appendSection(label, entries, category === "relation" ? (entry) =>
+              `${escapeHtml(entry.property)} -&gt; <span class="node-link" data-id="${escapeAttribute(entry.objectId)}">${escapeHtml(entry.value)}</span>` : null)
+          }
+          const incoming = (aboxData?.links || []).filter((link) => getNodeId(link.target) === node.id)
+          appendSection("Incoming Relations — not included above", incoming, (link) =>
+            `<span class="node-link" data-id="${escapeAttribute(getNodeId(link.source))}">${escapeHtml(getNodeId(link.source))}</span> -&gt; ${escapeHtml(link.label)}`)
         } else {
           const typeLabel = document.createElement("div")
           typeLabel.className = "info-label"
@@ -1290,5 +1387,6 @@
       }
     </script>
     <script src="./studio-bridge.js"></script>
+    <script src="./folder-mode.js"></script>
   </body>
 </html>

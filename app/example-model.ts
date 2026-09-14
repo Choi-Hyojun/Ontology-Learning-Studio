@@ -1,4 +1,6 @@
 import examples from "./methodology-examples.json" with { type: "json" };
+import demos from "./demo-ontologies.json" with { type: "json" };
+import { simulatedOntology } from "./project-files.ts";
 import type { PromptValues } from "./prompt-model";
 
 type Method = "neon" | "tao";
@@ -7,14 +9,14 @@ const fixtures: Record<Method, Example> = examples;
 
 export function exampleStatus(method: Method, stageId: string) {
   const source = fixtures[method];
-  if (method === "neon" && stageId === "20") return "제공된 최종 병합 TTL · 중간 단계 변경 이력은 미제공";
+  if (simulatedOntology(method, stageId)) return "고정 시연 온톨로지 · " + demos[method].file + " · 입력에서 새로 생성한 결과가 아닙니다.";
   if (source.outputSources[stageId]) return "첨부 결과 원문 · " + source.outputSources[stageId];
   return source.missing;
 }
 
 export function exampleResponse(method: Method, stageId: string) {
   const fixture = fixtures[method];
-  const ontology = fixture.ontologies[stageId];
+  const ontology = simulatedOntology(method, stageId);
   const content = ontology
     ? "###start_turtle###\n" + ontology.trimEnd() + "\n###end_turtle###"
     : fixture.outputs[stageId];

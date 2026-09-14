@@ -6,7 +6,7 @@ import { assemblePrompt } from "../app/prompt-model.ts";
 import {
   documentParagraphs, fewShotInstruction, fewShotMessages, resolveYonseiContext, simulateFewShot, validateYonseiOutput,
   yonseiDefaults, yonseiDefinitions, yonseiPipelineContext, yonseiPrerequisite, yonseiSimulation,
-  YONSEI_STAGES, YONSEI_CQ_ANNOTATION,
+  YONSEI_STAGES,
 } from "../app/yonsei-model.ts";
 
 const rdf = createRequire(import.meta.url)("rdflib");
@@ -384,7 +384,9 @@ test("simulation runs all nine steps with honest source-grounded JSON, valid TTL
   }
   const graph = rdf.graph(); rdf.parse(ontology, graph, "https://example.org/", "text/turtle");
   assert.ok(graph.statements.length > 5);
-  assert.ok(graph.statementsMatching(null, rdf.namedNode(YONSEI_CQ_ANNOTATION), rdf.literal("CQ1")).length >= 2);
+  assert.equal(ontology, readFileSync(new URL("../examples/demo/video_game_gold.ttl", import.meta.url), "utf8"));
+  assert.match(sessionOutputs["yonsei-08"], /FIXED DEMONSTRATION: video_game_gold.ttl/);
+  assert.match(sessionOutputs["yonsei-08"], /not generated from the current document/);
   assert.deepEqual(JSON.parse(resolveYonseiContext("09", values, sessionOutputs, ontology).refinement_context)[1].cqs, []);
 });
 

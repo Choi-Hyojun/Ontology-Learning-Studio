@@ -55,11 +55,12 @@ test("only supplied snapshots are exported, and their complete Turtle parses", (
     assert.ok(exampleResponse(method, stage).includes(ttl.trimEnd()));
     assert.equal(JSON.parse(exportLog({ ontologies: { [method]: ttl } })).ontologies[method], ttl);
   }
-  assert.equal(simulatedOntology("neon", "20"), read("examples/neon/video_game_ontology_final_merged.ttl"));
-  assert.equal(simulatedOntology("tao", "04"), read("examples/tao/stage4/videogame_ontology_document_50_ver2.ttl"));
+  assert.equal(simulatedOntology("neon", "08"), read("examples/demo/video_game_NeOn.ttl"));
+  assert.equal(simulatedOntology("neon", "20"), read("examples/demo/video_game_NeOn.ttl"));
+  assert.equal(simulatedOntology("tao", "04"), read("examples/demo/video_game_TAO.ttl"));
   const numbered = read("examples/tao/stage5/videigame_ontology_numbered_document_50_ver2.txt")
     .replace(/^L\d+: ?/gm, "").replaceAll("\r\n", "\n").trim();
-  assert.equal(numbered, simulatedOntology("tao", "04").replaceAll("\r\n", "\n").trim());
+  assert.equal(numbered, read("examples/tao/stage4/videogame_ontology_document_50_ver2.ttl").replaceAll("\r\n", "\n").trim());
 });
 
 test("missing results never fabricate validation passes, repairs or premature final snapshots", () => {

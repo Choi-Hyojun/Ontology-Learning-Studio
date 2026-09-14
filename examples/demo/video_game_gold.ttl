@@ -1,0 +1,1873 @@
+@prefix : <https://example.org/video-game-ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix schema: <https://schema.org/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@base <https://example.org/video-game-ontology#> .
+
+<https://example.org/video-game-ontology> rdf:type owl:Ontology ;
+                                           dcterms:description "A refined ontology for video games, releases, platforms, media and distribution, extensions and adaptations, input/output devices, gameplay, organizations, engines, monetization, ratings, reviews, historical context, competitive contexts, provenance, external links, release windows, series, and gameplay sessions. The model reuses Dublin Core Terms, PROV-O, SKOS/SKOS-XL, OWL-Time, and Schema.org where their terms already express the intended semantics."@en ;
+                                           dcterms:modified "2026-09-05"^^xsd:date ;
+                                           dcterms:title "Video Game Ontology"@en ;
+                                           rdfs:comment ":releaseOf specializes schema:exampleOfWork, preserving the ontology's distinction between an abstract VideoGame and a concrete GameRelease."@en ,
+                                                        "Abstract video games and concrete game releases remain distinct. GameRelease models an edition/version/release of a VideoGame rather than collapsing both levels into schema:VideoGame."@en ,
+                                                        "External identifiers reuse dcterms:identifier or schema:identifier directly. When the assigning system must be explicit, use schema:identifier with a schema:PropertyValue carrying schema:propertyID and schema:value rather than a local external-identifier predicate."@en ,
+                                                        "External related-resource links reuse rdfs:seeAlso; owl:sameAs and skos:exactMatch are reserved for stronger identity or exact-concept mappings."@en ,
+                                                        "For generic metadata, use dcterms:title, dcterms:identifier, and dcterms:description directly. Use schema:version for version literals on releases or cited source resources rather than introducing local duplicates."@en ,
+                                                        "Game extensions may use dcterms:creator with a prov:Agent creator. Video games and releases may use prov:qualifiedAssociation with prov:agent and prov:hadRole for role-qualified organizational participation."@en ,
+                                                        "GameplaySession is a prov:Activity. :usesGameRelease and :usedInputDevice specialize prov:used, while :hasPlayer specializes prov:wasAssociatedWith."@en ,
+                                                        "Genre hierarchies are modeled as :Genre instances using SKOS broader/narrower relations. This avoids duplicating the same genre taxonomy as an OWL class hierarchy."@en ,
+                                                        "Input-device support uses :supportsInputDevice and output routing uses :supportsOutputDevice; :providesFeedbackCapability describes the kind of feedback available. No additional synonymous controller/output properties are introduced."@en ,
+                                                        "Organization participation is represented with :developedBy, :publishedBy, and :distributedBy plus PROV qualified associations and named PROV roles. Developer and publisher are therefore modeled as contextual roles rather than redundant subclasses of :Organization."@en ,
+                                                        "Release windows and historical periods reuse OWL-Time: time:hasBeginning and time:hasEnd point to time:Instant values, whose calendar dates may be expressed with time:inXSDDate."@en ,
+                                                        "Reviews reuse schema:itemReviewed, schema:reviewBody, schema:reviewRating, and schema:ratingValue instead of parallel local review-target or rating-value properties."@en ,
+                                                        "SKOS concepts may use skos:prefLabel, skos:altLabel, skos:broader, skos:narrower, skos:scopeNote, and skos:historyNote. SKOS-XL labels may use skosxl:prefLabel, skosxl:altLabel, and skosxl:literalForm when label resources need contextual metadata."@en ,
+                                                        "SKOS-XL may be used when labels need region or historical-period context; :associatedWithRegion and :associatedWithHistoricalPeriod are specialized subproperties of Dublin Core spatial and temporal relations."@en ,
+                                                        "Standard metadata terms are reused directly where they already match the intended meaning: dcterms:title, dcterms:identifier, dcterms:description, dcterms:source, schema:version, schema:reviewBody, PROV derivation/influence properties, and OWL-Time interval boundaries."@en ,
+                                                        "Use dcterms:source for ordinary source citation and prov:hadPrimarySource when the stronger PROV primary-source relation is intended. Provenance records may use prov:wasDerivedFrom, prov:wasAttributedTo, and prov:generatedAtTime."@en ,
+                                                        "Use prov:wasDerivedFrom for generic derivation and prov:wasInfluencedBy for generic influence. The domain-specific :portOf, :conversionOf, :remasterOf, and :remakeOf properties specialize prov:wasDerivedFrom."@en ;
+                                           owl:versionInfo "2.1-refined"@en .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://purl.org/dc/terms/description
+dcterms:description rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/terms/modified
+dcterms:modified rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/terms/title
+dcterms:title rdf:type owl:AnnotationProperty .
+
+
+###  http://www.w3.org/2004/02/skos/core#altLabel
+skos:altLabel rdf:type owl:AnnotationProperty .
+
+
+###  http://www.w3.org/2004/02/skos/core#prefLabel
+skos:prefLabel rdf:type owl:AnnotationProperty .
+
+
+###  http://www.w3.org/ns/prov#wasInfluencedBy
+prov:wasInfluencedBy rdf:type owl:AnnotationProperty .
+
+
+#################################################################
+#    Datatypes
+#################################################################
+
+###  http://www.w3.org/2001/XMLSchema#date
+xsd:date rdf:type rdfs:Datatype .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://purl.org/dc/terms/spatial
+dcterms:spatial rdf:type owl:ObjectProperty .
+
+
+###  http://purl.org/dc/terms/temporal
+dcterms:temporal rdf:type owl:ObjectProperty .
+
+
+###  http://www.w3.org/ns/prov#used
+prov:used rdf:type owl:ObjectProperty .
+
+
+###  http://www.w3.org/ns/prov#wasAssociatedWith
+prov:wasAssociatedWith rdf:type owl:ObjectProperty .
+
+
+###  http://www.w3.org/ns/prov#wasDerivedFrom
+prov:wasDerivedFrom rdf:type owl:ObjectProperty .
+
+
+###  https://example.org/video-game-ontology#accessibleViaOnlineService
+:accessibleViaOnlineService rdf:type owl:ObjectProperty ;
+                            rdfs:domain :GameResource ;
+                            rdfs:comment "Indicates an online service through which a GameResource can be accessed."@en ;
+                            rdfs:label "accessible via online service"@en .
+
+
+###  https://example.org/video-game-ontology#administeredBy
+:administeredBy rdf:type owl:ObjectProperty ;
+                rdfs:range :RatingAuthority ;
+                rdfs:comment "Identifies the rating authority that administers a RatingSystem."@en ;
+                rdfs:label "administered by"@en .
+
+
+###  https://example.org/video-game-ontology#associatedWithGame
+:associatedWithGame rdf:type owl:ObjectProperty ;
+                    rdfs:range :VideoGame ;
+                    owl:propertyChainAxiom ( :extendsResource
+                                             :releaseOf
+                                           ) ;
+                    rdfs:comment "Links game-related content to the VideoGame with which it is associated. For a GameExtension that extends a GameRelease, the association can be inferred through :extendsResource followed by :releaseOf."@en ;
+                    rdfs:label "associated with game"@en .
+
+
+###  https://example.org/video-game-ontology#associatedWithHistoricalPeriod
+:associatedWithHistoricalPeriod rdf:type owl:ObjectProperty ;
+                                rdfs:subPropertyOf dcterms:temporal ;
+                                rdfs:comment "Associates a resource or contextualized label with a HistoricalPeriod."@en ;
+                                rdfs:label "associated with historical period"@en .
+
+
+###  https://example.org/video-game-ontology#associatedWithRegion
+:associatedWithRegion rdf:type owl:ObjectProperty ;
+                      rdfs:subPropertyOf dcterms:spatial ;
+                      rdfs:comment "Associates a resource or contextualized label with a Region."@en ;
+                      rdfs:label "associated with region"@en .
+
+
+###  https://example.org/video-game-ontology#availableOnPlatform
+:availableOnPlatform rdf:type owl:ObjectProperty ;
+                     rdfs:subPropertyOf schema:gamePlatform ;
+                     rdfs:domain :GameRelease ;
+                     rdfs:range :Platform ;
+                     rdfs:comment "Indicates a Platform on which a GameRelease is available."@en ;
+                     rdfs:label "available on platform"@en .
+
+
+###  https://example.org/video-game-ontology#conversionOf
+:conversionOf rdf:type owl:ObjectProperty ;
+              rdfs:subPropertyOf prov:wasDerivedFrom ;
+              rdfs:domain :GameResource ;
+              rdfs:range :GameResource ;
+              rdfs:comment "Identifies the earlier GameResource from which this GameResource was converted; conversion is a form of PROV derivation."@en ;
+              rdfs:label "conversion of"@en .
+
+
+###  https://example.org/video-game-ontology#developedBy
+:developedBy rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf owl:topObjectProperty ,
+                                :hasParticipatingOrganization ;
+             rdfs:domain [ rdf:type owl:Class ;
+                           owl:unionOf ( :GameRelease
+                                         :VideoGame
+                                       )
+                         ] ;
+             rdfs:range prov:Agent ;
+             rdfs:comment "Identifies an Organization that developed a VideoGame or GameRelease; use :DeveloperRole in a qualified PROV association when the role needs explicit qualification."@en ;
+             rdfs:label "developed by"@en .
+
+
+###  https://example.org/video-game-ontology#developedWithEngine
+:developedWithEngine rdf:type owl:ObjectProperty ;
+                     rdfs:domain [ rdf:type owl:Class ;
+                                   owl:unionOf ( :GameRelease
+                                                 :VideoGame
+                                               )
+                                 ] ;
+                     rdfs:range :GameEngine ;
+                     rdfs:comment "Identifies the GameEngine used to develop a VideoGame or GameRelease."@en ;
+                     rdfs:label "developed with engine"@en .
+
+
+###  https://example.org/video-game-ontology#distributedBy
+:distributedBy rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf :hasParticipatingOrganization ;
+               rdfs:domain [ rdf:type owl:Class ;
+                             owl:unionOf ( :GameRelease
+                                           :VideoGame
+                                         )
+                           ] ;
+               rdfs:range :Organization ;
+               rdfs:comment "Identifies an Organization that distributed a VideoGame or GameRelease; use :DistributorRole in a qualified PROV association when the role needs explicit qualification."@en ;
+               rdfs:label "distributed by"@en .
+
+
+###  https://example.org/video-game-ontology#distributedOnMediaFormat
+:distributedOnMediaFormat rdf:type owl:ObjectProperty ;
+                          rdfs:subPropertyOf :usesMediaFormat ;
+                          rdfs:domain :GameRelease ;
+                          rdfs:range :MediaFormat ;
+                          rdfs:comment "Identifies a MediaFormat on which a GameRelease was distributed."@en ;
+                          rdfs:label "distributed on media format"@en .
+
+
+###  https://example.org/video-game-ontology#distributedVia
+:distributedVia rdf:type owl:ObjectProperty ;
+                rdfs:domain :GameRelease ;
+                rdfs:range :DistributionMethod ;
+                rdfs:comment "Identifies the DistributionMethod used for a GameRelease."@en ;
+                rdfs:label "distributed via"@en .
+
+
+###  https://example.org/video-game-ontology#emulatableOnPlatform
+:emulatableOnPlatform rdf:type owl:ObjectProperty ;
+                      rdfs:domain [ rdf:type owl:Class ;
+                                    owl:unionOf ( :GameRelease
+                                                  :VideoGame
+                                                )
+                                  ] ;
+                      rdfs:range :Platform ;
+                      rdfs:comment "Indicates a Platform on which a VideoGame or GameRelease can be run through emulation."@en ;
+                      rdfs:label "emulatable on platform"@en .
+
+
+###  https://example.org/video-game-ontology#engineSupportsPlatform
+:engineSupportsPlatform rdf:type owl:ObjectProperty ;
+                        rdfs:domain :GameEngine ;
+                        rdfs:range :Platform ;
+                        rdfs:comment "Indicates a Platform supported by a GameEngine."@en ;
+                        rdfs:label "engine supports platform"@en .
+
+
+###  https://example.org/video-game-ontology#exclusiveToPlatform
+:exclusiveToPlatform rdf:type owl:ObjectProperty ;
+                     rdfs:subPropertyOf :availableOnPlatform ;
+                     rdfs:domain :GameRelease ;
+                     rdfs:range :Platform ;
+                     rdfs:comment "Indicates a Platform to which a GameRelease is exclusive; this is a specialization of :availableOnPlatform."@en ;
+                     rdfs:label "exclusive to platform"@en .
+
+
+###  https://example.org/video-game-ontology#exclusiveToPlatformHolder
+:exclusiveToPlatformHolder rdf:type owl:ObjectProperty ;
+                           rdfs:domain :GameRelease ;
+                           rdfs:range :Organization ;
+                           owl:propertyChainAxiom ( :exclusiveToPlatform
+                                                    :hasPlatformHolder
+                                                  ) ;
+                           rdfs:comment "Identifies the Organization holding the platform to which a GameRelease is exclusive. This relation can be inferred from :exclusiveToPlatform followed by :hasPlatformHolder."@en ;
+                           rdfs:label "exclusive to platform holder"@en .
+
+
+###  https://example.org/video-game-ontology#extendsResource
+:extendsResource rdf:type owl:ObjectProperty ;
+                 rdfs:domain :GameExtension ;
+                 rdfs:range :GameResource ;
+                 rdfs:comment "Identifies the GameResource extended by a GameExtension."@en ;
+                 rdfs:label "extends resource"@en .
+
+
+###  https://example.org/video-game-ontology#featuresGame
+:featuresGame rdf:type owl:ObjectProperty ;
+              rdfs:range :VideoGame ;
+              owl:propertyChainAxiom ( :featuresGameRelease
+                                       :releaseOf
+                                     ) ;
+              rdfs:comment "Identifies a VideoGame featured in a CompetitiveContext."@en ;
+              rdfs:label "features game"@en .
+
+
+###  https://example.org/video-game-ontology#featuresGameRelease
+:featuresGameRelease rdf:type owl:ObjectProperty ;
+                     rdfs:range :GameRelease ;
+                     rdfs:comment "Identifies a particular GameRelease featured in a CompetitiveContext."@en ;
+                     rdfs:label "features game release"@en .
+
+
+###  https://example.org/video-game-ontology#hasAgeCategory
+:hasAgeCategory rdf:type owl:ObjectProperty ;
+                rdfs:domain :ContentRating ;
+                rdfs:range :AgeCategory ;
+                rdfs:comment "Associates a ContentRating with its age-category concept."@en ;
+                rdfs:label "has age category"@en .
+
+
+###  https://example.org/video-game-ontology#hasCharacter
+:hasCharacter rdf:type owl:ObjectProperty ;
+              rdfs:domain :VideoGame ;
+              rdfs:range :Character ;
+              rdfs:comment "Associates a VideoGame with a Character appearing in the game."@en ;
+              rdfs:label "has character"@en .
+
+
+###  https://example.org/video-game-ontology#hasCompetitor
+:hasCompetitor rdf:type owl:ObjectProperty ;
+               rdfs:range prov:Agent ;
+               rdfs:comment "Identifies an agent competing in a CompetitiveContext."@en ;
+               rdfs:label "has competitor"@en .
+
+
+###  https://example.org/video-game-ontology#hasContentDescriptor
+:hasContentDescriptor rdf:type owl:ObjectProperty ;
+                      rdfs:domain :ContentRating ;
+                      rdfs:comment "Associates a ContentRating with a content-descriptor concept."@en ;
+                      rdfs:label "has content descriptor"@en .
+
+
+###  https://example.org/video-game-ontology#hasContentRating
+:hasContentRating rdf:type owl:ObjectProperty ;
+                  rdfs:domain :GameRelease ;
+                  rdfs:range :ContentRating ;
+                  rdfs:comment "Associates a GameRelease with an assigned ContentRating."@en ;
+                  rdfs:label "has content rating"@en .
+
+
+###  https://example.org/video-game-ontology#hasGameMode
+:hasGameMode rdf:type owl:ObjectProperty ;
+             rdfs:domain [ rdf:type owl:Class ;
+                           owl:unionOf ( :GameRelease
+                                         :VideoGame
+                                       )
+                         ] ;
+             rdfs:range :GameMode ;
+             rdfs:comment "Associates a VideoGame or GameRelease with a supported GameMode."@en ;
+             rdfs:label "has game mode"@en .
+
+
+###  https://example.org/video-game-ontology#hasGameplayMechanic
+:hasGameplayMechanic rdf:type owl:ObjectProperty ;
+                     rdfs:domain :VideoGame ;
+                     rdfs:range :GameplayMechanic ;
+                     rdfs:comment "Associates a VideoGame with a GameplayMechanic."@en ;
+                     rdfs:label "has gameplay mechanic"@en .
+
+
+###  https://example.org/video-game-ontology#hasGenre
+:hasGenre rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf schema:genre ;
+          rdfs:domain :VideoGame ;
+          rdfs:range :Genre ;
+          rdfs:comment "Associates a VideoGame with a Genre concept."@en ;
+          rdfs:label "has genre"@en .
+
+
+###  https://example.org/video-game-ontology#hasMonetizationModel
+:hasMonetizationModel rdf:type owl:ObjectProperty ;
+                      rdfs:domain [ rdf:type owl:Class ;
+                                    owl:unionOf ( :GameRelease
+                                                  :VideoGame
+                                                )
+                                  ] ;
+                      rdfs:comment "Associates a VideoGame or GameRelease with a MonetizationModel."@en ;
+                      rdfs:label "has monetization model"@en .
+
+
+###  https://example.org/video-game-ontology#hasParticipatingOrganization
+:hasParticipatingOrganization rdf:type owl:ObjectProperty ;
+                              rdfs:domain [ rdf:type owl:Class ;
+                                            owl:unionOf ( :GameRelease
+                                                          :VideoGame
+                                                        )
+                                          ] ;
+                              rdfs:range :Organization ;
+                              rdfs:comment "Relates a VideoGame or GameRelease to an Organization participating in its development, publication, or distribution."@en ;
+                              rdfs:label "has participating organization"@en .
+
+
+###  https://example.org/video-game-ontology#hasPlatformHolder
+:hasPlatformHolder rdf:type owl:ObjectProperty ;
+                   rdfs:domain :Platform ;
+                   rdfs:range :Organization ;
+                   rdfs:comment "Identifies the Organization that holds or controls a Platform."@en ;
+                   rdfs:label "has platform holder"@en .
+
+
+###  https://example.org/video-game-ontology#hasPlayer
+:hasPlayer rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf prov:wasAssociatedWith ;
+           rdfs:range prov:Agent ;
+           rdfs:comment "Identifies an agent participating as a player in a GameplaySession; it specializes PROV association."@en ;
+           rdfs:label "has player"@en .
+
+
+###  https://example.org/video-game-ontology#hasProvenanceRecord
+:hasProvenanceRecord rdf:type owl:ObjectProperty ;
+                     rdfs:comment "Links a resource to a ProvenanceRecord describing its provenance."@en ;
+                     rdfs:label "has provenance record"@en .
+
+
+###  https://example.org/video-game-ontology#hasReleaseWindow
+:hasReleaseWindow rdf:type owl:ObjectProperty ;
+                  rdfs:domain :GameRelease ;
+                  rdfs:comment "Associates a GameRelease with an OWL-Time interval representing a release window. Use time:hasBeginning/time:hasEnd for interval boundaries and time:inXSDDate on the boundary instants."@en ;
+                  rdfs:label "has release window"@en .
+
+
+###  https://example.org/video-game-ontology#hasUserInterface
+:hasUserInterface rdf:type owl:ObjectProperty ;
+                  rdfs:domain [ rdf:type owl:Class ;
+                                owl:unionOf ( :GameRelease
+                                              :VideoGame
+                                            )
+                              ] ;
+                  rdfs:range :UserInterface ;
+                  rdfs:comment "Associates a VideoGame or GameRelease with a UserInterface through which gameplay information or controls are presented."@en ;
+                  rdfs:label "has user interface"@en .
+
+
+###  https://example.org/video-game-ontology#installedFromMediaFormat
+:installedFromMediaFormat rdf:type owl:ObjectProperty ;
+                          rdfs:subPropertyOf :usesMediaFormat ;
+                          rdfs:domain :GameRelease ;
+                          rdfs:range :MediaFormat ;
+                          rdfs:comment "Identifies a MediaFormat from which a GameRelease is installed."@en ;
+                          rdfs:label "installed from media format"@en .
+
+
+###  https://example.org/video-game-ontology#intendedForPlatform
+:intendedForPlatform rdf:type owl:ObjectProperty ;
+                     rdfs:subPropertyOf schema:gamePlatform ;
+                     rdfs:domain [ rdf:type owl:Class ;
+                                   owl:unionOf ( :GameRelease
+                                                 :VideoGame
+                                               )
+                                 ] ;
+                     rdfs:range :Platform ;
+                     rdfs:comment "Indicates the Platform for which a VideoGame or GameRelease was originally or intentionally designed."@en ;
+                     rdfs:label "intended for platform"@en .
+
+
+###  https://example.org/video-game-ontology#issuedByRatingSystem
+:issuedByRatingSystem rdf:type owl:ObjectProperty ;
+                      rdfs:domain :ContentRating ;
+                      rdfs:comment "Identifies the RatingSystem that issued a ContentRating."@en ;
+                      rdfs:label "issued by rating system"@en .
+
+
+###  https://example.org/video-game-ontology#manufacturedBy
+:manufacturedBy rdf:type owl:ObjectProperty ;
+                rdfs:domain :Platform ;
+                rdfs:range :Organization ;
+                rdfs:comment "Identifies the Organization that manufactured a Platform."@en ;
+                rdfs:label "manufactured by"@en .
+
+
+###  https://example.org/video-game-ontology#modifiesResource
+:modifiesResource rdf:type owl:ObjectProperty ;
+                  rdfs:subPropertyOf :extendsResource ;
+                  rdfs:domain :Mod ;
+                  rdfs:range :GameResource ;
+                  rdfs:comment "Identifies the GameResource modified by a Mod. Because Mod is a GameExtension, this relation specializes :extendsResource."@en ;
+                  rdfs:label "modifies resource"@en .
+
+
+###  https://example.org/video-game-ontology#operatedBy
+:operatedBy rdf:type owl:ObjectProperty ;
+            rdfs:range prov:Agent ;
+            rdfs:comment "Identifies the agent that operates an OnlineService."@en ;
+            rdfs:label "operated by"@en .
+
+
+###  https://example.org/video-game-ontology#optionallySupportsInputDevice
+:optionallySupportsInputDevice rdf:type owl:ObjectProperty ;
+                               rdfs:subPropertyOf :supportsInputDevice ;
+                               rdfs:domain :GameRelease ;
+                               rdfs:range :InputDevice ;
+                               rdfs:comment "Identifies an optional InputDevice supported by a GameRelease."@en ;
+                               rdfs:label "optionally supports input device"@en .
+
+
+###  https://example.org/video-game-ontology#organizedBy
+:organizedBy rdf:type owl:ObjectProperty ;
+             rdfs:range prov:Agent ;
+             rdfs:comment "Identifies an agent that organizes a CompetitiveContext."@en ;
+             rdfs:label "organized by"@en .
+
+
+###  https://example.org/video-game-ontology#ownedBy
+:ownedBy rdf:type owl:ObjectProperty ;
+         rdfs:domain :Platform ;
+         rdfs:range :Organization ;
+         rdfs:comment "Identifies the Organization that owns a Platform."@en ;
+         rdfs:label "owned by"@en .
+
+
+###  https://example.org/video-game-ontology#participatesInCompetitiveContext
+:participatesInCompetitiveContext rdf:type owl:ObjectProperty ;
+                                  rdfs:domain [ rdf:type owl:Class ;
+                                                owl:unionOf ( :GameRelease
+                                                              :VideoGame
+                                                            )
+                                              ] ;
+                                  rdfs:comment "Associates a VideoGame or GameRelease with a CompetitiveContext in which it participates."@en ;
+                                  rdfs:label "participates in competitive context"@en .
+
+
+###  https://example.org/video-game-ontology#portOf
+:portOf rdf:type owl:ObjectProperty ;
+        rdfs:subPropertyOf prov:wasDerivedFrom ;
+        rdfs:domain :Port ;
+        rdfs:range :GameRelease ;
+        rdfs:comment "Identifies the earlier GameRelease from which a Port was derived."@en ;
+        rdfs:label "port of"@en .
+
+
+###  https://example.org/video-game-ontology#precededBy
+:precededBy rdf:type owl:ObjectProperty ;
+            rdfs:comment "Relates a resource to an earlier resource that precedes it in a relevant sequence or historical lineage."@en ;
+            rdfs:label "preceded by"@en .
+
+
+###  https://example.org/video-game-ontology#providesFeedbackCapability
+:providesFeedbackCapability rdf:type owl:ObjectProperty ;
+                            rdfs:comment "Identifies a FeedbackCapability provided by a resource, such as visual, audio, or haptic feedback."@en ;
+                            rdfs:label "provides feedback capability"@en .
+
+
+###  https://example.org/video-game-ontology#publishedBy
+:publishedBy rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf :hasParticipatingOrganization ,
+                                schema:publisher ;
+             rdfs:domain [ rdf:type owl:Class ;
+                           owl:unionOf ( :GameRelease
+                                         :VideoGame
+                                       )
+                         ] ;
+             rdfs:range :Organization ;
+             rdfs:comment "Identifies an Organization that published a VideoGame or GameRelease; use :PublisherRole in a qualified PROV association when the role needs explicit qualification."@en ;
+             rdfs:label "published by"@en .
+
+
+###  https://example.org/video-game-ontology#releaseOf
+:releaseOf rdf:type owl:ObjectProperty ;
+           rdfs:domain :GameRelease ;
+           rdfs:range :VideoGame ;
+           rdfs:comment "Links a particular GameRelease to the VideoGame work that it releases."@en ;
+           rdfs:label "release of"@en .
+
+
+###  https://example.org/video-game-ontology#remakeOf
+:remakeOf rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf prov:wasDerivedFrom ;
+          rdfs:domain :Remake ;
+          rdfs:range :GameRelease ;
+          rdfs:comment "Identifies the earlier GameRelease from which a Remake was derived."@en ;
+          rdfs:label "remake of"@en .
+
+
+###  https://example.org/video-game-ontology#remasterOf
+:remasterOf rdf:type owl:ObjectProperty ;
+            rdfs:subPropertyOf prov:wasDerivedFrom ;
+            rdfs:domain :Remaster ;
+            rdfs:range :GameRelease ;
+            rdfs:comment "Identifies the earlier GameRelease from which a Remaster was derived."@en ;
+            rdfs:label "remaster of"@en .
+
+
+###  https://example.org/video-game-ontology#requiresInputDevice
+:requiresInputDevice rdf:type owl:ObjectProperty ;
+                     rdfs:subPropertyOf :supportsInputDevice ;
+                     rdfs:domain :GameRelease ;
+                     rdfs:range :InputDevice ;
+                     rdfs:comment "Identifies an InputDevice required to use a GameRelease."@en ;
+                     rdfs:label "requires input device"@en .
+
+
+###  https://example.org/video-game-ontology#requiresOnlineService
+:requiresOnlineService rdf:type owl:ObjectProperty ;
+                       rdfs:subPropertyOf :accessibleViaOnlineService ;
+                       rdfs:domain :GameResource ;
+                       rdfs:comment "Identifies an OnlineService that is required to access or use a GameResource."@en ;
+                       rdfs:label "requires online service"@en .
+
+
+###  https://example.org/video-game-ontology#supportsDisplayTechnology
+:supportsDisplayTechnology rdf:type owl:ObjectProperty ;
+                           rdfs:domain [ rdf:type owl:Class ;
+                                         owl:unionOf ( :GameRelease
+                                                       :VideoGame
+                                                     )
+                                       ] ;
+                           rdfs:comment "Identifies a DisplayTechnology supported by a VideoGame or GameRelease."@en ;
+                           rdfs:label "supports display technology"@en .
+
+
+###  https://example.org/video-game-ontology#supportsInputDevice
+:supportsInputDevice rdf:type owl:ObjectProperty ;
+                     rdfs:domain [ rdf:type owl:Class ;
+                                   owl:unionOf ( :GameRelease
+                                                 :VideoGame
+                                               )
+                                 ] ;
+                     rdfs:range :InputDevice ;
+                     rdfs:comment "Identifies an InputDevice supported by a VideoGame or GameRelease."@en ;
+                     rdfs:label "supports input device"@en .
+
+
+###  https://example.org/video-game-ontology#supportsMultiplayerConnectivity
+:supportsMultiplayerConnectivity rdf:type owl:ObjectProperty ;
+                                 rdfs:domain [ rdf:type owl:Class ;
+                                               owl:unionOf ( :GameRelease
+                                                             :VideoGame
+                                                           )
+                                             ] ;
+                                 rdfs:range :MultiplayerConnectivityMode ;
+                                 rdfs:comment "Associates a VideoGame or GameRelease with a supported multiplayer connectivity mode."@en ;
+                                 rdfs:label "supports multiplayer connectivity"@en .
+
+
+###  https://example.org/video-game-ontology#supportsMultiplayerStyle
+:supportsMultiplayerStyle rdf:type owl:ObjectProperty ;
+                          rdfs:domain [ rdf:type owl:Class ;
+                                        owl:unionOf ( :GameRelease
+                                                      :VideoGame
+                                                    )
+                                      ] ;
+                          rdfs:range :MultiplayerStyle ;
+                          rdfs:comment "Associates a VideoGame or GameRelease with a supported multiplayer style."@en ;
+                          rdfs:label "supports multiplayer style"@en .
+
+
+###  https://example.org/video-game-ontology#supportsOutputDevice
+:supportsOutputDevice rdf:type owl:ObjectProperty ;
+                      rdfs:domain [ rdf:type owl:Class ;
+                                    owl:unionOf ( :GameRelease
+                                                  :VideoGame
+                                                )
+                                  ] ;
+                      rdfs:range :OutputDevice ;
+                      rdfs:comment "Identifies an OutputDevice through which a VideoGame or GameRelease can present output."@en ;
+                      rdfs:label "supports output device"@en .
+
+
+###  https://example.org/video-game-ontology#usedInputDevice
+:usedInputDevice rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf prov:used ;
+                 rdfs:range :InputDevice ;
+                 rdfs:comment "Identifies an InputDevice actually used during a GameplaySession."@en ;
+                 rdfs:label "used input device"@en .
+
+
+###  https://example.org/video-game-ontology#usedMicrophoneForInGameCommunication
+:usedMicrophoneForInGameCommunication rdf:type owl:ObjectProperty ;
+                                      rdfs:subPropertyOf :usedInputDevice ;
+                                      rdfs:range :Microphone ;
+                                      rdfs:comment "Identifies a Microphone used during a GameplaySession for in-game communication."@en ;
+                                      rdfs:label "used microphone for in-game communication"@en .
+
+
+###  https://example.org/video-game-ontology#usedWebcamForLivestreaming
+:usedWebcamForLivestreaming rdf:type owl:ObjectProperty ;
+                            rdfs:subPropertyOf :usedInputDevice ;
+                            rdfs:range :Webcam ;
+                            rdfs:comment "Identifies a Webcam used during a GameplaySession for livestreaming."@en ;
+                            rdfs:label "used webcam for livestreaming"@en .
+
+
+###  https://example.org/video-game-ontology#usesGameRelease
+:usesGameRelease rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf prov:used ;
+                 rdfs:range :GameRelease ;
+                 rdfs:comment "Identifies the GameRelease used in a GameplaySession."@en ;
+                 rdfs:label "uses game release"@en .
+
+
+###  https://example.org/video-game-ontology#usesMediaFormat
+:usesMediaFormat rdf:type owl:ObjectProperty ;
+                 rdfs:domain :GameRelease ;
+                 rdfs:range :MediaFormat ;
+                 rdfs:comment "Identifies a MediaFormat used to distribute or install a GameRelease."@en ;
+                 rdfs:label "uses media format"@en .
+
+
+###  https://example.org/video-game-ontology#validInRegion
+:validInRegion rdf:type owl:ObjectProperty ;
+               rdfs:domain :ContentRating ;
+               rdfs:comment "Identifies a Region in which a ContentRating is valid."@en ;
+               rdfs:label "valid in region"@en .
+
+
+###  https://schema.org/gamePlatform
+schema:gamePlatform rdf:type owl:ObjectProperty .
+
+
+###  https://schema.org/genre
+schema:genre rdf:type owl:ObjectProperty .
+
+
+###  https://schema.org/itemReviewed
+schema:itemReviewed rdf:type owl:ObjectProperty .
+
+
+###  https://schema.org/publisher
+schema:publisher rdf:type owl:ObjectProperty .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://purl.org/dc/terms/issued
+dcterms:issued rdf:type owl:DatatypeProperty .
+
+
+###  https://example.org/video-game-ontology#maximumPlayerCount
+:maximumPlayerCount rdf:type owl:DatatypeProperty ;
+                    rdfs:domain [ rdf:type owl:Class ;
+                                  owl:unionOf ( :GameRelease
+                                                :VideoGame
+                                              )
+                                ] ;
+                    rdfs:range xsd:nonNegativeInteger ;
+                    rdfs:comment "Records the maximum number of simultaneous players supported by a VideoGame or GameRelease."@en ;
+                    rdfs:label "maximum player count"@en .
+
+
+###  https://example.org/video-game-ontology#minimumAge
+:minimumAge rdf:type owl:DatatypeProperty ;
+            rdfs:domain :ContentRating ;
+            rdfs:range xsd:nonNegativeInteger ;
+            rdfs:comment "Records the minimum age associated with a ContentRating."@en ;
+            rdfs:label "minimum age"@en .
+
+
+###  https://example.org/video-game-ontology#officiallySupported
+:officiallySupported rdf:type owl:DatatypeProperty ;
+                     rdfs:range xsd:boolean ;
+                     rdfs:comment "Indicates whether game-related content is officially supported by the relevant rights holder, publisher, developer, or platform authority."@en ;
+                     rdfs:label "officially supported"@en .
+
+
+###  https://example.org/video-game-ontology#ratingCode
+:ratingCode rdf:type owl:DatatypeProperty ;
+            rdfs:domain :ContentRating ;
+            rdfs:range xsd:string ;
+            rdfs:comment "Records the code assigned to a ContentRating by its RatingSystem, such as an age or classification code."@en ;
+            rdfs:label "rating code"@en .
+
+
+###  https://example.org/video-game-ontology#releaseDate
+:releaseDate rdf:type owl:DatatypeProperty ;
+             rdfs:subPropertyOf dcterms:issued ,
+                                schema:datePublished ;
+             rdfs:domain :GameRelease ;
+             rdfs:range xsd:date ;
+             rdfs:comment "Records the formal release date of a GameRelease; it specializes dcterms:issued and schema:datePublished."@en ;
+             rdfs:label "release date"@en .
+
+
+###  https://example.org/video-game-ontology#userCreated
+:userCreated rdf:type owl:DatatypeProperty ;
+             rdfs:range xsd:boolean ;
+             rdfs:comment "Indicates whether game-related content was created by users rather than as official first-party or licensed content."@en ;
+             rdfs:label "user created"@en .
+
+
+###  https://schema.org/datePublished
+schema:datePublished rdf:type owl:DatatypeProperty .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.w3.org/ns/prov#Agent
+prov:Agent rdf:type owl:Class ;
+           owl:disjointWith :Category ,
+                            :Gameplay_Event .
+
+
+###  http://www.w3.org/ns/prov#Entity
+prov:Entity rdf:type owl:Class .
+
+
+###  https://example.org/video-game-ontology#Advergame
+:Advergame rdf:type owl:Class ;
+           rdfs:subClassOf :SeriousGame ;
+           rdfs:comment "A serious game designed around advertising or promoting a product, service, or brand."@en ;
+           rdfs:label "Advergame"@en .
+
+
+###  https://example.org/video-game-ontology#AgeCategory
+:AgeCategory rdf:type owl:Class ;
+             rdfs:subClassOf :Category ;
+             owl:disjointWith :DistributionMethod ,
+                              :GameMode ,
+                              :GameplayMechanic ,
+                              :Genre ,
+                              :MultiplayerConnectivityMode ,
+                              :MultiplayerStyle ;
+             rdfs:comment "A SKOS concept representing an age category in a rating system."@en ;
+             rdfs:label "Age Category"@en .
+
+
+###  https://example.org/video-game-ontology#ArcadeSystem
+:ArcadeSystem rdf:type owl:Class ;
+              rdfs:subClassOf :Platform ;
+              rdfs:comment "A type of platform."@en ;
+              rdfs:label "Arcade System"@en .
+
+
+###  https://example.org/video-game-ontology#ArtGame
+:ArtGame rdf:type owl:Class ;
+         rdfs:subClassOf :VideoGame ;
+         rdfs:comment "A type of video game."@en ;
+         rdfs:label "Art Game"@en .
+
+
+###  https://example.org/video-game-ontology#AugmentedRealityPlatform
+:AugmentedRealityPlatform rdf:type owl:Class ;
+                          rdfs:subClassOf :Platform ;
+                          rdfs:comment "A platform that supports augmented-reality video-game experiences by combining game output with the player's physical environment."@en ;
+                          rdfs:label "Augmented Reality Platform"@en .
+
+
+###  https://example.org/video-game-ontology#BrowserPlatform
+:BrowserPlatform rdf:type owl:Class ;
+                 rdfs:subClassOf :Platform ;
+                 rdfs:comment "A type of platform."@en ;
+                 rdfs:label "Browser Platform"@en .
+
+
+###  https://example.org/video-game-ontology#BuiltInScreen
+:BuiltInScreen rdf:type owl:Class ;
+               rdfs:subClassOf :DisplayDevice ;
+               rdfs:comment "A type of display device."@en ;
+               rdfs:label "Built In Screen"@en .
+
+
+###  https://example.org/video-game-ontology#CDROM
+:CDROM rdf:type owl:Class ;
+       rdfs:subClassOf :OpticalDisc ;
+       owl:disjointWith :DVD ;
+       rdfs:comment "A type of optical disc."@en ;
+       rdfs:label "CD-ROM"@en .
+
+
+###  https://example.org/video-game-ontology#CRTDisplay
+:CRTDisplay rdf:type owl:Class ;
+            rdfs:subClassOf :DisplayDevice ;
+            rdfs:comment "A type of display device."@en ;
+            rdfs:label "CRT display"@en .
+
+
+###  https://example.org/video-game-ontology#CasualGame
+:CasualGame rdf:type owl:Class ;
+            rdfs:subClassOf :VideoGame ;
+            rdfs:comment "A type of video game."@en ;
+            rdfs:label "Casual Game"@en .
+
+
+###  https://example.org/video-game-ontology#Category
+:Category rdf:type owl:Class ;
+          owl:disjointWith :Character ,
+                           :Gameplay_Event ,
+                           :MediaFormat ,
+                           :VideoGame .
+
+
+###  https://example.org/video-game-ontology#Character
+:Character rdf:type owl:Class ;
+           rdfs:subClassOf [ rdf:type owl:Restriction ;
+                             owl:onProperty [ owl:inverseOf :hasCharacter
+                                            ] ;
+                             owl:someValuesFrom :VideoGame
+                           ] ;
+           owl:disjointWith :Gameplay_Event ,
+                            :MediaFormat ,
+                            :Platform ,
+                            :VideoGame ;
+           rdfs:comment "A character appearing in a video game."@en ;
+           rdfs:label "Character"@en .
+
+
+###  https://example.org/video-game-ontology#CloudGamingService
+:CloudGamingService rdf:type owl:Class ;
+                    rdfs:subClassOf :Platform ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :operatedBy ;
+                                      owl:someValuesFrom prov:Agent
+                                    ] ;
+                    rdfs:comment "A cloud gaming service that also functions as a playable platform: game execution is provided remotely and accessed through an online service."@en ;
+                    rdfs:label "Cloud Gaming Service"@en .
+
+
+###  https://example.org/video-game-ontology#ComputerMonitor
+:ComputerMonitor rdf:type owl:Class ;
+                 rdfs:subClassOf :DisplayDevice ;
+                 rdfs:comment "A type of display device."@en ;
+                 rdfs:label "Computer Monitor"@en .
+
+
+###  https://example.org/video-game-ontology#ContentRating
+:ContentRating rdf:type owl:Class ;
+               rdfs:subClassOf prov:Entity ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :issuedByRatingSystem ;
+                                 owl:someValuesFrom [ rdf:type owl:Restriction ;
+                                                      owl:onProperty :administeredBy ;
+                                                      owl:someValuesFrom :RatingAuthority
+                                                    ]
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :validInRegion ;
+                                 owl:minCardinality "1"^^xsd:nonNegativeInteger
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty [ owl:inverseOf :hasContentRating
+                                                ] ;
+                                 owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                 owl:onClass :GameRelease
+                               ] ;
+               owl:disjointWith :Device ,
+                                :Display ,
+                                :GameEngine ,
+                                :GameResource ;
+               rdfs:comment "A provenance-capable content-rating assignment for a GameRelease that is issued by at least one RatingSystem; it may also carry a rating code, age category, content descriptors, and source metadata via dcterms:source."@en ;
+               rdfs:label "Content Rating"@en .
+
+
+###  https://example.org/video-game-ontology#CoreGame
+:CoreGame rdf:type owl:Class ;
+          rdfs:subClassOf :VideoGame ;
+          rdfs:comment "A type of video game."@en ;
+          rdfs:label "Core Game"@en .
+
+
+###  https://example.org/video-game-ontology#DVD
+:DVD rdf:type owl:Class ;
+     rdfs:subClassOf :OpticalDisc ;
+     rdfs:comment "A type of optical disc."@en ;
+     rdfs:label "DVD"@en .
+
+
+###  https://example.org/video-game-ontology#DancePad
+:DancePad rdf:type owl:Class ;
+          rdfs:subClassOf :GameController ;
+          rdfs:comment "A specialized game controller operated primarily with the feet."@en ;
+          rdfs:label "Dance Pad"@en .
+
+
+###  https://example.org/video-game-ontology#Device
+:Device rdf:type owl:Class ;
+        rdfs:subClassOf prov:Entity ;
+        owl:disjointWith :GameEngine ,
+                         :GameResource ,
+                         :Review ;
+        rdfs:comment "A physical or virtual device used for game input or output."@en ;
+        rdfs:label "Device"@en .
+
+
+###  https://example.org/video-game-ontology#DigitalCamera
+:DigitalCamera rdf:type owl:Class ;
+               rdfs:subClassOf :InputDevice ;
+               rdfs:comment "A type of input device."@en ;
+               rdfs:label "Digital Camera"@en .
+
+
+###  https://example.org/video-game-ontology#DigitalMediaFormat
+:DigitalMediaFormat rdf:type owl:Class ;
+                    rdfs:subClassOf :MediaFormat ;
+                    owl:disjointWith :PhysicalMediaFormat ;
+                    rdfs:comment "A type of media format."@en ;
+                    rdfs:label "Digital Media Format"@en .
+
+
+###  https://example.org/video-game-ontology#Display
+:Display rdf:type owl:Class ;
+         rdfs:subClassOf prov:Entity ;
+         owl:disjointWith :GameEngine ,
+                          :Review .
+
+
+###  https://example.org/video-game-ontology#DisplayDevice
+:DisplayDevice rdf:type owl:Class ;
+               rdfs:subClassOf :OutputDevice ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :providesFeedbackCapability ;
+                                 owl:hasValue :VisualFeedbackCapability
+                               ] ;
+               rdfs:comment "A type of output device."@en ;
+               rdfs:label "Display Device"@en .
+
+
+###  https://example.org/video-game-ontology#DistributionMethod
+:DistributionMethod rdf:type owl:Class ;
+                    rdfs:subClassOf :Category ;
+                    owl:disjointWith :GameMode ,
+                                     :GameplayMechanic ,
+                                     :Genre ,
+                                     :MultiplayerConnectivityMode ,
+                                     :MultiplayerStyle ;
+                    rdfs:comment "A controlled concept describing how a GameRelease is delivered or distributed."@en ;
+                    rdfs:label "Distribution Method"@en .
+
+
+###  https://example.org/video-game-ontology#DownloadableContent
+:DownloadableContent rdf:type owl:Class ;
+                     rdfs:subClassOf :GameExtension ;
+                     rdfs:comment "A type of game extension."@en ;
+                     rdfs:label "Downloadable Content"@en .
+
+
+###  https://example.org/video-game-ontology#EducationalGame
+:EducationalGame rdf:type owl:Class ;
+                 rdfs:subClassOf :SeriousGame ;
+                 rdfs:comment "A type of serious game."@en ;
+                 rdfs:label "Educational Game"@en .
+
+
+###  https://example.org/video-game-ontology#EdutainmentGame
+:EdutainmentGame rdf:type owl:Class ;
+                 rdfs:subClassOf :EducationalGame ;
+                 rdfs:comment "An educational game emphasizing entertainment and accessible learning activities."@en ;
+                 rdfs:label "Edutainment Game"@en .
+
+
+###  https://example.org/video-game-ontology#EsportsEvent
+:EsportsEvent rdf:type owl:Class ;
+              rdfs:subClassOf :Gameplay_Event ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :featuresGameRelease ;
+                                owl:someValuesFrom :GameRelease
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :hasCompetitor ;
+                                owl:someValuesFrom prov:Agent
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :organizedBy ;
+                                owl:someValuesFrom prov:Agent
+                              ] ;
+              rdfs:comment "A class that is a subtype of competitive context and prov:Activity."@en ;
+              rdfs:label "Esports Event"@en .
+
+
+###  https://example.org/video-game-ontology#ExpansionPack
+:ExpansionPack rdf:type owl:Class ;
+               rdfs:subClassOf :GameExtension ;
+               rdfs:comment "A type of game extension."@en ;
+               rdfs:label "Expansion Pack"@en .
+
+
+###  https://example.org/video-game-ontology#FitnessGame
+:FitnessGame rdf:type owl:Class ;
+             rdfs:subClassOf :SeriousGame ;
+             rdfs:comment "A serious game that incorporates significant physical exercise or fitness-oriented activity."@en ;
+             rdfs:label "Fitness Game"@en .
+
+
+###  https://example.org/video-game-ontology#FlashMemoryCard
+:FlashMemoryCard rdf:type owl:Class ;
+                 rdfs:subClassOf :PhysicalMediaFormat ;
+                 owl:disjointWith :FloppyDisk ,
+                                  :MagneticTape ,
+                                  :OpticalDisc ,
+                                  :ROMCartridge ;
+                 rdfs:comment "A type of physical media format."@en ;
+                 rdfs:label "Flash Memory Card"@en .
+
+
+###  https://example.org/video-game-ontology#FloppyDisk
+:FloppyDisk rdf:type owl:Class ;
+            rdfs:subClassOf :PhysicalMediaFormat ;
+            owl:disjointWith :MagneticTape ,
+                             :OpticalDisc ,
+                             :ROMCartridge ;
+            rdfs:comment "A type of physical media format."@en ;
+            rdfs:label "Floppy Disk"@en .
+
+
+###  https://example.org/video-game-ontology#GameController
+:GameController rdf:type owl:Class ;
+                rdfs:subClassOf :InputDevice ;
+                rdfs:comment "An input device designed primarily for controlling gameplay."@en ;
+                rdfs:label "Game Controller"@en ;
+                skos:altLabel "Controller"@en .
+
+
+###  https://example.org/video-game-ontology#GameEngine
+:GameEngine rdf:type owl:Class ;
+            rdfs:subClassOf prov:Entity ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :engineSupportsPlatform ;
+                              owl:someValuesFrom :Platform
+                            ] ;
+            owl:disjointWith :GameResource ;
+            rdfs:comment "Software used to develop or run a video game or game release."@en ;
+            rdfs:label "Game Engine"@en .
+
+
+###  https://example.org/video-game-ontology#GameExtension
+:GameExtension rdf:type owl:Class ;
+               rdfs:subClassOf :GameResource ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :associatedWithGame ;
+                                 owl:someValuesFrom :VideoGame
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty :extendsResource ;
+                                 owl:someValuesFrom :GameResource
+                               ] ;
+               rdfs:comment "A game-related creative resource that extends another GameResource, such as an expansion, downloadable content, or mod. Use dcterms:creator with a prov:Agent when creator attribution is recorded."@en ;
+               rdfs:label "Game Extension"@en .
+
+
+###  https://example.org/video-game-ontology#GameMode
+:GameMode rdf:type owl:Class ;
+          rdfs:subClassOf :Category ;
+          owl:disjointWith :GameplayMechanic ,
+                           :Genre ,
+                           :MultiplayerConnectivityMode ,
+                           :MultiplayerStyle ;
+          rdfs:comment "A controlled concept describing a mode of play supported by a game or release."@en ;
+          rdfs:label "Game Mode"@en .
+
+
+###  https://example.org/video-game-ontology#GameRelease
+:GameRelease rdf:type owl:Class ;
+             rdfs:subClassOf :GameResource ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :availableOnPlatform ;
+                               owl:someValuesFrom :Platform
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :distributedVia ;
+                               owl:someValuesFrom :DistributionMethod
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :hasGameMode ;
+                               owl:someValuesFrom :GameMode
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :releaseOf ;
+                               owl:someValuesFrom :VideoGame
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :supportsInputDevice ;
+                               owl:someValuesFrom :InputDevice
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :supportsOutputDevice ;
+                               owl:someValuesFrom :OutputDevice
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :usesMediaFormat ;
+                               owl:someValuesFrom :MediaFormat
+                             ] ;
+             owl:disjointWith :VideoGame ;
+             rdfs:comment "A particular release, edition, or version of a VideoGame. Every GameRelease is related to at least one VideoGame through :releaseOf; use dcterms:title and dcterms:identifier for generic metadata, schema:version for version text, and :releaseDate for its formal release date."@en ;
+             rdfs:label "Game Release"@en .
+
+
+###  https://example.org/video-game-ontology#GameResource
+:GameResource rdf:type owl:Class ;
+              rdfs:subClassOf prov:Entity ;
+              owl:disjointWith :Review ;
+              rdfs:comment "A domain resource representing a video game, a particular game release, or an extension; modeled as a PROV entity so derivation provenance can be reused directly."@en ;
+              rdfs:label "Game Resource"@en .
+
+
+###  https://example.org/video-game-ontology#Gamepad
+:Gamepad rdf:type owl:Class ;
+         rdfs:subClassOf :GameController ;
+         rdfs:comment "A handheld game controller with buttons, directional controls, or analog inputs."@en ;
+         rdfs:label "Gamepad"@en .
+
+
+###  https://example.org/video-game-ontology#GameplayMechanic
+:GameplayMechanic rdf:type owl:Class ;
+                  rdfs:subClassOf :Category ;
+                  rdfs:comment "A controlled concept for a gameplay rule, system, or mechanic."@en ;
+                  rdfs:label "Gameplay Mechanic"@en .
+
+
+###  https://example.org/video-game-ontology#Gameplay_Event
+:Gameplay_Event rdf:type owl:Class ;
+                owl:disjointWith :MediaFormat ,
+                                 :Platform ,
+                                 :VideoGame .
+
+
+###  https://example.org/video-game-ontology#Genre
+:Genre rdf:type owl:Class ;
+       rdfs:subClassOf :Category ;
+       rdfs:comment "A SKOS concept used to classify a VideoGame by genre. Genre taxonomies should use skos:broader/skos:narrower (and scope/history notes when useful) rather than duplicating genre names as OWL subclasses."@en ;
+       rdfs:label "Genre"@en .
+
+
+###  https://example.org/video-game-ontology#HandheldConsole
+:HandheldConsole rdf:type owl:Class ;
+                 rdfs:subClassOf :Platform ;
+                 rdfs:comment "A type of platform."@en ;
+                 rdfs:label "Handheld Console"@en .
+
+
+###  https://example.org/video-game-ontology#Headphones
+:Headphones rdf:type owl:Class ;
+            rdfs:subClassOf :OutputDevice ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :providesFeedbackCapability ;
+                              owl:hasValue :AudioFeedbackCapability
+                            ] ;
+            rdfs:comment "A type of output device."@en ;
+            rdfs:label "Headphones"@en .
+
+
+###  https://example.org/video-game-ontology#HomeConsole
+:HomeConsole rdf:type owl:Class ;
+             rdfs:subClassOf :Platform ;
+             rdfs:comment "A type of platform."@en ;
+             rdfs:label "Home Console"@en .
+
+
+###  https://example.org/video-game-ontology#HyperCasualGame
+:HyperCasualGame rdf:type owl:Class ;
+                 rdfs:subClassOf :CasualGame ;
+                 rdfs:comment "A casual game characterized by especially simple rules and short, readily replayable play sessions."@en ;
+                 rdfs:label "Hyper-casual Game"@en .
+
+
+###  https://example.org/video-game-ontology#InputDevice
+:InputDevice rdf:type owl:Class ;
+             rdfs:subClassOf :Device ;
+             rdfs:comment "A device used to provide input to a game or gameplay session."@en ;
+             rdfs:label "Input Device"@en .
+
+
+###  https://example.org/video-game-ontology#Joystick
+:Joystick rdf:type owl:Class ;
+          rdfs:subClassOf :GameController ;
+          rdfs:comment "A game controller centered on a movable stick for directional or analog input."@en ;
+          rdfs:label "Joystick"@en .
+
+
+###  https://example.org/video-game-ontology#Keyboard
+:Keyboard rdf:type owl:Class ;
+          rdfs:subClassOf :InputDevice ;
+          rdfs:comment "A type of input device."@en ;
+          rdfs:label "Keyboard"@en .
+
+
+###  https://example.org/video-game-ontology#LCDDisplay
+:LCDDisplay rdf:type owl:Class ;
+            rdfs:subClassOf :DisplayDevice ;
+            rdfs:comment "A type of display device."@en ;
+            rdfs:label "LCD display"@en .
+
+
+###  https://example.org/video-game-ontology#LightGun
+:LightGun rdf:type owl:Class ;
+          rdfs:subClassOf :GameController ;
+          rdfs:comment "A game controller designed for aiming at or interacting with a display."@en ;
+          rdfs:label "Light Gun"@en .
+
+
+###  https://example.org/video-game-ontology#MagneticTape
+:MagneticTape rdf:type owl:Class ;
+              rdfs:subClassOf :PhysicalMediaFormat ;
+              owl:disjointWith :OpticalDisc ,
+                               :ROMCartridge ;
+              rdfs:comment "A type of physical media format."@en ;
+              rdfs:label "Magnetic Tape"@en .
+
+
+###  https://example.org/video-game-ontology#MediaFormat
+:MediaFormat rdf:type owl:Class ;
+             owl:disjointWith :Platform ,
+                              :VideoGame ;
+             rdfs:comment "A physical or digital format used to distribute or install a game release."@en ;
+             rdfs:label "Media Format"@en .
+
+
+###  https://example.org/video-game-ontology#Microphone
+:Microphone rdf:type owl:Class ;
+            rdfs:subClassOf :InputDevice ;
+            rdfs:comment "A type of input device."@en ;
+            rdfs:label "Microphone"@en .
+
+
+###  https://example.org/video-game-ontology#MobilePlatform
+:MobilePlatform rdf:type owl:Class ;
+                rdfs:subClassOf :Platform ;
+                rdfs:comment "A type of platform."@en ;
+                rdfs:label "Mobile Platform"@en .
+
+
+###  https://example.org/video-game-ontology#Mod
+:Mod rdf:type owl:Class ;
+     rdfs:subClassOf :GameExtension ,
+                     [ rdf:type owl:Restriction ;
+                       owl:onProperty :modifiesResource ;
+                       owl:someValuesFrom :GameResource
+                     ] ;
+     rdfs:comment "A GameExtension that modifies at least one GameResource; :modifiesResource also specializes :extendsResource."@en ;
+     rdfs:label "Mod"@en .
+
+
+###  https://example.org/video-game-ontology#MotionSensor
+:MotionSensor rdf:type owl:Class ;
+              rdfs:subClassOf :InputDevice ;
+              rdfs:comment "A type of input device."@en ;
+              rdfs:label "Motion Sensor"@en .
+
+
+###  https://example.org/video-game-ontology#Mouse
+:Mouse rdf:type owl:Class ;
+       rdfs:subClassOf :InputDevice ;
+       rdfs:comment "A type of input device."@en ;
+       rdfs:label "Mouse"@en .
+
+
+###  https://example.org/video-game-ontology#MultiplayerConnectivityMode
+:MultiplayerConnectivityMode rdf:type owl:Class ;
+                             rdfs:subClassOf :Category ;
+                             rdfs:comment "A controlled concept describing how multiplayer participants connect."@en ;
+                             rdfs:label "Multiplayer Connectivity Mode"@en .
+
+
+###  https://example.org/video-game-ontology#MultiplayerStyle
+:MultiplayerStyle rdf:type owl:Class ;
+                  rdfs:subClassOf :Category ;
+                  rdfs:comment "A controlled concept describing the structure of multiplayer play."@en ;
+                  rdfs:label "Multiplayer Style"@en .
+
+
+###  https://example.org/video-game-ontology#Newsgame
+:Newsgame rdf:type owl:Class ;
+          rdfs:subClassOf :SeriousGame ;
+          rdfs:comment "A serious game designed to communicate or explore a news-related, political, or advocacy-oriented subject."@en ;
+          rdfs:label "Newsgame"@en .
+
+
+###  https://example.org/video-game-ontology#NonPlayerCharacter
+:NonPlayerCharacter rdf:type owl:Class ;
+                    rdfs:subClassOf :Character ;
+                    rdfs:comment "A type of character."@en ;
+                    rdfs:label "Non Player Character"@en .
+
+
+###  https://example.org/video-game-ontology#OpticalDisc
+:OpticalDisc rdf:type owl:Class ;
+             rdfs:subClassOf :PhysicalMediaFormat ;
+             owl:disjointWith :ROMCartridge ;
+             rdfs:comment "A type of physical media format."@en ;
+             rdfs:label "Optical Disc"@en .
+
+
+###  https://example.org/video-game-ontology#Organization
+:Organization rdf:type owl:Class ;
+              rdfs:subClassOf prov:Agent ;
+              owl:disjointWith :Person ;
+              rdfs:comment "An organization participating in the video-game ecosystem."@en ;
+              rdfs:label "Organization"@en .
+
+
+###  https://example.org/video-game-ontology#OutputDevice
+:OutputDevice rdf:type owl:Class ;
+              rdfs:subClassOf :Device ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :providesFeedbackCapability ;
+                                owl:minCardinality "1"^^xsd:nonNegativeInteger
+                              ] ;
+              rdfs:comment "A device used to present visual, audio, haptic, or other game output."@en ;
+              rdfs:label "Output Device"@en .
+
+
+###  https://example.org/video-game-ontology#Person
+:Person rdf:type owl:Class ;
+        rdfs:subClassOf prov:Agent .
+
+
+###  https://example.org/video-game-ontology#PersonalComputerPlatform
+:PersonalComputerPlatform rdf:type owl:Class ;
+                          rdfs:subClassOf :Platform ;
+                          rdfs:comment "A type of platform."@en ;
+                          rdfs:label "Personal Computer Platform"@en .
+
+
+###  https://example.org/video-game-ontology#PhysicalMediaFormat
+:PhysicalMediaFormat rdf:type owl:Class ;
+                     rdfs:subClassOf :MediaFormat ;
+                     rdfs:comment "A type of media format."@en ;
+                     rdfs:label "Physical Media Format"@en .
+
+
+###  https://example.org/video-game-ontology#Platform
+:Platform rdf:type owl:Class ;
+          owl:disjointWith :VideoGame ;
+          rdfs:comment "A hardware, software, browser, mobile, cloud, or virtual-reality platform on which games may run."@en ;
+          rdfs:label "Platform"@en .
+
+
+###  https://example.org/video-game-ontology#PlayerCharacter
+:PlayerCharacter rdf:type owl:Class ;
+                 rdfs:subClassOf :Character ;
+                 rdfs:comment "A type of character."@en ;
+                 rdfs:label "Player Character"@en .
+
+
+###  https://example.org/video-game-ontology#Port
+:Port rdf:type owl:Class ;
+      rdfs:subClassOf :GameRelease ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :portOf ;
+                        owl:someValuesFrom :GameRelease
+                      ] ;
+      rdfs:comment "A game release adapted to run on a platform or technical environment different from an earlier release."@en ;
+      rdfs:label "Port"@en .
+
+
+###  https://example.org/video-game-ontology#Projector
+:Projector rdf:type owl:Class ;
+           rdfs:subClassOf :DisplayDevice ;
+           rdfs:comment "A type of display device."@en ;
+           rdfs:label "Projector"@en .
+
+
+###  https://example.org/video-game-ontology#ROMCartridge
+:ROMCartridge rdf:type owl:Class ;
+              rdfs:subClassOf :PhysicalMediaFormat ;
+              rdfs:comment "A type of physical media format."@en ;
+              rdfs:label "ROM cartridge"@en .
+
+
+###  https://example.org/video-game-ontology#RacingWheel
+:RacingWheel rdf:type owl:Class ;
+             rdfs:subClassOf :GameController ;
+             rdfs:comment "A game controller designed to simulate steering in driving games."@en ;
+             rdfs:label "Racing Wheel"@en .
+
+
+###  https://example.org/video-game-ontology#RatingAuthority
+:RatingAuthority rdf:type owl:Class ;
+                 rdfs:subClassOf :Organization ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty [ owl:inverseOf :administeredBy
+                                                  ] ;
+                                   owl:minCardinality "1"^^xsd:nonNegativeInteger
+                                 ] ;
+                 rdfs:comment "An organization that administers a content-rating system."@en ;
+                 rdfs:label "Rating Authority"@en .
+
+
+###  https://example.org/video-game-ontology#Remake
+:Remake rdf:type owl:Class ;
+        rdfs:subClassOf :GameRelease ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :remakeOf ;
+                          owl:someValuesFrom :GameRelease
+                        ] ;
+        rdfs:comment "A game release that recreates an earlier game release as a new derived release."@en ;
+        rdfs:label "Remake"@en .
+
+
+###  https://example.org/video-game-ontology#Remaster
+:Remaster rdf:type owl:Class ;
+          rdfs:subClassOf :GameRelease ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :remasterOf ;
+                            owl:someValuesFrom :GameRelease
+                          ] ;
+          rdfs:comment "A game release derived from an earlier release with revised presentation or technical treatment while substantially preserving the original game."@en ;
+          rdfs:label "Remaster"@en .
+
+
+###  https://example.org/video-game-ontology#Review
+:Review rdf:type owl:Class ;
+        rdfs:subClassOf prov:Entity ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty schema:itemReviewed ;
+                          owl:someValuesFrom :GameRelease
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty schema:itemReviewed ;
+                          owl:allValuesFrom :GameRelease
+                        ] ;
+        rdfs:comment "A review of a GameRelease. Use schema:itemReviewed for the reviewed release, schema:reviewBody for review text, schema:reviewRating with schema:ratingValue for a structured score, and dcterms:source for source citation when applicable."@en ;
+        rdfs:label "Review"@en .
+
+
+###  https://example.org/video-game-ontology#SeriousGame
+:SeriousGame rdf:type owl:Class ;
+             rdfs:subClassOf :VideoGame ;
+             rdfs:comment "A type of video game."@en ;
+             rdfs:label "Serious Game"@en .
+
+
+###  https://example.org/video-game-ontology#Speaker
+:Speaker rdf:type owl:Class ;
+         rdfs:subClassOf :OutputDevice ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :providesFeedbackCapability ;
+                           owl:hasValue :AudioFeedbackCapability
+                         ] ;
+         rdfs:comment "A type of output device."@en ;
+         rdfs:label "Speaker"@en .
+
+
+###  https://example.org/video-game-ontology#Touchscreen
+:Touchscreen rdf:type owl:Class ;
+             rdfs:subClassOf :DisplayDevice ,
+                             :InputDevice ;
+             rdfs:comment "A combined display and touch-sensitive input device; it can therefore function as both an InputDevice and a DisplayDevice."@en ;
+             rdfs:label "Touchscreen"@en .
+
+
+###  https://example.org/video-game-ontology#UserInterface
+:UserInterface rdf:type owl:Class ;
+               rdfs:subClassOf :Display ;
+               rdfs:comment "An interface through which a player receives game state information or interacts with a video game."@en ;
+               rdfs:label "User Interface"@en .
+
+
+###  https://example.org/video-game-ontology#VRController
+:VRController rdf:type owl:Class ;
+              rdfs:subClassOf :GameController ;
+              rdfs:comment "A class that is a subtype of vr input device and game controller."@en ;
+              rdfs:label "VR controller"@en .
+
+
+###  https://example.org/video-game-ontology#VRHeadset
+:VRHeadset rdf:type owl:Class ;
+           rdfs:subClassOf :DisplayDevice ;
+           rdfs:comment "A class that is a subtype of display device and vr output device."@en ;
+           rdfs:label "VR headset"@en .
+
+
+###  https://example.org/video-game-ontology#VideoGame
+:VideoGame rdf:type owl:Class ;
+           rdfs:subClassOf [ rdf:type owl:Restriction ;
+                             owl:onProperty :hasGameMode ;
+                             owl:someValuesFrom :GameMode
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :hasGameplayMechanic ;
+                             owl:someValuesFrom :GameplayMechanic
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :hasGenre ;
+                             owl:someValuesFrom :Genre
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :supportsInputDevice ;
+                             owl:someValuesFrom :InputDevice
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :supportsOutputDevice ;
+                             owl:someValuesFrom :OutputDevice
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :providesFeedbackCapability ;
+                             owl:hasValue :VisualFeedbackCapability
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :intendedForPlatform ;
+                             owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onClass :Platform
+                           ] ;
+           rdfs:comment "A video game considered as a creative work independent of a particular release."@en ;
+           rdfs:label "Video Game"@en .
+
+
+###  https://example.org/video-game-ontology#VirtualRealityPlatform
+:VirtualRealityPlatform rdf:type owl:Class ;
+                        rdfs:subClassOf :Platform ;
+                        rdfs:comment "A type of platform."@en ;
+                        rdfs:label "Virtual Reality Platform"@en .
+
+
+###  https://example.org/video-game-ontology#Webcam
+:Webcam rdf:type owl:Class ;
+        rdfs:subClassOf :DigitalCamera ;
+        rdfs:comment "A DigitalCamera used as an input device for live video capture, communication, streaming, or gameplay-related sensing."@en ;
+        rdfs:label "Webcam"@en .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  https://example.org/video-game-ontology#Asymmetric
+:Asymmetric rdf:type owl:NamedIndividual ,
+                     :MultiplayerStyle ;
+            rdfs:comment "A named multiplayer style value: Asymmetric."@en ;
+            rdfs:label "Asymmetric"@en ;
+            skos:prefLabel "Asymmetric"@en .
+
+
+###  https://example.org/video-game-ontology#AudioFeedbackCapability
+:AudioFeedbackCapability rdf:type owl:NamedIndividual ;
+                         rdfs:comment "A named feedback capability representing audio feedback."@en ;
+                         rdfs:label "Audio Feedback Capability"@en .
+
+
+###  https://example.org/video-game-ontology#CloudDelivery
+:CloudDelivery rdf:type owl:NamedIndividual ,
+                        :DistributionMethod ;
+               rdfs:comment "Distribution or access in which game execution or delivery is provided through cloud infrastructure."@en ;
+               rdfs:label "Cloud Delivery"@en ;
+               skos:prefLabel "Cloud Delivery"@en .
+
+
+###  https://example.org/video-game-ontology#Competitive
+:Competitive rdf:type owl:NamedIndividual ,
+                      :MultiplayerStyle ;
+             rdfs:comment "A named multiplayer style value: Competitive."@en ;
+             rdfs:label "Competitive"@en ;
+             skos:prefLabel "Competitive"@en .
+
+
+###  https://example.org/video-game-ontology#ComputerSpace
+:ComputerSpace rdf:type owl:NamedIndividual ,
+                        :VideoGame ;
+               rdfs:label "Computer Space"@en ;
+               prov:wasInfluencedBy :Spacewar .
+
+
+###  https://example.org/video-game-ontology#Cooperative
+:Cooperative rdf:type owl:NamedIndividual ,
+                      :MultiplayerStyle ;
+             rdfs:comment "A named multiplayer style value: Cooperative."@en ;
+             rdfs:label "Cooperative"@en ;
+             skos:prefLabel "Cooperative"@en .
+
+
+###  https://example.org/video-game-ontology#DigitalDownload
+:DigitalDownload rdf:type owl:NamedIndividual ,
+                          :DistributionMethod ;
+                 rdfs:comment "Distribution by downloading a digital game package."@en ;
+                 rdfs:label "Digital Download"@en ;
+                 skos:prefLabel "Digital Download"@en .
+
+
+###  https://example.org/video-game-ontology#GameBoy
+:GameBoy rdf:type owl:NamedIndividual ,
+                  :HandheldConsole ;
+         :hasPlatformHolder :Nintendo ;
+         rdfs:label "Game Boy"@en .
+
+
+###  https://example.org/video-game-ontology#GameCube
+:GameCube rdf:type owl:NamedIndividual ,
+                   :HomeConsole ;
+          rdfs:label "GameCube"@en .
+
+
+###  https://example.org/video-game-ontology#InternetOnline
+:InternetOnline rdf:type owl:NamedIndividual ,
+                         :MultiplayerConnectivityMode ;
+                rdfs:comment "A named multiplayer connectivity mode value: Internet/online."@en ;
+                rdfs:label "Internet/online"@en ;
+                skos:prefLabel "Internet/online"@en .
+
+
+###  https://example.org/video-game-ontology#LocalNetwork
+:LocalNetwork rdf:type owl:NamedIndividual ,
+                       :MultiplayerConnectivityMode ;
+              rdfs:comment "A named multiplayer connectivity mode value: Local Network."@en ;
+              rdfs:label "Local Network"@en ;
+              skos:prefLabel "Local Network"@en .
+
+
+###  https://example.org/video-game-ontology#LocalSameDevice
+:LocalSameDevice rdf:type owl:NamedIndividual ,
+                          :MultiplayerConnectivityMode ;
+                 rdfs:comment "A named multiplayer connectivity mode value: Local same-device."@en ;
+                 rdfs:label "Local same-device"@en ;
+                 skos:prefLabel "Local same-device"@en .
+
+
+###  https://example.org/video-game-ontology#MagnavoxOdyssey
+:MagnavoxOdyssey rdf:type owl:NamedIndividual ,
+                          :HomeConsole ;
+                 rdfs:label "Magnavox Odyssey"@en .
+
+
+###  https://example.org/video-game-ontology#MassivelyMultiplayer
+:MassivelyMultiplayer rdf:type owl:NamedIndividual ,
+                               :MultiplayerStyle ;
+                      rdfs:comment "A named multiplayer style value: Massively Multiplayer."@en ;
+                      rdfs:label "Massively Multiplayer"@en ;
+                      skos:prefLabel "Massively Multiplayer"@en .
+
+
+###  https://example.org/video-game-ontology#Multiplayer
+:Multiplayer rdf:type owl:NamedIndividual ,
+                      :GameMode ;
+             rdfs:comment "A named game mode value: Multiplayer."@en ;
+             rdfs:label "Multiplayer"@en ;
+             skos:prefLabel "Multiplayer"@en .
+
+
+###  https://example.org/video-game-ontology#Nintendo
+:Nintendo rdf:type owl:NamedIndividual ,
+                   :Organization ;
+          rdfs:label "Nintendo"@en .
+
+
+###  https://example.org/video-game-ontology#Passage
+:Passage rdf:type owl:NamedIndividual ,
+                  :ArtGame ;
+         rdfs:label "Passage"@en .
+
+
+###  https://example.org/video-game-ontology#PhysicalMediaDistribution
+:PhysicalMediaDistribution rdf:type owl:NamedIndividual ,
+                                    :DistributionMethod ;
+                           rdfs:comment "Distribution through a physical carrier such as a cartridge, disc, tape, or memory card."@en ;
+                           rdfs:label "Physical Media Distribution"@en ;
+                           skos:prefLabel "Physical Media Distribution"@en .
+
+
+###  https://example.org/video-game-ontology#PlayStation
+:PlayStation rdf:type owl:NamedIndividual ,
+                      :HomeConsole ;
+             rdfs:label "PlayStation"@en .
+
+
+###  https://example.org/video-game-ontology#PlayStation2
+:PlayStation2 rdf:type owl:NamedIndividual ,
+                       :HomeConsole ;
+              rdfs:label "PlayStation 2"@en .
+
+
+###  https://example.org/video-game-ontology#PlayStationNow
+:PlayStationNow rdf:type owl:NamedIndividual ,
+                         :CloudGamingService ;
+                rdfs:label "PlayStation Now"@en .
+
+
+###  https://example.org/video-game-ontology#Pong
+:Pong rdf:type owl:NamedIndividual ,
+               :VideoGame ;
+      rdfs:label "Pong"@en .
+
+
+###  https://example.org/video-game-ontology#SinglePlayer
+:SinglePlayer rdf:type owl:NamedIndividual ,
+                       :GameMode ;
+              rdfs:comment "A named game mode value: Single Player."@en ;
+              rdfs:label "Single Player"@en ;
+              skos:prefLabel "Single Player"@en .
+
+
+###  https://example.org/video-game-ontology#Spacewar
+:Spacewar rdf:type owl:NamedIndividual ,
+                   :VideoGame ;
+          rdfs:label "Spacewar!"@en .
+
+
+###  https://example.org/video-game-ontology#TeamBased
+:TeamBased rdf:type owl:NamedIndividual ,
+                    :MultiplayerStyle ;
+           rdfs:comment "A named multiplayer style value: Team Based."@en ;
+           rdfs:label "Team Based"@en ;
+           skos:prefLabel "Team Based"@en .
+
+
+###  https://example.org/video-game-ontology#Tetris
+:Tetris rdf:type owl:NamedIndividual ,
+                 :CasualGame ;
+        rdfs:label "Tetris"@en .
+
+
+###  https://example.org/video-game-ontology#TheOregonTrail
+:TheOregonTrail rdf:type owl:NamedIndividual ,
+                         :EducationalGame ;
+                rdfs:label "The Oregon Trail"@en .
+
+
+###  https://example.org/video-game-ontology#VisualFeedbackCapability
+:VisualFeedbackCapability rdf:type owl:NamedIndividual ;
+                          rdfs:comment "A named feedback capability representing visual feedback."@en ;
+                          rdfs:label "Visual Feedback Capability"@en .
+
+
+###  https://example.org/video-game-ontology#Wii
+:Wii rdf:type owl:NamedIndividual ,
+              :HomeConsole ;
+     rdfs:label "Wii"@en .
+
+
+###  https://example.org/video-game-ontology#WiiFit
+:WiiFit rdf:type owl:NamedIndividual ,
+                 :SeriousGame ;
+        rdfs:label "Wii Fit"@en .
+
+
+###  https://example.org/video-game-ontology#XboxCloudGaming
+:XboxCloudGaming rdf:type owl:NamedIndividual ,
+                          :CloudGamingService ;
+                 rdfs:label "Xbox Cloud Gaming"@en .
+
+
+###  https://example.org/video-game-ontology#ZeroPlayer
+:ZeroPlayer rdf:type owl:NamedIndividual ,
+                     :GameMode ;
+            rdfs:comment "A named game mode value: Zero Player."@en ;
+            rdfs:label "Zero Player"@en ;
+            skos:prefLabel "Zero Player"@en .
+
+
+#################################################################
+#    Annotations
+#################################################################
+
+:ACB rdfs:comment "A named rating system value: ACB."@en ;
+     rdfs:label "ACB"@en ;
+     skos:prefLabel "ACB"@en .
+
+
+:Australia rdfs:label "Australia"@en .
+
+
+:CERO rdfs:comment "A named rating system value: CERO."@en ;
+      rdfs:label "CERO"@en ;
+      skos:prefLabel "CERO"@en .
+
+
+:DeveloperRole rdfs:comment "A PROV role used to qualify an organization's participation as a developer."@en ;
+               rdfs:label "Developer Role"@en .
+
+
+:DistributorRole rdfs:comment "A PROV role used to qualify an organization's participation as a distributor."@en ;
+                 rdfs:label "Distributor Role"@en .
+
+
+:ESRB rdfs:comment "A named rating system value: ESRB."@en ;
+      rdfs:label "ESRB"@en ;
+      skos:prefLabel "ESRB"@en .
+
+
+:GamesAsAService rdfs:comment "A monetization model in which a game is operated and updated as an ongoing service."@en ;
+                 rdfs:label "Games as a Service"@en ;
+                 skos:prefLabel "Games as a Service"@en .
+
+
+:Germany rdfs:label "Germany"@en .
+
+
+:HapticFeedbackCapability rdfs:comment "A named feedback capability representing haptic or tactile feedback."@en ;
+                          rdfs:label "Haptic Feedback Capability"@en .
+
+
+:Japan rdfs:label "Japan"@en .
+
+
+:MarketerRole rdfs:comment "A PROV role used when an organization participates in promoting or marketing a game or release."@en ;
+              rdfs:label "Marketer Role"@en .
+
+
+:PEGI rdfs:comment "A named rating system value: PEGI."@en ;
+      rdfs:label "PEGI"@en ;
+      skos:prefLabel "PEGI"@en .
+
+
+:PublisherRole rdfs:comment "A PROV role used to qualify an organization's participation as a publisher."@en ;
+               rdfs:label "Publisher Role"@en .
+
+
+:RetailerRole rdfs:comment "A PROV role used when an organization participates in bringing a game or release to consumers as a retailer."@en ;
+              rdfs:label "Retailer Role"@en .
+
+
+:USK rdfs:comment "A named rating system value: USK."@en ;
+     rdfs:label "USK"@en ;
+     skos:prefLabel "USK"@en .
+
+
+:UnitedKingdom rdfs:label "United Kingdom"@en .
+
+
+:UnitedStates rdfs:label "United States"@en .
+
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi

@@ -10,11 +10,21 @@ button { color:inherit; }
 .topbar { height:76px; padding:0 32px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); background:var(--panel); backdrop-filter:blur(14px); }
 .brand-group,.status-cluster,.stage-label,.subheading,.output-tabs,.stage-controls { display:flex; align-items:center; }
 .brand-group { gap:12px; }
+.workspace-brand { display:flex; align-items:center; flex-wrap:wrap; gap:12px 20px; min-width:0; }
+.workspace-tabs button:focus-visible { outline:2px solid var(--green); outline-offset:3px; }
+.workspace-tabs { display:flex; gap:4px; padding:3px; border:1px solid var(--line); border-radius:10px; background:var(--surface); }
+.workspace-tabs button { border:0; border-radius:7px; padding:7px 11px; background:transparent; color:var(--muted); cursor:pointer; }
+.workspace-tabs button[aria-pressed="true"] { background:var(--green-soft); color:var(--green); font-weight:700; }
+.studio-view[hidden],.ontovis-workspace[hidden],.export-actions[hidden] { display:none; }
+.app-shell.ontovis-active { padding-bottom:0; height:100dvh; min-height:100dvh; display:flex; flex-direction:column; }
+.ontovis-active > .topbar { flex-shrink:0; }
+.ontovis-workspace { flex:1; min-height:0; display:flex; }
+.ontovis-workspace-frame { display:block; width:100%; height:100%; min-height:0; flex:1; border:0; background:var(--surface); }
 .brand-mark { width:40px; height:40px; display:grid; place-items:center; border-radius:12px; background:var(--strong-bg); color:var(--lime); font:23px Georgia,serif; }
 .brand-name,.brand-subtitle,.method-bar h1,.method-bar p,.stage-header h2,.stage-header p,.prompt-card h3,.prompt-card p,.mini-title { margin:0; }
 .brand-name { font-weight:750; letter-spacing:-.02em; }
 .brand-subtitle { margin-top:3px; color:var(--muted); font-size:11px; letter-spacing:.05em; }
-.theme-trigger { padding:4px; min-width:0; border:0; border-radius:10px; background:transparent; text-align:left; cursor:pointer; }
+.theme-trigger { display:flex; align-items:center; gap:12px; padding:4px; min-width:0; border:0; border-radius:10px; background:transparent; text-align:left; cursor:pointer; }
 .theme-trigger:hover { background:var(--green-soft); }
 .theme-trigger:focus-visible { outline:2px solid var(--green); outline-offset:3px; }
 .theme-trigger .brand-mark { flex-shrink:0; }

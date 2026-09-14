@@ -1,6 +1,7 @@
 import source from "./yonsei-prompts.json" with { type: "json" };
 import neon from "./neon-prompts.json" with { type: "json" };
 import { withoutFewShotInputs } from "./few-shot-template.ts";
+import demos from "./demo-ontologies.json" with { type: "json" };
 import type { PromptMessages, PromptValues } from "./prompt-model";
 import type { ValidationMode } from "./execution-model";
 
@@ -304,26 +305,6 @@ function simulationModel(values: PromptValues, outputs: Record<string, string>) 
   return { elements, triples };
 }
 
-function simulationTurtle(values: PromptValues, outputs: Record<string, string>): string {
-  const cqs = readCqs(stageOutput(outputs, 3), values);
-  const cqIds = new Set(cqs.map(cq => cq.id));
-  const elements = collectElements(outputs, cqIds);
-  const triples = new Map<string, YonseiTriple>();
-  for (const stage of [5, 6, 7]) {
-    for (const triple of readModel(stageOutput(outputs, stage), String(stage).padStart(2, "0"), cqIds).triples)
-      triples.set(JSON.stringify([triple.subject, triple.predicate, triple.object]), triple);
-  }
-  const kind = { class: "Class", object_property: "ObjectProperty", data_property: "DatatypeProperty" };
-  const lines = ["# " + source.simulation.label, "@prefix owl: <http://www.w3.org/2002/07/owl#> .", "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .",
-    `<${YONSEI_CQ_ANNOTATION}> a owl:AnnotationProperty .`];
-  for (const entry of elements) {
-    lines.push(`<${entry.id}> a owl:${kind[entry.kind]} ; rdfs:label ${JSON.stringify(entry.label)} .`);
-    for (const cqId of entry.cq_ids) lines.push(`<${entry.id}> <${YONSEI_CQ_ANNOTATION}> ${JSON.stringify(cqId)} .`);
-  }
-  for (const triple of triples.values()) lines.push(`<${triple.subject}> <${triple.predicate}> ${iri(triple.object) ? "<" + triple.object + ">" : triple.object} .`);
-  return lines.join("\n") + "\n";
-}
-
 export function yonseiSimulation(stageId: string, values: PromptValues, outputs: Record<string, string>, ontology: string, mode: ValidationMode = "strict"): { content: string; ontology: string | null; warnings?: string[] } {
   if (mode === "exploratory") {
     const blocked = yonseiPrerequisite(stageId, values, outputs, ontology, mode);
@@ -350,8 +331,11 @@ export function yonseiSimulation(stageId: string, values: PromptValues, outputs:
   if (stage === 4) content = json({ simulation: true, ...simulationModel(values, outputs) });
   if (stage === 5) content = json({ simulation: true, ...readModel(stageOutput(outputs, 4), "04", new Set(readCqs(stageOutput(outputs, 3), values).map(cq => cq.id))) });
   if (stage === 6 || stage === 7) content = json({ simulation: true, elements: [], triples: [] });
-  if (stage === 8) { snapshot = simulationTurtle(values, outputs); content = snapshot; }
+  if (stage === 8) { snapshot = demos.yonsei.ttl; content = snapshot; }
   if (stage === 9) { snapshot = ontology; content = source.simulation.refine_comment + "\n" + ontology; }
   const marker = stage >= 8 ? "turtle" : "output";
-  return { content: source.simulation.label + `\n\n###start_${marker}###\n${content}\n###end_${marker}###`, ontology: snapshot };
+  const notice = stage >= 8 ? "\nFIXED DEMONSTRATION: " + demos.yonsei.file
+    + " is the built-in snapshot; it was not generated from the current document/CQs. No semantic refinement or CQ-coverage validation is performed in simulation." : "";
+  const label = stage >= 8 ? "[LOCAL SIMULATION — FIXED DEMONSTRATION SNAPSHOT; NO LLM CALL]" : source.simulation.label;
+  return { content: label + notice + `\n\n###start_${marker}###\n${content}\n###end_${marker}###`, ontology: snapshot };
 }

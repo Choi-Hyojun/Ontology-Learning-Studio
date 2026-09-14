@@ -53,7 +53,18 @@ test("Yonsei edited CQ evidence and Turtle links retain the existing validation 
     evidence: [{ paragraph_id: "P0001", text: "Books have titles." }] }] });
   assert.equal(editStageOutput("yonsei", "03", cq, values, outputs, records).outputEdit.content, cq);
   assert.throws(() => editStageOutput("yonsei", "03", cq.replace("Books have titles.", "Invented evidence."), values, outputs, records));
-  const ttl = outputs["yonsei-08"].replace("###end_turtle###", '<urn:note> <urn:label> "Edited" .\n###end_turtle###');
+  // The fixed gold demonstration is not the output of these synthetic CQs.
+  // Keep strict CQ validation intact and use a trace-matched fixture for it.
+  assert.throws(() => editStageOutput("yonsei", "08", outputs["yonsei-08"], values, outputs, records), /CQ/);
+  const editableDemo = editStageOutput("yonsei", "08", outputs["yonsei-08"], values, outputs, records, "exploratory");
+  assert.equal(editableDemo.outputEdit.content, outputs["yonsei-08"]);
+  assert.equal(editableDemo.ontology, null); // Unmatched CQ provenance is not certified.
+  assert.ok(editableDemo.warnings.length > 0);
+  const model = JSON.parse(outputs["yonsei-04"].split("###start_output###")[1].split("###end_output###")[0]);
+  const kinds = { class: "Class", object_property: "ObjectProperty", data_property: "DatatypeProperty" };
+  const fixture = model.elements.map(element =>
+    `<${element.id}> a <http://www.w3.org/2002/07/owl#${kinds[element.kind]}>; <https://example.org/yonsei/relatedCQ> "CQ1" .`).join("\n");
+  const ttl = '###start_turtle###\n<https://example.org/yonsei/relatedCQ> a <http://www.w3.org/2002/07/owl#AnnotationProperty> .\n' + fixture + '\n<urn:note> <urn:label> "Edited" .\n###end_turtle###';
   assert.match(editStageOutput("yonsei", "08", ttl, values, outputs, records).ontology, /Edited/);
   assert.throws(() => editStageOutput("yonsei", "08", ttl.replaceAll('"CQ1"', '"UNKNOWN"'), values, outputs, records), /CQ/);
 });

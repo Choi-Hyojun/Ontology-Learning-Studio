@@ -135,6 +135,12 @@ export default function Home() {
   const [notice, setNotice] = useState("");
   const [visualizationOpen, setVisualizationOpen] = useState(false);
   const [methodologyOpen, setMethodologyOpen] = useState(false);
+  const [workspaceView, setWorkspaceView] = useState<"studio" | "ontovis">("studio");
+  const [ontovisVisited, setOntovisVisited] = useState(false);
+  const selectWorkspace = (view: "studio" | "ontovis") => {
+    if (view === "ontovis") setOntovisVisited(true);
+    setWorkspaceView(view);
+  };
   const closeVisualization = useCallback(() => setVisualizationOpen(false), []);
   const values = valuesByMethod[method];
   const stages = method === "neon" ? NEON_STAGES : method === "tao" ? TAO_STAGES : YONSEI_PIPELINE;
@@ -559,11 +565,21 @@ export default function Home() {
   };
 
   return (
-    <main className="app-shell">
+    <main className={`app-shell ${workspaceView === "ontovis" ? "ontovis-active" : ""}`}>
       <header className="topbar">
-        <ThemeSelector />
+        <div className="workspace-brand">
+          <div className="brand-group">
+            <ThemeSelector />
+          </div>
+          <nav className="workspace-tabs" aria-label="Workspace">
+            <button type="button" aria-pressed={workspaceView === "studio"} aria-controls="studio-panel"
+              onClick={() => selectWorkspace("studio")}>OntoGen</button>
+            <button type="button" aria-pressed={workspaceView === "ontovis"} aria-controls="ontovis-panel"
+              onClick={() => selectWorkspace("ontovis")}>OntoVis</button>
+          </nav>
+        </div>
         <div className="status-cluster"><span className={`status-dot ${busy ? "running" : runState}`} /><span>{fewShotRunning ? "Few-shot 생성 중" : runState === "running" ? "실행 중" : runState === "paused" ? "일시정지" : runState === "done" ? "완료" : "준비됨"}</span>
-          <div className="export-actions">
+          <div className="export-actions" hidden={workspaceView !== "studio"}>
             <button type="button" className="ghost-button" onClick={saveLogs} title="입력 문서, 설정, 모든 실행 이력과 온톨로지 · JSON">전체 로그 저장 <small>JSON</small></button>
             {issues.length > 0 && <button type="button" className="ghost-button" onClick={() => setErrorOpen(true)}>오류 로그 <small>{issues.length}</small></button>}
             <button type="button" className="ghost-button" disabled={busy} onClick={() => logInputRef.current?.click()}
@@ -583,8 +599,9 @@ export default function Home() {
       {methodologyOpen && <MethodologyDialog initialMethod={method} onClose={() => setMethodologyOpen(false)} />}
       {notice && <div className="file-notice" role="status">{notice}<button type="button" onClick={() => setNotice("")} aria-label="알림 닫기">×</button></div>}
 
+      <div id="studio-panel" className="studio-view" hidden={workspaceView !== "studio"}>
       <section className="method-bar" aria-label="실행 모드와 방법론 설정">
-        <h1 className="visually-hidden">Ontology Learning Studio</h1>
+        <h1 className="visually-hidden">Ontology Studio</h1>
         <div className="engine-controls" role="group" aria-label="실행 엔진 설정">
           <button type="button" role="switch" aria-checked={engine === "api"} aria-describedby="engine-mode-help" className={`engine-switch ${engine === "api" ? "enabled" : ""}`}
             disabled={busy} onClick={() => changeEngine(engine === "api" ? "simulation" : "api")}>
@@ -731,6 +748,10 @@ export default function Home() {
       </section>
 
       <nav className="pipeline" aria-label={`${META[method].label} 단계`}><div className="progress-track"><span style={{ width: `${progress}%` }} /></div><div className="stage-strip">{stages.map((item, index) => <button key={item.id} aria-current={index === stageIndex ? "step" : undefined} className={`${index === stageIndex ? "active" : ""} ${outputs[method + "-" + item.id] ? "visited" : ""}`} onClick={() => { if (fewShotController.current) cancelFewShot(); setPreviousDraft(null); setPreviousEditError(""); setStageIndex(index); setRunState("paused"); }}><span>{item.id}</span><small>{item.short}</small></button>)}</div></nav>
+      </div>
+      <section id="ontovis-panel" className="ontovis-workspace" aria-label="OntoVis folder viewer" hidden={workspaceView !== "ontovis"}>
+        {ontovisVisited && <iframe src="/ontovis/index.html?mode=folder" title="OntoVis · Open OWL/TTL Folder" className="ontovis-workspace-frame" />}
+      </section>
     </main>
   );
 }
