@@ -13,6 +13,7 @@ function makeLoader(library = rdf) {
 }
 const loader = makeLoader();
 const tao = readFileSync(new URL("../examples/demo/video_game_TAO.ttl", import.meta.url), "utf8");
+const gold = readFileSync(new URL("../examples/demo/video_game_gold_0914.ttl", import.meta.url), "utf8");
 const prefixes = `@prefix : <https://example.org/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -20,6 +21,40 @@ const prefixes = `@prefix : <https://example.org/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 `;
 const restrictions = (graph, name) => graph.tbox.nodes.find(n => n.id.endsWith(":" + name)).axioms.propertyRestrictions;
+
+function assertGoldInverseRestrictions(graph) {
+  assert.equal(restrictions(graph, "RatingAuthority")[0], "[inverse(vg:administeredBy) min 1]");
+  assert.equal(restrictions(graph, "Character")[0], "[inverse(vg:hasCharacter) some vg:VideoGame]");
+  assert.ok(restrictions(graph, "ContentRating").includes("[inverse(vg:hasContentRating) exactly 1 vg:GameRelease]"));
+  assert.doesNotMatch(JSON.stringify(graph.tbox.nodes.map(n => n.axioms ?? {})), /_:/);
+}
+
+test("Yonsei inverse-property restrictions show property names without changing source triples", () => {
+  const store = loader.parseOntology(gold, "gold.ttl");
+  const before = store.statements.map(s => s.toNT());
+  const graph = loader.buildGraphData(store);
+  assertGoldInverseRestrictions(graph);
+  assert.equal(graph.tbox.stats.classCount, 78);
+  assert.equal(graph.abox.stats.tripleCount, 34);
+  assert.deepEqual(store.statements.map(s => s.toNT()), before);
+});
+
+test("inverse expressions support only restrictions, preserve named properties and bound cycles", () => {
+  const graph = loader.buildGraphData(loader.parseOntology(prefixes + `
+:p a owl:ObjectProperty; owl:inverseOf :q .
+:Inverse a owl:Class; rdfs:subClassOf [ a owl:Restriction;
+ owl:onProperty [ owl:inverseOf :p ]; owl:allValuesFrom :A ] .
+:Named a owl:Class; rdfs:subClassOf [ a owl:Restriction;
+ owl:onProperty :p; owl:someValuesFrom :A ] .
+:Cycle a owl:Class; rdfs:subClassOf [ a owl:Restriction;
+ owl:onProperty _:loop; owl:minCardinality 1 ] .
+_:loop owl:inverseOf _:loop .
+`, "inverse.ttl"));
+  assert.match(restrictions(graph, "Inverse")[0], /inverse\([^)]*:p\) only [^\]]*:A/);
+  assert.match(restrictions(graph, "Named")[0], /^\[[^ ]*:p some [^\]]*:A\]$/);
+  assert.ok(restrictions(graph, "Cycle")[0].length < 300);
+  assert.match(restrictions(graph, "Cycle")[0], /\?/);
+});
 
 test("TAO AttributeState shows the three qualified cardinalities instead of blank IDs", () => {
   const store = loader.parseOntology(tao, "video_game_TAO.ttl");
@@ -88,4 +123,15 @@ test("the shipped browser RDF bundle also expands TAO restrictions", () => {
   const graph = browserLoader.buildGraphData(browserLoader.parseOntology(tao, "current.ttl"));
   assert.equal(restrictions(graph, "Cl_AttributeState")[0], "[vg:op_stateOf exactly 1 vg:Cl_Entity]");
   assert.doesNotMatch(JSON.stringify(graph.tbox.nodes.map(n => n.axioms ?? {})), /_:/);
+});
+
+test("the shipped browser RDF bundle also expands revised Yonsei inverse restrictions", () => {
+  const context = { console, TextEncoder, TextDecoder, URL, setTimeout, clearTimeout,
+    document: { currentScript: { tagName: "SCRIPT", src: "http://localhost/ontovis/vendor/rdflib.min.js" }, getElementsByTagName: () => [] } };
+  context.window = context; context.self = context;
+  vm.createContext(context);
+  vm.runInContext(readFileSync(new URL("vendor/rdflib.min.js", root), "utf8"), context);
+  vm.runInContext(script, context);
+  const browserLoader = context.OntologyFolderLoader;
+  assertGoldInverseRestrictions(browserLoader.buildGraphData(browserLoader.parseOntology(gold, "gold.ttl")));
 });

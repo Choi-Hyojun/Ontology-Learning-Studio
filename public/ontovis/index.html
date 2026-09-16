@@ -1022,8 +1022,8 @@
         applyFocusHighlight(hasFocus ? currentFocusId : null)
       }
 
-      function focusOnNode() {
-        const rawInput = document.getElementById("focus-id").value.trim()
+      function focusOnNode(nodeId) {
+        const rawInput = typeof nodeId === "string" ? nodeId : document.getElementById("focus-id").value.trim()
         const normalizedInput = rawInput.toLocaleLowerCase()
         const nodes = currentMode === "tbox" ? allNodes : aboxData?.nodes || []
         const target =
@@ -1148,6 +1148,29 @@
         })
       }
 
+      function formatOntologyExpression(value, asHtml = false) {
+        // Format ontology tokens, not literal strings, URLs, or HTML attributes.
+        // Link targets retain the original identifier even if local names collide.
+        const text = String(value)
+        const tokens = /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|(?:https?:\/\/|urn:)[^\s<>"()[\]{}]+|_:[\w.-]+|([\p{L}][\p{L}\p{N}_.-]*):([\p{L}\p{N}_][\p{L}\p{N}_.-]*)/gu
+        const output = []
+        const encode = (part) => asHtml ? escapeHtml(part) : part
+        let offset = 0
+        for (const match of text.matchAll(tokens)) {
+          output.push(encode(text.slice(offset, match.index)))
+          const id = match[0]
+          const label = match[1] ? match[2] : id
+          if (asHtml && match[1] && allNodes.some((node) => node.id === id)) {
+            output.push(`<span class="node-link" data-id="${escapeAttribute(id)}">${escapeHtml(label)}</span>`)
+          } else {
+            output.push(encode(label))
+          }
+          offset = match.index + id.length
+        }
+        output.push(encode(text.slice(offset)))
+        return output.join("")
+      }
+
       function showClassPanel(node) {
         document.getElementById("info-panel").style.display = "none"
         const panel = document.getElementById("desc-axiom-panel")
@@ -1176,27 +1199,7 @@
             let axStrs = Array.isArray(value) ? value : [value]
             axiomHtml += "<pre>"
             axStrs.forEach((ax) => {
-              let replaced = escapeHtml(String(ax))
-              if (key === "disjointWith") {
-                let sortedIds = allNodes.map((n) => n.id).sort((a, b) => b.length - a.length)
-                for (let id of sortedIds) {
-                  const safeId = escapeHtml(id)
-                  if (replaced.includes(safeId)) {
-                    replaced = replaced.replace(safeId, `<span class=\"node-link\" data-id=\"${escapeAttribute(id)}\">${escapeHtml(displayLabel(id))}</span>`)
-                    break
-                  }
-                }
-              } else {
-                let sortedIds = allNodes.map((n) => n.id).sort((a, b) => b.length - a.length)
-                for (let id of sortedIds) {
-                  const safeId = escapeHtml(id)
-                  replaced = replaced.replace(
-                    new RegExp(`\\b${escapeRegExp(safeId)}\\b`, "g"),
-                    `<span class=\"node-link\" data-id=\"${escapeAttribute(id)}\">${escapeHtml(displayLabel(id))}</span>`
-                  )
-                }
-              }
-              axiomHtml += replaced + "\n"
+              axiomHtml += formatOntologyExpression(ax, true) + "\n"
             })
             axiomHtml += "</pre>"
           }
@@ -1211,7 +1214,7 @@
           span.style.cursor = "pointer"
           span.onclick = function () {
             document.getElementById("focus-id").value = displayLabel(this.dataset.id)
-            focusOnNode()
+            focusOnNode(this.dataset.id)
           }
         })
       }
@@ -1231,7 +1234,7 @@
             descLabel.className = "info-label"
             descLabel.textContent = "Description"
             const descPre = document.createElement("pre")
-            descPre.textContent = JSON.stringify(node.description, null, 2)
+            descPre.textContent = JSON.stringify(Object.fromEntries(Object.entries(node.description).map(([key, value]) => [displayLabel(key), value])), null, 2)
             content.appendChild(descLabel)
             content.appendChild(descPre)
           }
@@ -1240,7 +1243,7 @@
             axLabel.className = "info-label"
             axLabel.textContent = "Axioms"
             const axPre = document.createElement("pre")
-            axPre.textContent = JSON.stringify(node.axioms, null, 2)
+            axPre.textContent = JSON.stringify(node.axioms, (key, value) => typeof value === "string" ? formatOntologyExpression(value) : value, 2)
             content.appendChild(axLabel)
             content.appendChild(axPre)
           }
@@ -1261,7 +1264,7 @@
               pre.innerHTML = entries.map(renderLink).join("\n")
             } else {
               pre.textContent = entries.length
-                ? entries.map((entry) => `${entry.property}: ${entry.value}`).join("\n") : "(none)"
+                ? entries.map((entry) => `${displayLabel(entry.property)}: ${formatOntologyExpression(entry.value)}`).join("\n") : "(none)"
             }
             content.appendChild(heading)
             content.appendChild(pre)
@@ -1269,11 +1272,11 @@
           for (const [category, label] of [["type", "Types"], ["label", "Labels"], ["literal", "Literal Values"], ["relation", "Outgoing Relations"], ["other", "Other Statements"]]) {
             const entries = countedAssertions.filter((entry) => entry.category === category)
             appendSection(label, entries, category === "relation" ? (entry) =>
-              `${escapeHtml(entry.property)} -&gt; <span class="node-link" data-id="${escapeAttribute(entry.objectId)}">${escapeHtml(entry.value)}</span>` : null)
+              `${escapeHtml(displayLabel(entry.property))} -&gt; <span class="node-link" data-id="${escapeAttribute(entry.objectId)}">${escapeHtml(displayLabel(entry.objectId))}</span>` : null)
           }
           const incoming = (aboxData?.links || []).filter((link) => getNodeId(link.target) === node.id)
           appendSection("Incoming Relations — not included above", incoming, (link) =>
-            `<span class="node-link" data-id="${escapeAttribute(getNodeId(link.source))}">${escapeHtml(getNodeId(link.source))}</span> -&gt; ${escapeHtml(link.label)}`)
+            `<span class="node-link" data-id="${escapeAttribute(getNodeId(link.source))}">${escapeHtml(displayLabel(getNodeId(link.source)))}</span> -&gt; ${escapeHtml(displayLabel(link.label))}`)
         } else {
           const typeLabel = document.createElement("div")
           typeLabel.className = "info-label"
@@ -1347,7 +1350,7 @@
           span.style.cursor = "pointer"
           span.onclick = function () {
             document.getElementById("focus-id").value = displayLabel(this.dataset.id)
-            focusOnNode()
+            focusOnNode(this.dataset.id)
           }
         })
       }

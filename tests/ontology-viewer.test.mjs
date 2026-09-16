@@ -103,13 +103,13 @@ xsd:date a rdfs:Datatype .
 
   // Execute the actual detail renderer with a minimal DOM, including mutated D3 edges.
   const html = readFileSync(new URL("index.html", viewerRoot), "utf8");
-  const source = html.slice(html.indexOf("      function showInfoPanel(node)"), html.indexOf("      function dragStarted("));
+  const source = html.slice(html.indexOf("      function formatOntologyExpression("), html.indexOf("      function dragStarted("));
   const element = () => ({ style: {}, children: [], textContent: "", innerHTML: "",
     appendChild(child) { this.children.push(child); }, querySelectorAll() { return []; } });
   const elements = Object.fromEntries(["desc-axiom-panel", "info-panel", "info-title", "info-content"].map(id => [id, element()]));
   const context = { currentMode: "abox", aboxData: { ...abox, links: abox.links.map(l => ({ ...l, source: { id: l.source }, target: { id: l.target } })) },
     document: { createElement: element, getElementById: id => elements[id] },
-    displayLabel: value => value, getNodeId: value => typeof value === "object" ? value.id : value };
+    displayLabel: value => value.split(":").at(-1), getNodeId: value => typeof value === "object" ? value.id : value };
   vm.createContext(context);
   vm.runInContext(source, context);
   context.showInfoPanel(node);
@@ -122,7 +122,8 @@ xsd:date a rdfs:Datatype .
   assert.match(text, /Literal Values \(3\)/);
   assert.match(text, /Other Statements \(2\)/);
   assert.match(text, /"A"@ko/);
-  assert.match(text, /rdfs:comment: "<script>alert\(1\)<\/script>"@en/);
+  assert.match(text, /comment: "<script>alert\(1\)<\/script>"@en/);
+  assert.doesNotMatch(text, /rdfs:|xsd:|ns\d+:/);
   assert.doesNotMatch(children.map(e => e.innerHTML).join("\n"), /<script>/);
   assert.match(children.map(e => e.innerHTML).join("\n"), /class="node-link"/);
   elements["info-content"].children = [];
@@ -153,6 +154,40 @@ test("multiple explicit class types count individually without adding superclass
   assert.equal(node("a").tripleCount, 2);
   assert.equal(node("b").tripleCount, 2);
   assert.equal(node("c").tripleCount, 0);
+});
+
+test("detail expressions hide prefixes without changing literals, URLs or exact link targets", () => {
+  const html = readFileSync(new URL("index.html", viewerRoot), "utf8");
+  const source = html.slice(html.indexOf("      function formatOntologyExpression("), html.indexOf("      function dragStarted("));
+  const elements = Object.fromEntries(["info-panel", "desc-axiom-panel", "panel-class-label", "desc-content", "axiom-content", "focus-id"].map(id => [id, { style: {}, innerHTML: "" }]));
+  const links = [{ dataset: { id: "other:Game" }, style: {} }];
+  let focused;
+  const context = { allNodes: [{ id: "vg:Game" }, { id: "other:Game" }],
+    document: { getElementById: id => elements[id], querySelectorAll: () => links },
+    displayLabel: id => id.split(":").at(-1), focusOnNode: id => { focused = id; } };
+  vm.createContext(context); vm.runInContext(source, context);
+  const format = context.formatOntologyExpression;
+  assert.equal(format("[inverse(vg:administeredBy) min 1]"), "[inverse(administeredBy) min 1]");
+  assert.equal(format("[vg:p some (vg:Game or other:Game)]"), "[p some (Game or Game)]");
+  assert.equal(format('"vg:original <b>"^^xsd:string'), '"vg:original <b>"^^string');
+  assert.equal(format('"vg:original"@en'), '"vg:original"@en');
+  assert.equal(format("https://example.org/vg:original"), "https://example.org/vg:original");
+  assert.equal(format("urn:example:original"), "urn:example:original");
+  const node = { id: "vg:Test", description: { "rdfs:comment": "Keep vg:literal and https://example.org/p" },
+    axioms: { propertyRestrictions: ["[inverse(vg:administeredBy) min 1]"], disjointWith: ["vg:Game", "other:Game"] } };
+  const before = JSON.stringify(node);
+  context.showClassPanel(node);
+  const markup = elements["axiom-content"].innerHTML;
+  assert.match(markup, /inverse\(administeredBy\) min 1/);
+  assert.match(markup, /data-id="vg:Game">Game<\/span>/);
+  assert.match(markup, /data-id="other:Game">Game<\/span>/);
+  assert.doesNotMatch(markup.replace(/<[^>]*>/g, ""), /vg:|other:/);
+  assert.match(elements["desc-content"].innerHTML, /Keep vg:literal and https:\/\/example.org\/p/);
+  assert.doesNotMatch(format('"<img src=x onerror=alert(1)>"^^xsd:string', true), /<img/);
+  links[0].onclick();
+  assert.equal(elements["focus-id"].value, "Game");
+  assert.equal(focused, "other:Game");
+  assert.equal(JSON.stringify(node), before);
 });
 
 test("mode statistics show the right labels, zero-state and updated snapshot totals", () => {

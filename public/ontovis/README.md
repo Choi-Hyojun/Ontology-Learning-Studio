@@ -10,6 +10,15 @@ Restriction descriptions use explicit RDF triple membership checks rather than
 expressions support both rdflib Collection objects (Turtle lists) and explicit
 rdf:first/rdf:rest chains (including RDF/XML). Blank-node identifiers are not
 substituted for supported restriction expressions. Source files are unchanged.
+Anonymous owl:inverseOf property expressions render as `inverse(property)` inside
+restrictions, including unqualified/qualified cardinalities and some/only fillers.
+For example, RatingAuthority displays `[inverse(vg:administeredBy) min 1]`.
+Named properties with their own inverseOf axiom retain their original name.
+Detail panels hide namespace prefixes in ontology expressions and property names
+(e.g. `[inverse(administeredBy) min 1]`). This is display-only: graph identifiers,
+source ontologies and exported files retain their namespaces. Quoted literals,
+descriptions, language tags and URLs are not rewritten. Clickable class/instance
+references retain the full identifier so equal local names remain distinct.
 
 The status above Focus shows source class, declared Object Property and declared
 Datatype Property counts in TBox mode. Classes are the named classes recognized

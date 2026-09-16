@@ -232,6 +232,11 @@
       if (isLiteral(term)) return termValue(term)
       if (!isBlank(term)) return h.compact(term)
 
+      // Anonymous inverse-property expressions can be used by owl:onProperty.
+      // Named properties still keep their own name, even with inverseOf axioms.
+      const inverse = h.objects(term, NS.owl + "inverseOf")[0]
+      if (inverse) return `inverse(${expression(inverse, depth + 1)})`
+
       const union = h.objects(term, NS.owl + "unionOf")[0]
       if (union) return `(${parseList(union, depth).join(" or ")})`
       const intersection = h.objects(term, NS.owl + "intersectionOf")[0]
