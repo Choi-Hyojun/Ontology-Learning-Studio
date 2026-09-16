@@ -384,8 +384,8 @@ test("simulation runs all nine steps with honest source-grounded JSON, valid TTL
   }
   const graph = rdf.graph(); rdf.parse(ontology, graph, "https://example.org/", "text/turtle");
   assert.ok(graph.statements.length > 5);
-  assert.equal(ontology, readFileSync(new URL("../examples/demo/video_game_gold.ttl", import.meta.url), "utf8"));
-  assert.match(sessionOutputs["yonsei-08"], /FIXED DEMONSTRATION: video_game_gold.ttl/);
+  assert.equal(ontology, readFileSync(new URL("../examples/demo/video_game_gold_0914.ttl", import.meta.url), "utf8"));
+  assert.match(sessionOutputs["yonsei-08"], /FIXED DEMONSTRATION: video_game_gold_0914.ttl/);
   assert.match(sessionOutputs["yonsei-08"], /not generated from the current document/);
   assert.deepEqual(JSON.parse(resolveYonseiContext("09", values, sessionOutputs, ontology).refinement_context)[1].cqs, []);
 });

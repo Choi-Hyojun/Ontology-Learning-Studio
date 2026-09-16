@@ -30,7 +30,8 @@ Labels, Literal Values, Outgoing Relations or
 Other Statements. Literal language tags and datatypes are preserved. The per-node
 Outgoing triples totals sum to the status Triple count; incoming relations are
 shown separately and counted only at their source. owl:NamedIndividual declarations
-are preserved in the loaded data but hidden from the detail panel. Thus the gold demo has 32
+are preserved in the loaded data but hidden from the detail panel. The previous
+`video_game_gold.ttl` regression fixture has 32
 instances and a Triple count of 94: 30 explicit class memberships, 46 labels,
 16 comments and 2 drawn relations. Two instances have only owl:NamedIndividual
 declarations and contribute no class type count. The 126 unfiltered source triples
@@ -55,7 +56,8 @@ run the sync script again. Library license files are included alongside the bund
 
 The simulator replays the unchanged files in `examples/demo/`: NeOn-GPT uses
 `video_game_NeOn.ttl` at steps 08/20, TAO uses `video_game_TAO.ttl` at step 04,
-and Yonsei uses `video_game_gold.ttl` at step 08. TAO's missing QA/repair results
+and Yonsei uses `video_game_gold_0914.ttl` at step 08, converted without inference
+from the preserved `video_game_gold_0914.owx` OWL/XML source. TAO's missing QA/repair results
 retain step 04's snapshot; Yonsei step 09 preserves the current snapshot without
 claiming semantic refinement. These files are demonstrations, not outputs
 generated from the current prompts or CQs.

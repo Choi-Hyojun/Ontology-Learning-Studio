@@ -1,0 +1,3283 @@
+<?xml version="1.0"?>
+<Ontology xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="https://example.org/video-game-ontology"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     ontologyIRI="https://example.org/video-game-ontology">
+    <Prefix name="" IRI="https://example.org/video-game-ontology#"/>
+    <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
+    <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+    <Prefix name="xml" IRI="http://www.w3.org/XML/1998/namespace"/>
+    <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
+    <Prefix name="prov" IRI="http://www.w3.org/ns/prov#"/>
+    <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
+    <Prefix name="skos" IRI="http://www.w3.org/2004/02/skos/core#"/>
+    <Prefix name="time" IRI="http://www.w3.org/2006/time#"/>
+    <Prefix name="schema" IRI="https://schema.org/"/>
+    <Prefix name="dcterms" IRI="http://purl.org/dc/terms/"/>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="dcterms:description"/>
+        <Literal xml:lang="en">A refined ontology for video games, releases, platforms, media and distribution, extensions and adaptations, input/output devices, gameplay, organizations, engines, monetization, ratings, reviews, historical context, competitive contexts, provenance, external links, release windows, series, and gameplay sessions. The model reuses Dublin Core Terms, PROV-O, SKOS/SKOS-XL, OWL-Time, and Schema.org where their terms already express the intended semantics.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="dcterms:modified"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#date">2026-09-05</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="dcterms:title"/>
+        <Literal xml:lang="en">Video Game Ontology</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">:releaseOf specializes schema:exampleOfWork, preserving the ontology&apos;s distinction between an abstract VideoGame and a concrete GameRelease.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">Abstract video games and concrete game releases remain distinct. GameRelease models an edition/version/release of a VideoGame rather than collapsing both levels into schema:VideoGame.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">External identifiers reuse dcterms:identifier or schema:identifier directly. When the assigning system must be explicit, use schema:identifier with a schema:PropertyValue carrying schema:propertyID and schema:value rather than a local external-identifier predicate.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">External related-resource links reuse rdfs:seeAlso; owl:sameAs and skos:exactMatch are reserved for stronger identity or exact-concept mappings.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">For generic metadata, use dcterms:title, dcterms:identifier, and dcterms:description directly. Use schema:version for version literals on releases or cited source resources rather than introducing local duplicates.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">Game extensions may use dcterms:creator with a prov:Agent creator. Video games and releases may use prov:qualifiedAssociation with prov:agent and prov:hadRole for role-qualified organizational participation.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">GameplaySession is a prov:Activity. :usesGameRelease and :usedInputDevice specialize prov:used, while :hasPlayer specializes prov:wasAssociatedWith.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">Genre hierarchies are modeled as :Genre instances using SKOS broader/narrower relations. This avoids duplicating the same genre taxonomy as an OWL class hierarchy.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">Input-device support uses :supportsInputDevice and output routing uses :supportsOutputDevice; :providesFeedbackCapability describes the kind of feedback available. No additional synonymous controller/output properties are introduced.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">Organization participation is represented with :developedBy, :publishedBy, and :distributedBy plus PROV qualified associations and named PROV roles. Developer and publisher are therefore modeled as contextual roles rather than redundant subclasses of :Organization.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">Release windows and historical periods reuse OWL-Time: time:hasBeginning and time:hasEnd point to time:Instant values, whose calendar dates may be expressed with time:inXSDDate.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">Reviews reuse schema:itemReviewed, schema:reviewBody, schema:reviewRating, and schema:ratingValue instead of parallel local review-target or rating-value properties.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">SKOS concepts may use skos:prefLabel, skos:altLabel, skos:broader, skos:narrower, skos:scopeNote, and skos:historyNote. SKOS-XL labels may use skosxl:prefLabel, skosxl:altLabel, and skosxl:literalForm when label resources need contextual metadata.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">SKOS-XL may be used when labels need region or historical-period context; :associatedWithRegion and :associatedWithHistoricalPeriod are specialized subproperties of Dublin Core spatial and temporal relations.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">Standard metadata terms are reused directly where they already match the intended meaning: dcterms:title, dcterms:identifier, dcterms:description, dcterms:source, schema:version, schema:reviewBody, PROV derivation/influence properties, and OWL-Time interval boundaries.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">Use dcterms:source for ordinary source citation and prov:hadPrimarySource when the stronger PROV primary-source relation is intended. Provenance records may use prov:wasDerivedFrom, prov:wasAttributedTo, and prov:generatedAtTime.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal xml:lang="en">Use prov:wasDerivedFrom for generic derivation and prov:wasInfluencedBy for generic influence. The domain-specific :portOf, :conversionOf, :remasterOf, and :remakeOf properties specialize prov:wasDerivedFrom.</Literal>
+    </Annotation>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="owl:versionInfo"/>
+        <Literal xml:lang="en">2.1-refined</Literal>
+    </Annotation>
+    <Declaration>
+        <Class IRI="#Advergame"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Agent"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ArcadeSystem"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ArtGame"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Assessment"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#AugmentedRealityPlatform"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#BrowserPlatform"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#BuiltInScreen"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#CDROM"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#CRTDisplay"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#CasualGame"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Character"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#CloudGamingService"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ComputerMonitor"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ContentRating"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#CoreGame"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DVD"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DancePad"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Device"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DigitalCamera"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DigitalMediaFormat"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DisplayDevice"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DownloadableContent"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#EducationalGame"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ExpansionPack"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#FitnessGame"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#FlashMemoryCard"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#FloppyDisk"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#GameController"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#GameEngine"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#GameExtension"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#GamePublisher"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#GameRelease"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#GameResource"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Gamepad"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#GameplayEvent"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Genre"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#HandheldConsole"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Headphones"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#HomeConsole"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#InputDevice"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Joystick"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Keyboard"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#LCDDisplay"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#LightGun"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#MagneticTape"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#MediaFormat"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Microphone"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#MobilePlatform"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Mod"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#MotionSensor"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Mouse"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Newsgame"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#NonPlayerCharacter"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#OpticalDisc"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Organization"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#OutputDevice"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Person"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#PersonalComputerPlatform"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#PhysicalMediaFormat"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Platform"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#PlayerCharacter"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Port"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Projector"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ROMCartridge"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#RacingWheel"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#RatingAuthority"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Remake"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Remaster"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Review"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#SeriousGame"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Speaker"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Touchscreen"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#UserInterface"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#VRController"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#VRHeadset"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#VideoGame"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#VirtualRealityPlatform"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty abbreviatedIRI="prov:wasDerivedFrom"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#accessibleViaOnlineService"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#administeredBy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#associatedWithGame"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#availableOnPlatform"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#conversionOf"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#developedBy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#developedWithEngine"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#distributedBy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#distributedOnMediaFormat"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#distributedVia"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#emulatableOnPlatform"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#engineSupportsPlatform"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#exclusiveToPlatform"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#extendsResource"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#featuresGame"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasAgeCategory"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasCharacter"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasContentDescriptor"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasContentRating"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasGameplayMechanic"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasGenre"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasMonetizationModel"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasParticipatingOrganization"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasPlatformHolder"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasPlayer"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasUserInterface"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#installedFromMediaFormat"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#intendedForPlatform"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#issuedByRatingSystem"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#manufacturedBy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#modifiesResource"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#operatedBy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#optionallySupportsInputDevice"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#organizedBy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#ownedBy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#participatesInCompetitiveContext"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#portOf"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#precededBy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#providesFeedbackCapability"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#publishedBy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#releaseOf"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#remakeOf"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#remasterOf"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#requiresInputDevice"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#requiresOnlineService"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#supportsInputDevice"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#supportsMultiplayerConnectivity"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#supportsOutputDevice"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#usedInputDevice"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#usesGameRelease"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#usesMediaFormat"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty abbreviatedIRI="schema:gamePlatform"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasAgeCategory"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasDistributionMethod"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasGameMode"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasGameplayMechanic"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasMultiplayerConnectivityMode"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasMultiplayerStyle"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#maximumPlayerCount"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#minimumAge"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#officiallySupported"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#ratingCode"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#releaseDate"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#userCreated"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#ComputerSpace"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#GameBoy"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#GameCube"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#MagnavoxOdyssey"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Nintendo"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Passage"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#PlayStation"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#PlayStation2"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#PlayStationNow"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Pong"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Spacewar"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Tetris"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#TheOregonTrail"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#Wii"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#WiiFit"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#XboxCloudGaming"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty abbreviatedIRI="dcterms:description"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty abbreviatedIRI="dcterms:modified"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty abbreviatedIRI="dcterms:title"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty abbreviatedIRI="skos:altLabel"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty abbreviatedIRI="skos:prefLabel"/>
+    </Declaration>
+    <Declaration>
+        <AnnotationProperty abbreviatedIRI="prov:wasInfluencedBy"/>
+    </Declaration>
+    <Declaration>
+        <Datatype abbreviatedIRI="xsd:date"/>
+    </Declaration>
+    <SubClassOf>
+        <Class IRI="#Advergame"/>
+        <Class IRI="#SeriousGame"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ArcadeSystem"/>
+        <Class IRI="#Platform"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ArtGame"/>
+        <Class IRI="#VideoGame"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#AugmentedRealityPlatform"/>
+        <Class IRI="#Platform"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#BrowserPlatform"/>
+        <Class IRI="#Platform"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#BuiltInScreen"/>
+        <Class IRI="#DisplayDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#CDROM"/>
+        <Class IRI="#OpticalDisc"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#CRTDisplay"/>
+        <Class IRI="#DisplayDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#CasualGame"/>
+        <Class IRI="#VideoGame"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Character"/>
+        <ObjectSomeValuesFrom>
+            <ObjectInverseOf>
+                <ObjectProperty IRI="#hasCharacter"/>
+            </ObjectInverseOf>
+            <Class IRI="#VideoGame"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#CloudGamingService"/>
+        <Class IRI="#Platform"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ComputerMonitor"/>
+        <Class IRI="#DisplayDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ContentRating"/>
+        <Class IRI="#Assessment"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ContentRating"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#issuedByRatingSystem"/>
+            <ObjectSomeValuesFrom>
+                <ObjectProperty IRI="#administeredBy"/>
+                <Class IRI="#RatingAuthority"/>
+            </ObjectSomeValuesFrom>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ContentRating"/>
+        <ObjectExactCardinality cardinality="1">
+            <ObjectInverseOf>
+                <ObjectProperty IRI="#hasContentRating"/>
+            </ObjectInverseOf>
+            <Class IRI="#GameRelease"/>
+        </ObjectExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#CoreGame"/>
+        <Class IRI="#VideoGame"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DVD"/>
+        <Class IRI="#OpticalDisc"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DancePad"/>
+        <Class IRI="#GameController"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DigitalCamera"/>
+        <Class IRI="#InputDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DigitalMediaFormat"/>
+        <Class IRI="#MediaFormat"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DisplayDevice"/>
+        <Class IRI="#OutputDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DownloadableContent"/>
+        <Class IRI="#GameExtension"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#EducationalGame"/>
+        <Class IRI="#SeriousGame"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ExpansionPack"/>
+        <Class IRI="#GameExtension"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#FitnessGame"/>
+        <Class IRI="#SeriousGame"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#FlashMemoryCard"/>
+        <Class IRI="#PhysicalMediaFormat"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#FloppyDisk"/>
+        <Class IRI="#PhysicalMediaFormat"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GameController"/>
+        <Class IRI="#InputDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GameEngine"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#engineSupportsPlatform"/>
+            <Class IRI="#Platform"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GameExtension"/>
+        <Class IRI="#GameResource"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GameExtension"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#associatedWithGame"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GameExtension"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#extendsResource"/>
+            <Class IRI="#GameResource"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GamePublisher"/>
+        <Class IRI="#Organization"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GameRelease"/>
+        <Class IRI="#GameResource"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GameRelease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#availableOnPlatform"/>
+            <Class IRI="#Platform"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GameRelease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#releaseOf"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GameRelease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#supportsInputDevice"/>
+            <Class IRI="#InputDevice"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GameRelease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#supportsOutputDevice"/>
+            <Class IRI="#OutputDevice"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#GameRelease"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#usesMediaFormat"/>
+            <Class IRI="#MediaFormat"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Gamepad"/>
+        <Class IRI="#GameController"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#HandheldConsole"/>
+        <Class IRI="#Platform"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Headphones"/>
+        <Class IRI="#OutputDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#HomeConsole"/>
+        <Class IRI="#Platform"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#InputDevice"/>
+        <Class IRI="#Device"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Joystick"/>
+        <Class IRI="#GameController"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Keyboard"/>
+        <Class IRI="#InputDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#LCDDisplay"/>
+        <Class IRI="#DisplayDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#LightGun"/>
+        <Class IRI="#GameController"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#MagneticTape"/>
+        <Class IRI="#PhysicalMediaFormat"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Microphone"/>
+        <Class IRI="#InputDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#MobilePlatform"/>
+        <Class IRI="#Platform"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Mod"/>
+        <Class IRI="#GameExtension"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Mod"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#modifiesResource"/>
+            <Class IRI="#GameResource"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#MotionSensor"/>
+        <Class IRI="#InputDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Mouse"/>
+        <Class IRI="#InputDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Newsgame"/>
+        <Class IRI="#SeriousGame"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#NonPlayerCharacter"/>
+        <Class IRI="#Character"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#OpticalDisc"/>
+        <Class IRI="#PhysicalMediaFormat"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Organization"/>
+        <Class IRI="#Agent"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#OutputDevice"/>
+        <Class IRI="#Device"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#OutputDevice"/>
+        <ObjectMinCardinality cardinality="1">
+            <ObjectProperty IRI="#providesFeedbackCapability"/>
+        </ObjectMinCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Person"/>
+        <Class IRI="#Agent"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#PersonalComputerPlatform"/>
+        <Class IRI="#Platform"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#PhysicalMediaFormat"/>
+        <Class IRI="#MediaFormat"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#PlayerCharacter"/>
+        <Class IRI="#Character"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Port"/>
+        <Class IRI="#GameRelease"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Port"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#portOf"/>
+            <Class IRI="#GameRelease"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Projector"/>
+        <Class IRI="#DisplayDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ROMCartridge"/>
+        <Class IRI="#PhysicalMediaFormat"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#RacingWheel"/>
+        <Class IRI="#GameController"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#RatingAuthority"/>
+        <Class IRI="#Organization"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#RatingAuthority"/>
+        <ObjectMinCardinality cardinality="1">
+            <ObjectInverseOf>
+                <ObjectProperty IRI="#administeredBy"/>
+            </ObjectInverseOf>
+        </ObjectMinCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Remake"/>
+        <Class IRI="#GameRelease"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Remake"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#remakeOf"/>
+            <Class IRI="#GameRelease"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Remaster"/>
+        <Class IRI="#GameRelease"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Remaster"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#remasterOf"/>
+            <Class IRI="#GameRelease"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Review"/>
+        <Class IRI="#Assessment"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#SeriousGame"/>
+        <Class IRI="#VideoGame"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Speaker"/>
+        <Class IRI="#OutputDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Touchscreen"/>
+        <Class IRI="#DisplayDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Touchscreen"/>
+        <Class IRI="#InputDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#VRController"/>
+        <Class IRI="#GameController"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#VRHeadset"/>
+        <Class IRI="#DisplayDevice"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#VideoGame"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#supportsInputDevice"/>
+            <Class IRI="#InputDevice"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#VideoGame"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#supportsOutputDevice"/>
+            <Class IRI="#OutputDevice"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#VideoGame"/>
+        <ObjectMinCardinality cardinality="1">
+            <ObjectProperty IRI="#intendedForPlatform"/>
+            <Class IRI="#Platform"/>
+        </ObjectMinCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#VirtualRealityPlatform"/>
+        <Class IRI="#Platform"/>
+    </SubClassOf>
+    <DisjointClasses>
+        <Class IRI="#Agent"/>
+        <Class IRI="#Genre"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Assessment"/>
+        <Class IRI="#Genre"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#CDROM"/>
+        <Class IRI="#DVD"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Character"/>
+        <Class IRI="#GameplayEvent"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Character"/>
+        <Class IRI="#Genre"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Character"/>
+        <Class IRI="#MediaFormat"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Character"/>
+        <Class IRI="#Platform"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Character"/>
+        <Class IRI="#VideoGame"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#ContentRating"/>
+        <Class IRI="#Device"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#ContentRating"/>
+        <Class IRI="#GameEngine"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#ContentRating"/>
+        <Class IRI="#GameResource"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#ContentRating"/>
+        <Class IRI="#Review"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Device"/>
+        <Class IRI="#GameEngine"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Device"/>
+        <Class IRI="#GameResource"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Device"/>
+        <Class IRI="#Genre"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Device"/>
+        <Class IRI="#Review"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#DigitalMediaFormat"/>
+        <Class IRI="#PhysicalMediaFormat"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#FlashMemoryCard"/>
+        <Class IRI="#FloppyDisk"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#FlashMemoryCard"/>
+        <Class IRI="#MagneticTape"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#FlashMemoryCard"/>
+        <Class IRI="#OpticalDisc"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#FlashMemoryCard"/>
+        <Class IRI="#ROMCartridge"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#FloppyDisk"/>
+        <Class IRI="#MagneticTape"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#FloppyDisk"/>
+        <Class IRI="#OpticalDisc"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#FloppyDisk"/>
+        <Class IRI="#ROMCartridge"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#GameEngine"/>
+        <Class IRI="#GameResource"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#GameEngine"/>
+        <Class IRI="#Genre"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#GamePublisher"/>
+        <Class IRI="#RatingAuthority"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#GameRelease"/>
+        <Class IRI="#VideoGame"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#GameResource"/>
+        <Class IRI="#Genre"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#GameResource"/>
+        <Class IRI="#Review"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#GameplayEvent"/>
+        <Class IRI="#MediaFormat"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#GameplayEvent"/>
+        <Class IRI="#Platform"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#GameplayEvent"/>
+        <Class IRI="#VideoGame"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Genre"/>
+        <Class IRI="#MediaFormat"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Genre"/>
+        <Class IRI="#Platform"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Genre"/>
+        <Class IRI="#UserInterface"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Genre"/>
+        <Class IRI="#VideoGame"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#MagneticTape"/>
+        <Class IRI="#OpticalDisc"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#MagneticTape"/>
+        <Class IRI="#ROMCartridge"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#MediaFormat"/>
+        <Class IRI="#Platform"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#MediaFormat"/>
+        <Class IRI="#VideoGame"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#OpticalDisc"/>
+        <Class IRI="#ROMCartridge"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Organization"/>
+        <Class IRI="#Person"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#Platform"/>
+        <Class IRI="#VideoGame"/>
+    </DisjointClasses>
+    <ClassAssertion>
+        <Class IRI="#VideoGame"/>
+        <NamedIndividual IRI="#ComputerSpace"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#HandheldConsole"/>
+        <NamedIndividual IRI="#GameBoy"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#HomeConsole"/>
+        <NamedIndividual IRI="#GameCube"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#HomeConsole"/>
+        <NamedIndividual IRI="#MagnavoxOdyssey"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Organization"/>
+        <NamedIndividual IRI="#Nintendo"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#ArtGame"/>
+        <NamedIndividual IRI="#Passage"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#HomeConsole"/>
+        <NamedIndividual IRI="#PlayStation"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#HomeConsole"/>
+        <NamedIndividual IRI="#PlayStation2"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#CloudGamingService"/>
+        <NamedIndividual IRI="#PlayStationNow"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#VideoGame"/>
+        <NamedIndividual IRI="#Pong"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#VideoGame"/>
+        <NamedIndividual IRI="#Spacewar"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#CasualGame"/>
+        <NamedIndividual IRI="#Tetris"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#EducationalGame"/>
+        <NamedIndividual IRI="#TheOregonTrail"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#HomeConsole"/>
+        <NamedIndividual IRI="#Wii"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#SeriousGame"/>
+        <NamedIndividual IRI="#WiiFit"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#CloudGamingService"/>
+        <NamedIndividual IRI="#XboxCloudGaming"/>
+    </ClassAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="#hasPlatformHolder"/>
+        <NamedIndividual IRI="#GameBoy"/>
+        <NamedIndividual IRI="#Nintendo"/>
+    </ObjectPropertyAssertion>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#availableOnPlatform"/>
+        <ObjectProperty abbreviatedIRI="schema:gamePlatform"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#conversionOf"/>
+        <ObjectProperty abbreviatedIRI="prov:wasDerivedFrom"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#developedBy"/>
+        <ObjectProperty abbreviatedIRI="owl:topObjectProperty"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#developedBy"/>
+        <ObjectProperty IRI="#hasParticipatingOrganization"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#distributedBy"/>
+        <ObjectProperty IRI="#hasParticipatingOrganization"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#distributedOnMediaFormat"/>
+        <ObjectProperty IRI="#usesMediaFormat"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#exclusiveToPlatform"/>
+        <ObjectProperty IRI="#availableOnPlatform"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#installedFromMediaFormat"/>
+        <ObjectProperty IRI="#usesMediaFormat"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#intendedForPlatform"/>
+        <ObjectProperty abbreviatedIRI="schema:gamePlatform"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#modifiesResource"/>
+        <ObjectProperty IRI="#extendsResource"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#optionallySupportsInputDevice"/>
+        <ObjectProperty IRI="#supportsInputDevice"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#portOf"/>
+        <ObjectProperty abbreviatedIRI="prov:wasDerivedFrom"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#publishedBy"/>
+        <ObjectProperty IRI="#hasParticipatingOrganization"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#remakeOf"/>
+        <ObjectProperty abbreviatedIRI="prov:wasDerivedFrom"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#remasterOf"/>
+        <ObjectProperty abbreviatedIRI="prov:wasDerivedFrom"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#requiresInputDevice"/>
+        <ObjectProperty IRI="#supportsInputDevice"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#requiresOnlineService"/>
+        <ObjectProperty IRI="#accessibleViaOnlineService"/>
+    </SubObjectPropertyOf>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#accessibleViaOnlineService"/>
+        <Class IRI="#GameResource"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#availableOnPlatform"/>
+        <Class IRI="#GameRelease"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#conversionOf"/>
+        <Class IRI="#GameResource"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#developedBy"/>
+        <ObjectUnionOf>
+            <Class IRI="#GameRelease"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#developedWithEngine"/>
+        <ObjectUnionOf>
+            <Class IRI="#GameRelease"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#distributedBy"/>
+        <ObjectUnionOf>
+            <Class IRI="#GameRelease"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#distributedOnMediaFormat"/>
+        <Class IRI="#GameRelease"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#distributedVia"/>
+        <Class IRI="#GameRelease"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#emulatableOnPlatform"/>
+        <ObjectUnionOf>
+            <Class IRI="#GameRelease"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#engineSupportsPlatform"/>
+        <Class IRI="#GameEngine"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#exclusiveToPlatform"/>
+        <Class IRI="#GameRelease"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#extendsResource"/>
+        <Class IRI="#GameExtension"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasAgeCategory"/>
+        <Class IRI="#ContentRating"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasCharacter"/>
+        <Class IRI="#VideoGame"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasContentDescriptor"/>
+        <Class IRI="#ContentRating"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasContentRating"/>
+        <Class IRI="#GameRelease"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasGameplayMechanic"/>
+        <Class IRI="#VideoGame"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasGenre"/>
+        <Class IRI="#VideoGame"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasMonetizationModel"/>
+        <ObjectUnionOf>
+            <Class IRI="#GameRelease"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasParticipatingOrganization"/>
+        <ObjectUnionOf>
+            <Class IRI="#GameRelease"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasPlatformHolder"/>
+        <Class IRI="#Platform"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasUserInterface"/>
+        <ObjectUnionOf>
+            <Class IRI="#GameRelease"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#installedFromMediaFormat"/>
+        <Class IRI="#GameRelease"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#intendedForPlatform"/>
+        <ObjectUnionOf>
+            <Class IRI="#GameRelease"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#issuedByRatingSystem"/>
+        <Class IRI="#ContentRating"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#manufacturedBy"/>
+        <Class IRI="#Platform"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#modifiesResource"/>
+        <Class IRI="#Mod"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#optionallySupportsInputDevice"/>
+        <Class IRI="#GameRelease"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#ownedBy"/>
+        <Class IRI="#Platform"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#participatesInCompetitiveContext"/>
+        <ObjectUnionOf>
+            <Class IRI="#GameRelease"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#portOf"/>
+        <Class IRI="#Port"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#publishedBy"/>
+        <ObjectUnionOf>
+            <Class IRI="#GameRelease"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#releaseOf"/>
+        <Class IRI="#GameRelease"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#remakeOf"/>
+        <Class IRI="#Remake"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#remasterOf"/>
+        <Class IRI="#Remaster"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#requiresInputDevice"/>
+        <Class IRI="#GameRelease"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#requiresOnlineService"/>
+        <Class IRI="#GameResource"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#supportsInputDevice"/>
+        <ObjectUnionOf>
+            <Class IRI="#GameRelease"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#supportsMultiplayerConnectivity"/>
+        <ObjectUnionOf>
+            <Class IRI="#GameRelease"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#supportsOutputDevice"/>
+        <ObjectUnionOf>
+            <Class IRI="#GameRelease"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectUnionOf>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#usesMediaFormat"/>
+        <Class IRI="#GameRelease"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#administeredBy"/>
+        <Class IRI="#RatingAuthority"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#associatedWithGame"/>
+        <Class IRI="#VideoGame"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#availableOnPlatform"/>
+        <Class IRI="#Platform"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#conversionOf"/>
+        <Class IRI="#GameResource"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#developedWithEngine"/>
+        <Class IRI="#GameEngine"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#distributedBy"/>
+        <Class IRI="#Organization"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#distributedOnMediaFormat"/>
+        <Class IRI="#MediaFormat"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#emulatableOnPlatform"/>
+        <Class IRI="#Platform"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#engineSupportsPlatform"/>
+        <Class IRI="#Platform"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#exclusiveToPlatform"/>
+        <Class IRI="#Platform"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#extendsResource"/>
+        <Class IRI="#GameResource"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#featuresGame"/>
+        <Class IRI="#VideoGame"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasCharacter"/>
+        <Class IRI="#Character"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasContentRating"/>
+        <Class IRI="#ContentRating"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasGenre"/>
+        <Class IRI="#Genre"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasParticipatingOrganization"/>
+        <Class IRI="#Organization"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasPlatformHolder"/>
+        <Class IRI="#Organization"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasUserInterface"/>
+        <Class IRI="#UserInterface"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#installedFromMediaFormat"/>
+        <Class IRI="#MediaFormat"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#intendedForPlatform"/>
+        <Class IRI="#Platform"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#manufacturedBy"/>
+        <Class IRI="#Organization"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#modifiesResource"/>
+        <Class IRI="#GameResource"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#optionallySupportsInputDevice"/>
+        <Class IRI="#InputDevice"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#ownedBy"/>
+        <Class IRI="#Organization"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#portOf"/>
+        <Class IRI="#GameRelease"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#publishedBy"/>
+        <Class IRI="#Organization"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#releaseOf"/>
+        <Class IRI="#VideoGame"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#remakeOf"/>
+        <Class IRI="#GameRelease"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#remasterOf"/>
+        <Class IRI="#GameRelease"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#requiresInputDevice"/>
+        <Class IRI="#InputDevice"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#supportsInputDevice"/>
+        <Class IRI="#InputDevice"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#supportsOutputDevice"/>
+        <Class IRI="#OutputDevice"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#usedInputDevice"/>
+        <Class IRI="#InputDevice"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#usesGameRelease"/>
+        <Class IRI="#GameRelease"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#usesMediaFormat"/>
+        <Class IRI="#MediaFormat"/>
+    </ObjectPropertyRange>
+    <SubObjectPropertyOf>
+        <ObjectPropertyChain>
+            <ObjectProperty IRI="#extendsResource"/>
+            <ObjectProperty IRI="#releaseOf"/>
+        </ObjectPropertyChain>
+        <ObjectProperty IRI="#associatedWithGame"/>
+    </SubObjectPropertyOf>
+    <DataPropertyDomain>
+        <DataProperty IRI="#maximumPlayerCount"/>
+        <ObjectUnionOf>
+            <Class IRI="#GameRelease"/>
+            <Class IRI="#VideoGame"/>
+        </ObjectUnionOf>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#minimumAge"/>
+        <Class IRI="#ContentRating"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#ratingCode"/>
+        <Class IRI="#ContentRating"/>
+    </DataPropertyDomain>
+    <DataPropertyDomain>
+        <DataProperty IRI="#releaseDate"/>
+        <Class IRI="#GameRelease"/>
+    </DataPropertyDomain>
+    <DataPropertyRange>
+        <DataProperty IRI="#maximumPlayerCount"/>
+        <Datatype abbreviatedIRI="xsd:nonNegativeInteger"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#minimumAge"/>
+        <Datatype abbreviatedIRI="xsd:nonNegativeInteger"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#officiallySupported"/>
+        <Datatype abbreviatedIRI="xsd:boolean"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#ratingCode"/>
+        <Datatype abbreviatedIRI="xsd:string"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#releaseDate"/>
+        <Datatype abbreviatedIRI="xsd:date"/>
+    </DataPropertyRange>
+    <DataPropertyRange>
+        <DataProperty IRI="#userCreated"/>
+        <Datatype abbreviatedIRI="xsd:boolean"/>
+    </DataPropertyRange>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#ACB</IRI>
+        <Literal xml:lang="en">A named rating system value: ACB.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#ACB</IRI>
+        <Literal xml:lang="en">ACB</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="skos:prefLabel"/>
+        <IRI>#ACB</IRI>
+        <Literal xml:lang="en">ACB</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Advergame</IRI>
+        <Literal xml:lang="en">A serious game designed around advertising or promoting a product, service, or brand.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Advergame</IRI>
+        <Literal xml:lang="en">Advergame</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#ArcadeSystem</IRI>
+        <Literal xml:lang="en">A type of platform.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#ArcadeSystem</IRI>
+        <Literal xml:lang="en">Arcade System</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#ArtGame</IRI>
+        <Literal xml:lang="en">A type of video game.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#ArtGame</IRI>
+        <Literal xml:lang="en">Art Game</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#AugmentedRealityPlatform</IRI>
+        <Literal xml:lang="en">A platform that supports augmented-reality video-game experiences by combining game output with the player&apos;s physical environment.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#AugmentedRealityPlatform</IRI>
+        <Literal xml:lang="en">Augmented Reality Platform</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Australia</IRI>
+        <Literal xml:lang="en">Australia</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#BrowserPlatform</IRI>
+        <Literal xml:lang="en">A type of platform.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#BrowserPlatform</IRI>
+        <Literal xml:lang="en">Browser Platform</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#BuiltInScreen</IRI>
+        <Literal xml:lang="en">A type of display device.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#BuiltInScreen</IRI>
+        <Literal xml:lang="en">Built In Screen</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#CDROM</IRI>
+        <Literal xml:lang="en">A type of optical disc.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#CDROM</IRI>
+        <Literal xml:lang="en">CD-ROM</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#CERO</IRI>
+        <Literal xml:lang="en">A named rating system value: CERO.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#CERO</IRI>
+        <Literal xml:lang="en">CERO</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="skos:prefLabel"/>
+        <IRI>#CERO</IRI>
+        <Literal xml:lang="en">CERO</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#CRTDisplay</IRI>
+        <Literal xml:lang="en">A type of display device.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#CRTDisplay</IRI>
+        <Literal xml:lang="en">CRT display</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#CasualGame</IRI>
+        <Literal xml:lang="en">A type of video game.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#CasualGame</IRI>
+        <Literal xml:lang="en">Casual Game</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Character</IRI>
+        <Literal xml:lang="en">A character appearing in a video game.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Character</IRI>
+        <Literal xml:lang="en">Character</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#CloudGamingService</IRI>
+        <Literal xml:lang="en">A cloud gaming service that also functions as a playable platform: game execution is provided remotely and accessed through an online service.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#CloudGamingService</IRI>
+        <Literal xml:lang="en">Cloud Gaming Service</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#ComputerMonitor</IRI>
+        <Literal xml:lang="en">A type of display device.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#ComputerMonitor</IRI>
+        <Literal xml:lang="en">Computer Monitor</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#ComputerSpace</IRI>
+        <Literal xml:lang="en">Computer Space</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="prov:wasInfluencedBy"/>
+        <IRI>#ComputerSpace</IRI>
+        <IRI>#Spacewar</IRI>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#ContentRating</IRI>
+        <Literal xml:lang="en">A provenance-capable content-rating assignment for a GameRelease that is issued by at least one RatingSystem; it may also carry a rating code, age category, content descriptors, and source metadata via dcterms:source.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#ContentRating</IRI>
+        <Literal xml:lang="en">Content Rating</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#CoreGame</IRI>
+        <Literal xml:lang="en">A type of video game.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#CoreGame</IRI>
+        <Literal xml:lang="en">Core Game</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#DVD</IRI>
+        <Literal xml:lang="en">A type of optical disc.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#DVD</IRI>
+        <Literal xml:lang="en">DVD</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#DancePad</IRI>
+        <Literal xml:lang="en">A specialized game controller operated primarily with the feet.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#DancePad</IRI>
+        <Literal xml:lang="en">Dance Pad</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#DeveloperRole</IRI>
+        <Literal xml:lang="en">A PROV role used to qualify an organization&apos;s participation as a developer.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#DeveloperRole</IRI>
+        <Literal xml:lang="en">Developer Role</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Device</IRI>
+        <Literal xml:lang="en">A physical or virtual device used for game input or output.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Device</IRI>
+        <Literal xml:lang="en">Device</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#DigitalCamera</IRI>
+        <Literal xml:lang="en">A type of input device.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#DigitalCamera</IRI>
+        <Literal xml:lang="en">Digital Camera</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#DigitalMediaFormat</IRI>
+        <Literal xml:lang="en">A type of media format.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#DigitalMediaFormat</IRI>
+        <Literal xml:lang="en">Digital Media Format</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#DisplayDevice</IRI>
+        <Literal xml:lang="en">A type of output device.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#DisplayDevice</IRI>
+        <Literal xml:lang="en">Display Device</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#DistributorRole</IRI>
+        <Literal xml:lang="en">A PROV role used to qualify an organization&apos;s participation as a distributor.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#DistributorRole</IRI>
+        <Literal xml:lang="en">Distributor Role</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#DownloadableContent</IRI>
+        <Literal xml:lang="en">A type of game extension.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#DownloadableContent</IRI>
+        <Literal xml:lang="en">Downloadable Content</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#ESRB</IRI>
+        <Literal xml:lang="en">A named rating system value: ESRB.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#ESRB</IRI>
+        <Literal xml:lang="en">ESRB</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="skos:prefLabel"/>
+        <IRI>#ESRB</IRI>
+        <Literal xml:lang="en">ESRB</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#EducationalGame</IRI>
+        <Literal xml:lang="en">A type of serious game.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#EducationalGame</IRI>
+        <Literal xml:lang="en">Educational Game</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#ExpansionPack</IRI>
+        <Literal xml:lang="en">A type of game extension.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#ExpansionPack</IRI>
+        <Literal xml:lang="en">Expansion Pack</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#FitnessGame</IRI>
+        <Literal xml:lang="en">A serious game that incorporates significant physical exercise or fitness-oriented activity.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#FitnessGame</IRI>
+        <Literal xml:lang="en">Fitness Game</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#FlashMemoryCard</IRI>
+        <Literal xml:lang="en">A type of physical media format.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#FlashMemoryCard</IRI>
+        <Literal xml:lang="en">Flash Memory Card</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#FloppyDisk</IRI>
+        <Literal xml:lang="en">A type of physical media format.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#FloppyDisk</IRI>
+        <Literal xml:lang="en">Floppy Disk</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#GameBoy</IRI>
+        <Literal xml:lang="en">Game Boy</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#GameController</IRI>
+        <Literal xml:lang="en">An input device designed primarily for controlling gameplay.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#GameController</IRI>
+        <Literal xml:lang="en">Game Controller</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="skos:altLabel"/>
+        <IRI>#GameController</IRI>
+        <Literal xml:lang="en">Controller</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#GameCube</IRI>
+        <Literal xml:lang="en">GameCube</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#GameEngine</IRI>
+        <Literal xml:lang="en">Software used to develop or run a video game or game release.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#GameEngine</IRI>
+        <Literal xml:lang="en">Game Engine</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#GameExtension</IRI>
+        <Literal xml:lang="en">A game-related creative resource that extends another GameResource, such as an expansion, downloadable content, or mod. Use dcterms:creator with a prov:Agent when creator attribution is recorded.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#GameExtension</IRI>
+        <Literal xml:lang="en">Game Extension</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#GameRelease</IRI>
+        <Literal xml:lang="en">A particular release, edition, or version of a VideoGame. Every GameRelease is related to at least one VideoGame through :releaseOf; use dcterms:title and dcterms:identifier for generic metadata, schema:version for version text, and :releaseDate for its formal release date.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#GameRelease</IRI>
+        <Literal xml:lang="en">Game Release</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#GameResource</IRI>
+        <Literal xml:lang="en">A domain resource representing a video game, a particular game release, or an extension; modeled as a PROV entity so derivation provenance can be reused directly.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#GameResource</IRI>
+        <Literal xml:lang="en">Game Resource</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Gamepad</IRI>
+        <Literal xml:lang="en">A handheld game controller with buttons, directional controls, or analog inputs.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Gamepad</IRI>
+        <Literal xml:lang="en">Gamepad</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#GamesAsAService</IRI>
+        <Literal xml:lang="en">A monetization model in which a game is operated and updated as an ongoing service.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#GamesAsAService</IRI>
+        <Literal xml:lang="en">Games as a Service</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="skos:prefLabel"/>
+        <IRI>#GamesAsAService</IRI>
+        <Literal xml:lang="en">Games as a Service</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Germany</IRI>
+        <Literal xml:lang="en">Germany</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#HandheldConsole</IRI>
+        <Literal xml:lang="en">A type of platform.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#HandheldConsole</IRI>
+        <Literal xml:lang="en">Handheld Console</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#HapticFeedbackCapability</IRI>
+        <Literal xml:lang="en">A named feedback capability representing haptic or tactile feedback.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#HapticFeedbackCapability</IRI>
+        <Literal xml:lang="en">Haptic Feedback Capability</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Headphones</IRI>
+        <Literal xml:lang="en">A type of output device.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Headphones</IRI>
+        <Literal xml:lang="en">Headphones</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#HomeConsole</IRI>
+        <Literal xml:lang="en">A type of platform.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#HomeConsole</IRI>
+        <Literal xml:lang="en">Home Console</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#InputDevice</IRI>
+        <Literal xml:lang="en">A device used to provide input to a game or gameplay session.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#InputDevice</IRI>
+        <Literal xml:lang="en">Input Device</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Japan</IRI>
+        <Literal xml:lang="en">Japan</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Joystick</IRI>
+        <Literal xml:lang="en">A game controller centered on a movable stick for directional or analog input.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Joystick</IRI>
+        <Literal xml:lang="en">Joystick</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Keyboard</IRI>
+        <Literal xml:lang="en">A type of input device.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Keyboard</IRI>
+        <Literal xml:lang="en">Keyboard</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#LCDDisplay</IRI>
+        <Literal xml:lang="en">A type of display device.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#LCDDisplay</IRI>
+        <Literal xml:lang="en">LCD display</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#LightGun</IRI>
+        <Literal xml:lang="en">A game controller designed for aiming at or interacting with a display.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#LightGun</IRI>
+        <Literal xml:lang="en">Light Gun</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#MagnavoxOdyssey</IRI>
+        <Literal xml:lang="en">Magnavox Odyssey</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#MagneticTape</IRI>
+        <Literal xml:lang="en">A type of physical media format.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#MagneticTape</IRI>
+        <Literal xml:lang="en">Magnetic Tape</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#MarketerRole</IRI>
+        <Literal xml:lang="en">A PROV role used when an organization participates in promoting or marketing a game or release.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#MarketerRole</IRI>
+        <Literal xml:lang="en">Marketer Role</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#MediaFormat</IRI>
+        <Literal xml:lang="en">A physical or digital format used to distribute or install a game release.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#MediaFormat</IRI>
+        <Literal xml:lang="en">Media Format</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Microphone</IRI>
+        <Literal xml:lang="en">A type of input device.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Microphone</IRI>
+        <Literal xml:lang="en">Microphone</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#MobilePlatform</IRI>
+        <Literal xml:lang="en">A type of platform.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#MobilePlatform</IRI>
+        <Literal xml:lang="en">Mobile Platform</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Mod</IRI>
+        <Literal xml:lang="en">A GameExtension that modifies at least one GameResource; :modifiesResource also specializes :extendsResource.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Mod</IRI>
+        <Literal xml:lang="en">Mod</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#MotionSensor</IRI>
+        <Literal xml:lang="en">A type of input device.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#MotionSensor</IRI>
+        <Literal xml:lang="en">Motion Sensor</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Mouse</IRI>
+        <Literal xml:lang="en">A type of input device.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Mouse</IRI>
+        <Literal xml:lang="en">Mouse</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Newsgame</IRI>
+        <Literal xml:lang="en">A serious game designed to communicate or explore a news-related, political, or advocacy-oriented subject.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Newsgame</IRI>
+        <Literal xml:lang="en">Newsgame</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Nintendo</IRI>
+        <Literal xml:lang="en">Nintendo</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#NonPlayerCharacter</IRI>
+        <Literal xml:lang="en">A type of character.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#NonPlayerCharacter</IRI>
+        <Literal xml:lang="en">Non Player Character</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#OpticalDisc</IRI>
+        <Literal xml:lang="en">A type of physical media format.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#OpticalDisc</IRI>
+        <Literal xml:lang="en">Optical Disc</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Organization</IRI>
+        <Literal xml:lang="en">An organization participating in the video-game ecosystem.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Organization</IRI>
+        <Literal xml:lang="en">Organization</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#OutputDevice</IRI>
+        <Literal xml:lang="en">A device used to present visual, audio, haptic, or other game output.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#OutputDevice</IRI>
+        <Literal xml:lang="en">Output Device</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#PEGI</IRI>
+        <Literal xml:lang="en">A named rating system value: PEGI.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#PEGI</IRI>
+        <Literal xml:lang="en">PEGI</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="skos:prefLabel"/>
+        <IRI>#PEGI</IRI>
+        <Literal xml:lang="en">PEGI</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Passage</IRI>
+        <Literal xml:lang="en">Passage</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#PersonalComputerPlatform</IRI>
+        <Literal xml:lang="en">A type of platform.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#PersonalComputerPlatform</IRI>
+        <Literal xml:lang="en">Personal Computer Platform</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#PhysicalMediaFormat</IRI>
+        <Literal xml:lang="en">A type of media format.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#PhysicalMediaFormat</IRI>
+        <Literal xml:lang="en">Physical Media Format</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Platform</IRI>
+        <Literal xml:lang="en">A hardware, software, browser, mobile, cloud, or virtual-reality platform on which games may run.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Platform</IRI>
+        <Literal xml:lang="en">Platform</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#PlayStation</IRI>
+        <Literal xml:lang="en">PlayStation</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#PlayStation2</IRI>
+        <Literal xml:lang="en">PlayStation 2</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#PlayStationNow</IRI>
+        <Literal xml:lang="en">PlayStation Now</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#PlayerCharacter</IRI>
+        <Literal xml:lang="en">A type of character.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#PlayerCharacter</IRI>
+        <Literal xml:lang="en">Player Character</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Pong</IRI>
+        <Literal xml:lang="en">Pong</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Port</IRI>
+        <Literal xml:lang="en">A game release adapted to run on a platform or technical environment different from an earlier release.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Port</IRI>
+        <Literal xml:lang="en">Port</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Projector</IRI>
+        <Literal xml:lang="en">A type of display device.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Projector</IRI>
+        <Literal xml:lang="en">Projector</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#PublisherRole</IRI>
+        <Literal xml:lang="en">A PROV role used to qualify an organization&apos;s participation as a publisher.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#PublisherRole</IRI>
+        <Literal xml:lang="en">Publisher Role</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#ROMCartridge</IRI>
+        <Literal xml:lang="en">A type of physical media format.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#ROMCartridge</IRI>
+        <Literal xml:lang="en">ROM cartridge</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#RacingWheel</IRI>
+        <Literal xml:lang="en">A game controller designed to simulate steering in driving games.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#RacingWheel</IRI>
+        <Literal xml:lang="en">Racing Wheel</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#RatingAuthority</IRI>
+        <Literal xml:lang="en">An organization that administers a content-rating system.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#RatingAuthority</IRI>
+        <Literal xml:lang="en">Rating Authority</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Remake</IRI>
+        <Literal xml:lang="en">A game release that recreates an earlier game release as a new derived release.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Remake</IRI>
+        <Literal xml:lang="en">Remake</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Remaster</IRI>
+        <Literal xml:lang="en">A game release derived from an earlier release with revised presentation or technical treatment while substantially preserving the original game.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Remaster</IRI>
+        <Literal xml:lang="en">Remaster</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#RetailerRole</IRI>
+        <Literal xml:lang="en">A PROV role used when an organization participates in bringing a game or release to consumers as a retailer.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#RetailerRole</IRI>
+        <Literal xml:lang="en">Retailer Role</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Review</IRI>
+        <Literal xml:lang="en">A review of a GameRelease. Use schema:itemReviewed for the reviewed release, schema:reviewBody for review text, schema:reviewRating with schema:ratingValue for a structured score, and dcterms:source for source citation when applicable.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Review</IRI>
+        <Literal xml:lang="en">Review</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#SeriousGame</IRI>
+        <Literal xml:lang="en">A type of video game.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#SeriousGame</IRI>
+        <Literal xml:lang="en">Serious Game</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Spacewar</IRI>
+        <Literal xml:lang="en">Spacewar!</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Speaker</IRI>
+        <Literal xml:lang="en">A type of output device.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Speaker</IRI>
+        <Literal xml:lang="en">Speaker</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Tetris</IRI>
+        <Literal xml:lang="en">Tetris</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#TheOregonTrail</IRI>
+        <Literal xml:lang="en">The Oregon Trail</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#Touchscreen</IRI>
+        <Literal xml:lang="en">A combined display and touch-sensitive input device; it can therefore function as both an InputDevice and a DisplayDevice.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Touchscreen</IRI>
+        <Literal xml:lang="en">Touchscreen</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#USK</IRI>
+        <Literal xml:lang="en">A named rating system value: USK.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#USK</IRI>
+        <Literal xml:lang="en">USK</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="skos:prefLabel"/>
+        <IRI>#USK</IRI>
+        <Literal xml:lang="en">USK</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#UnitedKingdom</IRI>
+        <Literal xml:lang="en">United Kingdom</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#UnitedStates</IRI>
+        <Literal xml:lang="en">United States</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#UserInterface</IRI>
+        <Literal xml:lang="en">An interface through which a player receives game state information or interacts with a video game.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#UserInterface</IRI>
+        <Literal xml:lang="en">User Interface</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#VRController</IRI>
+        <Literal xml:lang="en">A class that is a subtype of vr input device and game controller.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#VRController</IRI>
+        <Literal xml:lang="en">VR controller</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#VRHeadset</IRI>
+        <Literal xml:lang="en">A class that is a subtype of display device and vr output device.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#VRHeadset</IRI>
+        <Literal xml:lang="en">VR headset</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#VideoGame</IRI>
+        <Literal xml:lang="en">A video game considered as a creative work independent of a particular release.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#VideoGame</IRI>
+        <Literal xml:lang="en">Video Game</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#VirtualRealityPlatform</IRI>
+        <Literal xml:lang="en">A type of platform.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#VirtualRealityPlatform</IRI>
+        <Literal xml:lang="en">Virtual Reality Platform</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#Wii</IRI>
+        <Literal xml:lang="en">Wii</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#WiiFit</IRI>
+        <Literal xml:lang="en">Wii Fit</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#XboxCloudGaming</IRI>
+        <Literal xml:lang="en">Xbox Cloud Gaming</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#accessibleViaOnlineService</IRI>
+        <Literal xml:lang="en">Indicates an online service through which a GameResource can be accessed.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#accessibleViaOnlineService</IRI>
+        <Literal xml:lang="en">accessible via online service</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#administeredBy</IRI>
+        <Literal xml:lang="en">Identifies the rating authority that administers a RatingSystem.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#administeredBy</IRI>
+        <Literal xml:lang="en">administered by</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#associatedWithGame</IRI>
+        <Literal xml:lang="en">Links game-related content to the VideoGame with which it is associated. For a GameExtension that extends a GameRelease, the association can be inferred through :extendsResource followed by :releaseOf.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#associatedWithGame</IRI>
+        <Literal xml:lang="en">associated with game</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#availableOnPlatform</IRI>
+        <Literal xml:lang="en">Indicates a Platform on which a GameRelease is available.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#availableOnPlatform</IRI>
+        <Literal xml:lang="en">available on platform</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#conversionOf</IRI>
+        <Literal xml:lang="en">Identifies the earlier GameResource from which this GameResource was converted; conversion is a form of PROV derivation.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#conversionOf</IRI>
+        <Literal xml:lang="en">conversion of</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#developedBy</IRI>
+        <Literal xml:lang="en">Identifies an Organization that developed a VideoGame or GameRelease; use :DeveloperRole in a qualified PROV association when the role needs explicit qualification.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#developedBy</IRI>
+        <Literal xml:lang="en">developed by</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#developedWithEngine</IRI>
+        <Literal xml:lang="en">Identifies the GameEngine used to develop a VideoGame or GameRelease.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#developedWithEngine</IRI>
+        <Literal xml:lang="en">developed with engine</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#distributedBy</IRI>
+        <Literal xml:lang="en">Identifies an Organization that distributed a VideoGame or GameRelease; use :DistributorRole in a qualified PROV association when the role needs explicit qualification.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#distributedBy</IRI>
+        <Literal xml:lang="en">distributed by</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#distributedOnMediaFormat</IRI>
+        <Literal xml:lang="en">Identifies a MediaFormat on which a GameRelease was distributed.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#distributedOnMediaFormat</IRI>
+        <Literal xml:lang="en">distributed on media format</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#distributedVia</IRI>
+        <Literal xml:lang="en">Identifies the DistributionMethod used for a GameRelease.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#distributedVia</IRI>
+        <Literal xml:lang="en">distributed via</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#emulatableOnPlatform</IRI>
+        <Literal xml:lang="en">Indicates a Platform on which a VideoGame or GameRelease can be run through emulation.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#emulatableOnPlatform</IRI>
+        <Literal xml:lang="en">emulatable on platform</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#engineSupportsPlatform</IRI>
+        <Literal xml:lang="en">Indicates a Platform supported by a GameEngine.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#engineSupportsPlatform</IRI>
+        <Literal xml:lang="en">engine supports platform</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#exclusiveToPlatform</IRI>
+        <Literal xml:lang="en">Indicates a Platform to which a GameRelease is exclusive; this is a specialization of :availableOnPlatform.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#exclusiveToPlatform</IRI>
+        <Literal xml:lang="en">exclusive to platform</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#extendsResource</IRI>
+        <Literal xml:lang="en">Identifies the GameResource extended by a GameExtension.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#extendsResource</IRI>
+        <Literal xml:lang="en">extends resource</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#featuresGame</IRI>
+        <Literal xml:lang="en">Identifies a VideoGame featured in a CompetitiveContext.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#featuresGame</IRI>
+        <Literal xml:lang="en">features game</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasAgeCategory</IRI>
+        <Literal xml:lang="en">Associates a ContentRating with its age-category concept.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#hasAgeCategory</IRI>
+        <Literal xml:lang="en">has age category</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasCharacter</IRI>
+        <Literal xml:lang="en">Associates a VideoGame with a Character appearing in the game.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#hasCharacter</IRI>
+        <Literal xml:lang="en">has character</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasContentDescriptor</IRI>
+        <Literal xml:lang="en">Associates a ContentRating with a content-descriptor concept.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#hasContentDescriptor</IRI>
+        <Literal xml:lang="en">has content descriptor</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasContentRating</IRI>
+        <Literal xml:lang="en">Associates a GameRelease with an assigned ContentRating.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#hasContentRating</IRI>
+        <Literal xml:lang="en">has content rating</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasGameplayMechanic</IRI>
+        <Literal xml:lang="en">Associates a VideoGame with a GameplayMechanic.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#hasGameplayMechanic</IRI>
+        <Literal xml:lang="en">has gameplay mechanic</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasGenre</IRI>
+        <Literal xml:lang="en">Associates a VideoGame with a Genre concept.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#hasGenre</IRI>
+        <Literal xml:lang="en">has genre</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasMonetizationModel</IRI>
+        <Literal xml:lang="en">Associates a VideoGame or GameRelease with a MonetizationModel.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#hasMonetizationModel</IRI>
+        <Literal xml:lang="en">has monetization model</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasParticipatingOrganization</IRI>
+        <Literal xml:lang="en">Relates a VideoGame or GameRelease to an Organization participating in its development, publication, or distribution.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#hasParticipatingOrganization</IRI>
+        <Literal xml:lang="en">has participating organization</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasPlatformHolder</IRI>
+        <Literal xml:lang="en">Identifies the Organization that holds or controls a Platform.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#hasPlatformHolder</IRI>
+        <Literal xml:lang="en">has platform holder</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasPlayer</IRI>
+        <Literal xml:lang="en">Identifies an agent participating as a player in a GameplaySession; it specializes PROV association.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#hasPlayer</IRI>
+        <Literal xml:lang="en">has player</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#hasUserInterface</IRI>
+        <Literal xml:lang="en">Associates a VideoGame or GameRelease with a UserInterface through which gameplay information or controls are presented.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#hasUserInterface</IRI>
+        <Literal xml:lang="en">has user interface</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#installedFromMediaFormat</IRI>
+        <Literal xml:lang="en">Identifies a MediaFormat from which a GameRelease is installed.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#installedFromMediaFormat</IRI>
+        <Literal xml:lang="en">installed from media format</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#intendedForPlatform</IRI>
+        <Literal xml:lang="en">Indicates the Platform for which a VideoGame or GameRelease was originally or intentionally designed.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#intendedForPlatform</IRI>
+        <Literal xml:lang="en">intended for platform</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#issuedByRatingSystem</IRI>
+        <Literal xml:lang="en">Identifies the RatingSystem that issued a ContentRating.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#issuedByRatingSystem</IRI>
+        <Literal xml:lang="en">issued by rating system</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#manufacturedBy</IRI>
+        <Literal xml:lang="en">Identifies the Organization that manufactured a Platform.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#manufacturedBy</IRI>
+        <Literal xml:lang="en">manufactured by</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#maximumPlayerCount</IRI>
+        <Literal xml:lang="en">Records the maximum number of simultaneous players supported by a VideoGame or GameRelease.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#maximumPlayerCount</IRI>
+        <Literal xml:lang="en">maximum player count</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#minimumAge</IRI>
+        <Literal xml:lang="en">Records the minimum age associated with a ContentRating.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#minimumAge</IRI>
+        <Literal xml:lang="en">minimum age</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#modifiesResource</IRI>
+        <Literal xml:lang="en">Identifies the GameResource modified by a Mod. Because Mod is a GameExtension, this relation specializes :extendsResource.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#modifiesResource</IRI>
+        <Literal xml:lang="en">modifies resource</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#officiallySupported</IRI>
+        <Literal xml:lang="en">Indicates whether game-related content is officially supported by the relevant rights holder, publisher, developer, or platform authority.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#officiallySupported</IRI>
+        <Literal xml:lang="en">officially supported</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#operatedBy</IRI>
+        <Literal xml:lang="en">Identifies the agent that operates an OnlineService.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#operatedBy</IRI>
+        <Literal xml:lang="en">operated by</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#optionallySupportsInputDevice</IRI>
+        <Literal xml:lang="en">Identifies an optional InputDevice supported by a GameRelease.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#optionallySupportsInputDevice</IRI>
+        <Literal xml:lang="en">optionally supports input device</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#organizedBy</IRI>
+        <Literal xml:lang="en">Identifies an agent that organizes a CompetitiveContext.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#organizedBy</IRI>
+        <Literal xml:lang="en">organized by</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#ownedBy</IRI>
+        <Literal xml:lang="en">Identifies the Organization that owns a Platform.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#ownedBy</IRI>
+        <Literal xml:lang="en">owned by</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#participatesInCompetitiveContext</IRI>
+        <Literal xml:lang="en">Associates a VideoGame or GameRelease with a CompetitiveContext in which it participates.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#participatesInCompetitiveContext</IRI>
+        <Literal xml:lang="en">participates in competitive context</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#portOf</IRI>
+        <Literal xml:lang="en">Identifies the earlier GameRelease from which a Port was derived.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#portOf</IRI>
+        <Literal xml:lang="en">port of</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#precededBy</IRI>
+        <Literal xml:lang="en">Relates a resource to an earlier resource that precedes it in a relevant sequence or historical lineage.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#precededBy</IRI>
+        <Literal xml:lang="en">preceded by</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#providesFeedbackCapability</IRI>
+        <Literal xml:lang="en">Identifies a FeedbackCapability provided by a resource, such as visual, audio, or haptic feedback.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#providesFeedbackCapability</IRI>
+        <Literal xml:lang="en">provides feedback capability</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#publishedBy</IRI>
+        <Literal xml:lang="en">Identifies an Organization that published a VideoGame or GameRelease; use :PublisherRole in a qualified PROV association when the role needs explicit qualification.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#publishedBy</IRI>
+        <Literal xml:lang="en">published by</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#ratingCode</IRI>
+        <Literal xml:lang="en">Records the code assigned to a ContentRating by its RatingSystem, such as an age or classification code.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#ratingCode</IRI>
+        <Literal xml:lang="en">rating code</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#releaseDate</IRI>
+        <Literal xml:lang="en">Records the formal release date of a GameRelease; it specializes dcterms:issued and schema:datePublished.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#releaseDate</IRI>
+        <Literal xml:lang="en">release date</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#releaseOf</IRI>
+        <Literal xml:lang="en">Links a particular GameRelease to the VideoGame work that it releases.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#releaseOf</IRI>
+        <Literal xml:lang="en">release of</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#remakeOf</IRI>
+        <Literal xml:lang="en">Identifies the earlier GameRelease from which a Remake was derived.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#remakeOf</IRI>
+        <Literal xml:lang="en">remake of</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#remasterOf</IRI>
+        <Literal xml:lang="en">Identifies the earlier GameRelease from which a Remaster was derived.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#remasterOf</IRI>
+        <Literal xml:lang="en">remaster of</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#requiresInputDevice</IRI>
+        <Literal xml:lang="en">Identifies an InputDevice required to use a GameRelease.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#requiresInputDevice</IRI>
+        <Literal xml:lang="en">requires input device</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#requiresOnlineService</IRI>
+        <Literal xml:lang="en">Identifies an OnlineService that is required to access or use a GameResource.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#requiresOnlineService</IRI>
+        <Literal xml:lang="en">requires online service</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#supportsInputDevice</IRI>
+        <Literal xml:lang="en">Identifies an InputDevice supported by a VideoGame or GameRelease.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#supportsInputDevice</IRI>
+        <Literal xml:lang="en">supports input device</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#supportsMultiplayerConnectivity</IRI>
+        <Literal xml:lang="en">Associates a VideoGame or GameRelease with a supported multiplayer connectivity mode.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#supportsMultiplayerConnectivity</IRI>
+        <Literal xml:lang="en">supports multiplayer connectivity</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#supportsOutputDevice</IRI>
+        <Literal xml:lang="en">Identifies an OutputDevice through which a VideoGame or GameRelease can present output.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#supportsOutputDevice</IRI>
+        <Literal xml:lang="en">supports output device</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#usedInputDevice</IRI>
+        <Literal xml:lang="en">Identifies an InputDevice actually used during a GameplaySession.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#usedInputDevice</IRI>
+        <Literal xml:lang="en">used input device</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#userCreated</IRI>
+        <Literal xml:lang="en">Indicates whether game-related content was created by users rather than as official first-party or licensed content.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#userCreated</IRI>
+        <Literal xml:lang="en">user created</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#usesGameRelease</IRI>
+        <Literal xml:lang="en">Identifies the GameRelease used in a GameplaySession.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#usesGameRelease</IRI>
+        <Literal xml:lang="en">uses game release</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <IRI>#usesMediaFormat</IRI>
+        <Literal xml:lang="en">Identifies a MediaFormat used to distribute or install a GameRelease.</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <IRI>#usesMediaFormat</IRI>
+        <Literal xml:lang="en">uses media format</Literal>
+    </AnnotationAssertion>
+</Ontology>
+
+
+
+<!-- Generated by the OWL API (version 4.5.25.2023-02-15T19:15:49Z) https://github.com/owlcs/owlapi -->
+
